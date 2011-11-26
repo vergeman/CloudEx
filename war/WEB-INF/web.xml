@@ -8,7 +8,7 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.coudexchange.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>edu.columbia.e6998.cloudexchange.server.GreetingServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
