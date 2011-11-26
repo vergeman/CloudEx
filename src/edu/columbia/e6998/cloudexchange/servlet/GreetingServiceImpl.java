@@ -1,4 +1,4 @@
-package edu.columbia.e6998.cloudexchange.server;
+package edu.columbia.e6998.cloudexchange.servlet;
 
 import java.io.IOException;
 

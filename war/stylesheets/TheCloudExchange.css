@@ -1,0 +1,16 @@
+/** Add css rules here for your application. */
+
+/*font stuff*/
+h1 {
+	font-size: 2em;
+	font-family: arial, helvetica;
+}
+
+
+/*div stuff*/
+#header {
+	width: 960px;
+	margin: 0px auto;
+	padding: 16px;
+}
+
