@@ -16,6 +16,18 @@
     <url-pattern>/thecloudexchange/greet</url-pattern>
   </servlet-mapping>
   
+  
+  <servlet>
+    <servlet-name>launchServlet</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.servlet.LaunchServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>launchServlet</servlet-name>
+    <url-pattern>/launch</url-pattern>
+  </servlet-mapping>
+  
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
