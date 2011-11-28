@@ -6,6 +6,8 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
+  
+  <!-- test servlet does nothing -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>edu.columbia.e6998.cloudexchange.servlet.GreetingServiceImpl</servlet-class>
@@ -16,6 +18,7 @@
     <url-pattern>/thecloudexchange/greet</url-pattern>
   </servlet-mapping>
   
+  <!-- placeholder servlet tentatively for launching instances -->
   
   <servlet>
     <servlet-name>launchServlet</servlet-name>
@@ -25,6 +28,39 @@
   <servlet-mapping>
     <servlet-name>launchServlet</servlet-name>
     <url-pattern>/launch</url-pattern>
+  </servlet-mapping>
+  
+  
+  <!-- test datastore servlets -->
+  <servlet>
+    <servlet-name>DatastoreEstablishBuyServlet</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreEstablishBuyServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DatastoreEstablishBuyServlet</servlet-name>
+    <url-pattern>/test/buy</url-pattern>
+  </servlet-mapping>
+  
+  
+   <servlet>
+    <servlet-name>DatastoreInsertContractServlet</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreInsertContractServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DatastoreInsertContractServlet</servlet-name>
+    <url-pattern>/test/insert</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>DatastoreQueryServlet</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreQueryServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DatastoreQueryServlet</servlet-name>
+    <url-pattern>/test/query</url-pattern>
   </servlet-mapping>
   
   
