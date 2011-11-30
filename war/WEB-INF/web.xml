@@ -53,8 +53,18 @@
   </servlet-mapping>
  
  
- <!--  channel servlets for connection inquiries -->
+ <!--  channel servlets for message passing and connection status/update-->
   
+   <servlet-mapping>
+	<servlet-name>MessageHandlerServlet</servlet-name>
+	<url-pattern>/message/</url-pattern>
+</servlet-mapping>
+
+	<servlet>
+		<servlet-name>MessageHandlerServlet</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.channel.MessageHandlerServlet</servlet-class>
+	</servlet> 
+ 
   <servlet-mapping>
 	<servlet-name>ConnectHandlerServlet</servlet-name>
 	<url-pattern>/_ah/channel/connected/</url-pattern>

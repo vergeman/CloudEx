@@ -26,6 +26,18 @@
 	</div>
 
 
+	<div id="message">
+		<input id="input_message" type="text" />
+	</div>
+	
+	<button id="send_message"></button>
+	
+	<div id="message_result">
+	
+	</div>
+	
+
+
 	<div id="footer">
 		Project footnotes
 	</div>

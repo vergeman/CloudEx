@@ -11,6 +11,8 @@ import com.google.appengine.api.channel.ChannelPresence;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
+
 
 @SuppressWarnings("serial")
 public class ConnectHandlerServlet extends HttpServlet {
@@ -21,10 +23,12 @@ public class ConnectHandlerServlet extends HttpServlet {
 		ChannelService channelService = ChannelServiceFactory.getChannelService();
 		ChannelPresence presence = channelService.parsePresence(req);
 		
-		
 		/* we will want to populate a list of connected clients
-		 * so we know who to propogate messages to
-		 */
+		 * so we know who to propagate messages to
+		 */		
+		ConnectedUserManager connectedUsers = new ConnectedUserManager();
+		connectedUsers.addUser(presence.clientId());
+
 		System.out.println("Connected: " + presence.clientId());
 	}
 }
