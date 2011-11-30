@@ -33,6 +33,11 @@ public class LaunchServlet extends HttpServlet {
 		 * 
 		 * */
 		
-		testInstance t = new testInstance(resp);
+		
+		//we comment this out for now since our cron job hits it every hour
+		//but it works on deploy
+		
+		
+		//testInstance t = new testInstance(resp);
 	}
 }
