@@ -1,4 +1,4 @@
-package edu.columbia.e6998.cloudexchange.servlet;
+package edu.columbia.e6998.cloudexchange.aws;
 
 import java.io.IOException;
 
@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.columbia.e6998.cloudexchange.aws.testInstance;
 
 
 

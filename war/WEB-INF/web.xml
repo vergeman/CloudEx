@@ -11,7 +11,7 @@
   
   <servlet>
     <servlet-name>launchServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.servlet.LaunchServlet</servlet-class>
+    <servlet-class>edu.columbia.e6998.cloudexchange.aws.LaunchServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
