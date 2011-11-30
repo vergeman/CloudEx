@@ -1,4 +1,3 @@
-
 var token = $('meta[name=channel_token]').attr("content");
 var channel = new goog.appengine.Channel(token);
 var socket = channel.open();

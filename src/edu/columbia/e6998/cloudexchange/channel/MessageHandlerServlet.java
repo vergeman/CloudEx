@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+import com.google.appengine.api.channel.ChannelFailureException;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
@@ -41,7 +42,13 @@ public class MessageHandlerServlet extends HttpServlet {
 		 */
 		for (String user : users.values()) {
 			String channelKey = user;
-			channelService.sendMessage(new ChannelMessage(channelKey, message.toString()));
+			try {
+				channelService.sendMessage(new ChannelMessage(channelKey,
+						message.toString()));
+				
+			} catch (ChannelFailureException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
