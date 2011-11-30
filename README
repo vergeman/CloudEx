@@ -4,3 +4,7 @@ E6998, Cloud Computing, Prof Sahu.
 Eugene
 Suhan
 Alan
+
+Library used:
+https://github.com/apcj/aws-sdk-for-java-on-gae
+WEB-INF/lib/gae-aws-sdk-1.1.7.1.jar

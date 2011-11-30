@@ -2,7 +2,6 @@ package edu.columbia.e6998.cloudexchange.channel;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
