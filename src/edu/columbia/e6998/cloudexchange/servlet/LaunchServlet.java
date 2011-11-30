@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.columbia.edu.e6998.cloudexchange.aws.testInstance;
+import edu.columbia.e6998.cloudexchange.aws.testInstance;
 
 
 

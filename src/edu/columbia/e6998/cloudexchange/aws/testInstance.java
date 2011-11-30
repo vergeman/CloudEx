@@ -1,4 +1,4 @@
-package edu.columbia.edu.e6998.cloudexchange.aws;
+package edu.columbia.e6998.cloudexchange.aws;
 
 import java.io.IOException;
 import java.util.HashSet;
