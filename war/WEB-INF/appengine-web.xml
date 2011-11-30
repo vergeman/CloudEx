@@ -26,4 +26,9 @@
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
   </system-properties>
 
+<!-- enable channel -->
+<inbound-services>
+    <service>channel_presence</service>
+</inbound-services>
+  
 </appengine-web-app>

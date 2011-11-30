@@ -6,18 +6,7 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
-  
-  <!-- test servlet does nothing -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.servlet.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/thecloudexchange/greet</url-pattern>
-  </servlet-mapping>
-  
+
   <!-- placeholder servlet tentatively for launching instances -->
   
   <servlet>
@@ -43,7 +32,7 @@
   </servlet-mapping>
   
   
-   <servlet>
+  <servlet>
     <servlet-name>DatastoreInsertContractServlet</servlet-name>
     <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreInsertContractServlet</servlet-class>
   </servlet>
@@ -62,11 +51,47 @@
     <servlet-name>DatastoreQueryServlet</servlet-name>
     <url-pattern>/test/query</url-pattern>
   </servlet-mapping>
+ 
+ 
+ <!--  channel servlets for connection inquiries -->
+  
+  <servlet-mapping>
+	<servlet-name>ConnectHandlerServlet</servlet-name>
+	<url-pattern>/_ah/channel/connected/</url-pattern>
+</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ConnectHandlerServlet</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.channel.ConnectHandlerServlet</servlet-class>
+	</servlet> 
+ 
+   <servlet-mapping>
+	<servlet-name>DisconnectHandlerServlet</servlet-name>
+	<url-pattern>/_ah/channel/disconnected/</url-pattern>
+</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DisconnectHandlerServlet</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.channel.DisconnectHandlerServlet</servlet-class>
+	</servlet>  
+	
+	
+ <!--  main "viewer" - exchange screen -->
+  <servlet>
+        <servlet-name>main</servlet-name>
+        <servlet-class>edu.columbia.e6998.cloudexchange.client.MainServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>main</servlet-name>
+        <url-pattern>/main</url-pattern>
+    </servlet-mapping>
+  
   
   
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
+    <welcome-file>views/index.jsp</welcome-file>
   </welcome-file-list>
 
 </web-app>

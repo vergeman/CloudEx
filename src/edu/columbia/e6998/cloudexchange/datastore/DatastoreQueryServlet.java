@@ -2,9 +2,6 @@ package edu.columbia.e6998.cloudexchange.datastore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
