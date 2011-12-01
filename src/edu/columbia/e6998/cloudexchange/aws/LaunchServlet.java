@@ -20,6 +20,8 @@ public class LaunchServlet extends HttpServlet {
 		/*this just goes through the HW1 sample
 		 * launches and terminates an instance
 		 * 
+		 * should probably be done in the form of a task queue
+		 * 
 		 * you will need your AwsCredentials.properties file in the aws folder 
 		 * for now - we can adapt to use datastore
 		 * just wanted to get the library working
@@ -38,5 +40,8 @@ public class LaunchServlet extends HttpServlet {
 		
 		
 		//testInstance t = new testInstance(resp);
+		
+		SpotPrices sp = new SpotPrices(resp);
+		
 	}
 }

@@ -5,6 +5,16 @@ Eugene
 Suhan
 Alan
 
+
+
 Library used:
-https://github.com/apcj/aws-sdk-for-java-on-gae
+https://github.com/vergeman/aws-sdk-for-java-on-gae
+
+(forked from https://github.com/apcj/aws-sdk-for-java-on-gae)
+the library is somewhat old and doesn't have new updates - especially
+for spot prices; so had to fork and update to reflect some changes 
+from aws.
+
+
+build to get build/classes/gae-aws-sdk-1.1.7.1.jar and copy to CloudEx
 WEB-INF/lib/gae-aws-sdk-1.1.7.1.jar

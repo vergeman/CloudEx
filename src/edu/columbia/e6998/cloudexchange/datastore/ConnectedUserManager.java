@@ -15,6 +15,9 @@ public class ConnectedUserManager {
 	 * we may have to do a <userid, username> tuple if we 
 	 * want to refer to users in a more robust fashion
 	 * but for now we'll just identify by the channel generated userid
+	 * 
+	 * this is probably racy with object updates - need to 
+	 * handle in memcache
 	 */
 	public ConnectedUserManager() {
 		syncCache = MemcacheServiceFactory.getMemcacheService();
