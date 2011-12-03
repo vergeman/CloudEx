@@ -15,6 +15,8 @@
 	 <a href="<%=userService.createLogoutURL("/")%>">
 	 	Logout
 	 </a>
+	 <a>&nbsp<%= user.getEmail() %></a>
+	 
 </p>
 
 

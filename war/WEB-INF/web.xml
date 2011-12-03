@@ -96,6 +96,42 @@
         <servlet-name>main</servlet-name>
         <url-pattern>/main</url-pattern>
     </servlet-mapping>
+    
+    <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Open Pages</web-resource-name>
+      <url-pattern>/stylesheets/*</url-pattern>
+      <url-pattern>/images/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Secure Pages</web-resource-name>
+      <url-pattern>/views/*</url-pattern>
+      <url-pattern>/js/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+      <http-method>FORWARD</http-method>
+      <http-method>DELETE</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Pages</web-resource-name>
+      <url-pattern>/admin/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+  </security-constraint>
   
   
   

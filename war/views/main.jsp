@@ -21,10 +21,14 @@
 
 	</div>
 
+<div id="main">
+	<div id="side">
+
+	</div>
 	<div id="container">
 		This is our main client page.
 	</div>
-
+</div>
 
 	<div id="message">
 		<input id="input_message" type="text" />
@@ -39,7 +43,7 @@
 
 
 	<div id="footer">
-		Project footnotes
+		<jsp:include page="/views/_footer.jsp" /> 
 	</div>
 
 

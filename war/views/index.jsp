@@ -21,13 +21,17 @@
 
 	</div>
 
+<div id="main">
+	<div id="side">
+		Left column
+	</div>
 	<div id="container">
 		This is our landing page.
 	</div>
-
+</div>
 
 	<div id="footer">
-		Project footnotes
+		<jsp:include page="/views/_footer.jsp" /> 
 	</div>
 
 

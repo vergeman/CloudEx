@@ -6,6 +6,13 @@ h1 {
 	font-family: arial, helvetica;
 }
 
+body
+{	font:13px/1.231 arial,helvetica,clean,sans-serif;
+	*font-size:small;
+	*font:x-small;
+	height:100%;
+}
+
 
 /*div stuff*/
 #header {
@@ -13,4 +20,54 @@ h1 {
 	margin: 0px auto;
 	padding: 16px;
 }
+
+footerBorder
+{
+	border:1px solid #ddd;
+	border-width:1px 0 0 0;
+	margin:.5em .5em 0 .5em
+}
+
+#main {
+    background: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 60px;
+}
+
+#mcontainer {
+    margin-left: 16em;
+    padding-top: 4ex;
+    padding-left: 2em;
+    background: white;
+}
+
+#side {
+    float: left;
+    line-height:2;
+    padding-top: 3em;
+    padding-left: 1em;
+    padding-bottom: 1em;
+    padding-right: 1em;
+    background: #ffffff;
+}
+
+#left {
+	width: 300px; 
+	padding-left: 60px; 
+	margin-left: 10px;
+	margin-top: 0px; 
+	padding-top: 6px;
+}
+
+#center {
+	valign: top;
+	width: 650px; 
+	margin-top: 0px; 
+	padding-top: 5px;
+}
+
+#right {
+	width: 300px;
+}
+
 
