@@ -29,10 +29,10 @@ public class GenericToolkit {
 		StringBuilder sDate = new StringBuilder(dateYYYYMMDD.format(date));
 		
 		String profile =  String.format("%02d", AWSCodes.Region.valueOf(region).ordinal()) 
-						+ String.format("%02d", AWSCodes.Region.valueOf(zone).ordinal())
-						+ String.format("%02d", AWSCodes.Region.valueOf(OS).ordinal())
-						+ String.format("%02d", AWSCodes.Region.valueOf(instanceType).ordinal())
-						+ sDate;//StringBuilder(dateYYYYMMDD.format(date));
+						+ String.format("%02d", AWSCodes.Zones.valueOf(region).ordinal())
+						+ String.format("%02d", AWSCodes.OS.valueOf(OS).ordinal())
+						+ String.format("%02d", AWSCodes.InstanceType.valueOf(instanceType).ordinal())
+						+ sDate;
 		
 		profile = "0000000020111124";// + String.format("%02d", rand.nextInt(24));
 		return profile;
@@ -106,7 +106,7 @@ public class GenericToolkit {
 
 		//TODO hash functions here
 		//String profile = AMI + "_" + region + "_" + type + "_" + date;//.substring(0, date.length() - 2);
-		String profile = generateProfileKey("US_EAST", "us-east-1a", "Windows","micro", new Date());
+		String profile = generateProfileKey("US_EAST", "us-east-1a", "Windows","MICRO", new Date());
 		
 		for(int i = 0; i < 100 ; i++){
 		
@@ -127,7 +127,7 @@ public class GenericToolkit {
 		}
 	}
 	
-	public void insertNewOffer(Entity e, String user, int hour, Double price){
+	public void insertNewOffer(String profile, double price, String user, int arrayIndex){
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Entity contract = new Entity("Contract");
 		contract.setPropertiesFrom(e);
@@ -162,5 +162,5 @@ public class GenericToolkit {
 		//the offer is no longer available, update memcache
 	}
 	
-	
+
 }

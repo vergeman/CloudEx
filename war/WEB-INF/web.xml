@@ -19,15 +19,16 @@
     <url-pattern>/launch</url-pattern>
   </servlet-mapping>
   
+  
   <!-- test datastore servlets -->
   <servlet>
-    <servlet-name>DatastoreEstablishBuyServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreEstablishBuyServlet</servlet-class>
+    <servlet-name>CreateData</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.toolkit.ToolkitServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>DatastoreEstablishBuyServlet</servlet-name>
-    <url-pattern>/test/buy</url-pattern>
+    <servlet-name>CreateData</servlet-name>
+    <url-pattern>/test/CreateData</url-pattern>
   </servlet-mapping>
   
   
@@ -50,27 +51,7 @@
     <servlet-name>DatastoreQueryServlet</servlet-name>
     <url-pattern>/test/query</url-pattern>
   </servlet-mapping>
-
-<!--  blob upload/serve servlets for message passing and connection status/update-->
-  <servlet>
-    <servlet-name>BlobUploadHandler</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.BlobUploadHandler</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>BlobUploadHandler</servlet-name>
-    <url-pattern>/upload</url-pattern>
-  </servlet-mapping> 
-  
-  <servlet>
-    <servlet-name>BlobServeHandler</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.BlobServeHandler</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>BlobServeHandler</servlet-name>
-    <url-pattern>/serve</url-pattern>
-  </servlet-mapping>
+ 
  
  <!--  channel servlets for message passing and connection status/update-->
   
@@ -114,17 +95,6 @@
     <servlet-mapping>
         <servlet-name>main</servlet-name>
         <url-pattern>/main</url-pattern>
-    </servlet-mapping>
-    
- <!--  account "viewer" -->   
-    <servlet>
-        <servlet-name>account</servlet-name>
-        <servlet-class>edu.columbia.e6998.cloudexchange.client.AccountServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>account</servlet-name>
-        <url-pattern>/account</url-pattern>
     </servlet-mapping>
     
     <security-constraint>
