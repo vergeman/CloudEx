@@ -29,31 +29,31 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class BlobUploadHandler extends HttpServlet {
-	
+
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-	
+
 	@SuppressWarnings("unchecked")
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
+		throws ServletException, IOException {
+
 		final String destination = "/account";
 		RequestDispatcher rd;
-		
+
 		Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
 		BlobKey blobKey = blobs.get("myFile");
-		
+
 		if (blobKey == null) {
-			
+
 		} else {
-			
+
 			String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 			// Store the blob key in user table
 			Query q = new Query("UserProfile");
 			q.addFilter("userId", Query.FilterOperator.EQUAL, userId);
 			Entity userProfile = datastore.prepare(q).asSingleEntity();
-	
+
 			// if userProfile does not exist, create entry in the database
 			if (userProfile == null) {
 				userProfile = new Entity("UserProfile");
@@ -73,3 +73,4 @@ public class BlobUploadHandler extends HttpServlet {
 		}
 	}
 }
+

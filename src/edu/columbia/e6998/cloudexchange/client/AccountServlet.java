@@ -30,27 +30,27 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class AccountServlet extends HttpServlet {
-	
+
 	final String destination = "/views/account.jsp";
-	
+
 	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-			
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/serve");
-			
-			String fileName = "random file name";
-			
-			req.setAttribute("fileName", fileName);
-			
-			rd = getServletContext().getRequestDispatcher(destination);
-			try {
-				rd.forward(req, resp);
-			} catch (ServletException e) {
-				e.printStackTrace();
-			}
-	}
+		throws ServletException, IOException {
+
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/serve");
+
+		String fileName = "random file name";
 	
+		req.setAttribute("fileName", fileName);
+
+		rd = getServletContext().getRequestDispatcher(destination);
+		try {
+			rd.forward(req, resp);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException {
 		doGet(req, resp);
