@@ -51,6 +51,24 @@ footerBorder
     background: #ffffff;
 }
 
+
+#userInfo {
+    text-align: right;
+    white-space: nowrap;
+}
+
+#userInfo ul{
+	padding-bottom: 0;
+    padding-top: 5px;
+    padding: 0 0 1em 1.2em;	
+}
+
+#userInfo li {
+	display: inline;
+    line-height: 1.5em;
+    padding: 0 0 0.5em;
+}
+
 #left {
 	width: 300px; 
 	padding-left: 60px; 
@@ -60,7 +78,6 @@ footerBorder
 }
 
 #center {
-	valign: top;
 	width: 650px; 
 	margin-top: 0px; 
 	padding-top: 5px;
@@ -70,4 +87,6 @@ footerBorder
 	width: 300px;
 }
 
-
+#mainTableCell {
+	valign: top;
+}

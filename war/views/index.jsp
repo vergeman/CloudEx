@@ -23,7 +23,7 @@
 
 <div id="main">
 	<div id="side">
-		Left column
+	
 	</div>
 	<div id="container">
 		This is our landing page.

@@ -4,34 +4,37 @@
 <%@ page import="com.google.appengine.api.users.UserService"%>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
 
+<div id="userInfo">
 <%
 	UserService userService = UserServiceFactory.getUserService();
 	User user = userService.getCurrentUser();
 	if (user != null) {
 %>
-
-<!-- logout action (you are signed in) -->
-<p>
-	 <a href="<%=userService.createLogoutURL("/")%>">
-	 	Logout
-	 </a>
-	 <a>&nbsp<%= user.getEmail() %></a>
-	 
-</p>
-
-
+<ul>
+	<!-- logout action (you are signed in) -->
+	<li>
+		<strong><%= user.getEmail() %></strong>
+		|
+	</li>
+	<li>
+		<a href="/account">My CloudEx Account</a>
+		|
+	</li>
+	<li>
+	 	<a href="<%=userService.createLogoutURL("/")%>">Logout</a>
+	 </li>
+</ul>
 <%
 	} 
-	
 	else {
 %>
-<!--  login action (you are signed out) -->
-<p>
-	<a href="<%=userService.createLoginURL("/main")%>">
-		Login
-	</a>
-</p>
-
+<ul>
+	<!--  login action (you are signed out) -->
+	<li>
+		<a href="<%=userService.createLoginURL("/main")%>">Login</a>
+	</li>
+</ul>
 <%
 	}
 %>
+</div>
