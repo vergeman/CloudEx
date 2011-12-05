@@ -130,9 +130,9 @@ public class GenericToolkit {
 	public void insertNewOffer(String profile, double price, String user, int arrayIndex){
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Entity contract = new Entity("Contract");
-		contract.setPropertiesFrom(e);
+		//contract.setPropertiesFrom(e);
 		contract.setProperty("user", user);
-		contract.setProperty("hour", hour);
+		//contract.setProperty("hour", hour);
 		contract.setProperty("price", price);
 		//TODO Check if MemCache needs to be updated
 		datastore.put(contract);
