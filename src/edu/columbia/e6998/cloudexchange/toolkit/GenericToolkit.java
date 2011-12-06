@@ -34,7 +34,7 @@ public class GenericToolkit {
 						+ String.format("%02d", AWSCodes.InstanceType.valueOf(instanceType).ordinal())
 						+ sDate;
 		
-		profile = "0000000020111124";// + String.format("%02d", rand.nextInt(24));
+		//profile = "0000000020111124";// + String.format("%02d", rand.nextInt(24));
 		return profile;
 
 		
