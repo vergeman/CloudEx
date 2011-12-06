@@ -1,5 +1,7 @@
 package edu.columbia.e6998.cloudexchange.toolkit;
 import edu.columbia.e6998.cloudexchange.aws.*;
+import edu.columbia.e6998.cloudexchange.aws.AWSCodes.Zone;
+//import edu.columbia.e6998.cloudexchange.aws.AWSCodes.Zones;
 
 
 import java.text.SimpleDateFormat;
@@ -19,9 +21,11 @@ import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 public class GenericToolkit {
+	
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
 	SimpleDateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+	
 	
 	public String generateProfileKey(String region, String zone, String OS, String instanceType, Date date){
 		
@@ -29,7 +33,7 @@ public class GenericToolkit {
 		StringBuilder sDate = new StringBuilder(dateYYYYMMDD.format(date));
 		
 		String profile =  String.format("%02d", AWSCodes.Region.valueOf(region).ordinal()) 
-						+ String.format("%02d", AWSCodes.Zones.valueOf(region).ordinal())
+						+ String.format("%02d", AWSCodes.Zone.valueOf(zone).ordinal())
 						+ String.format("%02d", AWSCodes.OS.valueOf(OS).ordinal())
 						+ String.format("%02d", AWSCodes.InstanceType.valueOf(instanceType).ordinal())
 						+ sDate;
@@ -89,37 +93,40 @@ public class GenericToolkit {
 	
 	public void createData(){
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		String[] region = {"US_EAST", "US_WEST_1", "US_WEST_2"};
+		String[] zone = {"US_EAST1A", "US_EAST1C", "US_EAST1D", "US_WEST1B", "US_WEST1C"};
+		String[] OS = {"Linux","Windows", "SUSE_Linux"};
+		String[] instanceType = {"MICRO", "STDSMALL"};
 		String[] user = {"batman", "robin", "bart", "lisa"};
-		Boolean[] cType = {true, false};
-		int AMI, region, type;
-		String date;
+		Boolean[] active = {true, false};
+
+		Date date = new Date();
 
 		Random rand = new Random(); 
 
-		AMI = rand.nextInt(4);
-		region = rand.nextInt(4);
-		type = rand.nextInt(4);
-		date =  "2011" 
-				+ String.format("%02d", (rand.nextInt(12) + 1))
-				+ String.format("%02d", (rand.nextInt(28) + 1))
-				+ String.format("%02d", rand.nextInt(24));
+		String r,z,O,it,u;
+		r = region[rand.nextInt(region.length)]; 
+		z =	zone[rand.nextInt(zone.length)]; 
+		O =	OS[rand.nextInt(OS.length)];
+		it =	instanceType[rand.nextInt(instanceType.length)]; 
 
-		//TODO hash functions here
-		//String profile = AMI + "_" + region + "_" + type + "_" + date;//.substring(0, date.length() - 2);
-		String profile = generateProfileKey("US_EAST", "us-east-1a", "Windows","MICRO", new Date());
-		
+		String profile = generateProfileKey(r,z,O, it, date);
+		String sDate = new StringBuilder(dateYYYYMMDD.format(date)).toString();
 		for(int i = 0; i < 100 ; i++){
 		
 			Entity contract = new Entity("Contract");
-			
 
 			 //profile = "1_0_1" + "_" + date;
 			 contract.setProperty("profile", profile);
-			 contract.setProperty("date", date);
-			 contract.setProperty("qty", rand.nextInt(5) + 1);
-			 contract.setProperty("price", rand.nextFloat() + 0.001);
-			 contract.setProperty("seller", cType[rand.nextInt(2)]);
-			 contract.setProperty("user", user[rand.nextInt(4)]);
+			 contract.setProperty("date", 			sDate);
+			 contract.setProperty("qty", 			rand.nextInt(5) + 1);
+			 contract.setProperty("price", 			rand.nextFloat() + 0.001);
+			 contract.setProperty("seller", 		active[rand.nextInt(2)]);
+			 contract.setProperty("user", 			user[rand.nextInt(4)]);
+			 contract.setProperty("region", 		r);
+			 contract.setProperty("zone", 			z);
+			 contract.setProperty("OS", 			O);
+			 contract.setProperty("instanceType", 	it);
 			 contract.setProperty("active", true);
 
 			 datastore.put(contract);
@@ -140,6 +147,7 @@ public class GenericToolkit {
 
 	public boolean memCachceUpdate(Entity e){
 		//ArrayList<Entity> contracts = (ArrayList<Entity>) syncCache.get(e.getProperty("profile"));
+		String [] s = {"asd1","asd2"};
 		return false;
 		
 	}
@@ -162,5 +170,11 @@ public class GenericToolkit {
 		//the offer is no longer available, update memcache
 	}
 	
+	public String test(){
+		//String profile =   AWSCodes.Zone.ASIANE_2A.zone();
+		//String profile = generateProfileKey("US_EAST", "US_EAST1A", "Windows","MICRO", new Date());
+		createData();
+		return "Done";
+	}
 
 }
