@@ -17,7 +17,8 @@ public class ToolkitServlet extends HttpServlet {
 			throws IOException {
 		
 		GenericToolkit asd = new GenericToolkit();
-		asd.createData();
+		resp.getWriter().write(asd.test());
+		
 	
 	}
 }

@@ -1,5 +1,7 @@
 package edu.columbia.e6998.cloudexchange.aws;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class AWSCodes {
 
@@ -26,8 +28,8 @@ public class AWSCodes {
 		US_WEST_1 ("us-west-1b", "us-west-1c"), 
 		US_WEST_2 ("us-west-2a", "us-west-2b"), 
 		EU_WEST ("eu-west-1a", "eu-west-1b", "eu-west-1c"), 
-		ASIA_1 ("ap-southeast-1a, ap-southeast-1b"), 
-		ASIA_2 ("ap-northeast-1a, ap-northeast-1b"); 
+		ASIA_1 ("ap-southeast-1a", "ap-southeast-1b"), 
+		ASIA_2 ("ap-northeast-1a", "ap-northeast-1b"); 
 		
 		private final String[] zones;
 		
@@ -38,7 +40,32 @@ public class AWSCodes {
 		private String[] zones() { return zones; }
 	}
 	
+	public enum Zone {
+		US_EAST1A 	("us-east-1a"),
+		US_EAST1C 	("us-east-1c"),
+		US_EAST1D 	("us-east-1d"),
+		US_WEST1B 	("us-west-1b"), 
+		US_WEST1C 	("us-west-1c"),
+		US_WEST2A 	("us-west-2a"),
+		US_WEST2B 	("us-west-2b"), 
+		EU_WEST1A 	("eu-west-1a"), 
+		EU_WEST1B 	("eu-west-1b"), 
+		EU_WEST1C 	("eu-west-1c"), 
+		ASIASE_1A   ("ap-southeast-1a"),
+		ASIASE_1B	("ap-southeast-1b"), 
+		ASIANE_2A 	("ap-northeast-1a"),
+		ASIANE_2B	("ap-northeast-1b");
+		
+		private final String zone;
+		
+		Zone(String zone) {
+			this.zone = zone;
+		}
+		
+		public String zone() { return zone; }
+	}
 	
+
 	/*ignoring VPC stuff*/
 	public enum OS {
 		Linux ("Linux/UNIX"),
