@@ -18,6 +18,17 @@ import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
 
+
+
+/*MESSAGE RECEIVE FORMAT
+ * action: buy | sell | cancel
+ * price: x
+ * qty: x
+ *
+ *
+ *MESSAGE SEND FORMAT
+ *action: reload, update(key, payload)
+ */
 @SuppressWarnings("serial")
 public class MessageHandlerServlet extends HttpServlet {
 
@@ -67,7 +78,7 @@ public class MessageHandlerServlet extends HttpServlet {
 		 *is to be passed on to
 		 */
 	
-		
+		System.out.println("msg recv: " + msg);
 		/*propagate the message to clients*/
 		sendUpdates(msg);
 		

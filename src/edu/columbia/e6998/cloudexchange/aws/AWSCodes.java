@@ -23,7 +23,7 @@ public class AWSCodes {
 		
 		public String getDescription() { return description;}
 		public String getView_name() { return view_name;}
-		
+		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
 	}
 	
 	public enum Zones {
@@ -41,6 +41,7 @@ public class AWSCodes {
 		}
 		
 		public String[] getZones() { return zones; }
+		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
 	}
 	
 	public enum Zone {
@@ -65,15 +66,16 @@ public class AWSCodes {
 			this.zone = zone;
 		}
 		
-		public String zone() { return zone; }
+		public String getZone() { return zone; }
+		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
 	}
 	
 
 	/*ignoring VPC stuff*/
 	public enum OS {
-		Linux ("Linux/UNIX"),
-		SUSE_Linux ("SUSE Linux"), 
-		Windows ("Windows");
+		LINUX	("Linux/UNIX"),
+		SUSE_LINUX	("SUSE Linux"), 
+		WINDOWS	("Windows");
 		
 		private final String description;
 		
@@ -82,6 +84,7 @@ public class AWSCodes {
 		}
 		
 		public String getDescription() { return description; }
+		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
 	}
 	
 	/*we'll figure out some logic crap to choose appropriate values*/
@@ -109,6 +112,7 @@ public class AWSCodes {
 		
 		public String getDescription() { return description; }
 		public String getCode() { return code; }
+		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
 		
 	}
 	
