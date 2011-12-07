@@ -22,36 +22,15 @@
   
   <!-- test datastore servlets -->
   <servlet>
-    <servlet-name>CreateData</servlet-name>
+    <servlet-name>ToolkitServlet</servlet-name>
     <servlet-class>edu.columbia.e6998.cloudexchange.toolkit.ToolkitServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>CreateData</servlet-name>
-    <url-pattern>/test/CreateData</url-pattern>
+    <servlet-name>ToolkitServlet</servlet-name>
+    <url-pattern>/data/</url-pattern>
   </servlet-mapping>
   
-  
-  <servlet>
-    <servlet-name>DatastoreInsertContractServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreInsertContractServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>DatastoreInsertContractServlet</servlet-name>
-    <url-pattern>/test/insert</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>DatastoreQueryServlet</servlet-name>
-    <servlet-class>edu.columbia.e6998.cloudexchange.datastore.DatastoreQueryServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>DatastoreQueryServlet</servlet-name>
-    <url-pattern>/test/query</url-pattern>
-  </servlet-mapping>
-
 
 	<!-- blob upload/serve servlets for message passing and connection status/update -->
 	<servlet>

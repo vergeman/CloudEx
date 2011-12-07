@@ -110,9 +110,11 @@ public class AWSCodes {
 			this.code = code;
 		}
 		
+
 		public String getDescription() { return description; }
 		public String getCode() { return code; }
 		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
+
 		
 	}
 	
