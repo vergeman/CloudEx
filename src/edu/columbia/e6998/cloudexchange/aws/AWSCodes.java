@@ -104,8 +104,8 @@ public class AWSCodes {
 			this.code = code;
 		}
 		
-		private String description() { return description; }
-		private String code() { return code; }
+		public String description() { return description; }
+		public String code() { return code; }
 		
 	}
 	
