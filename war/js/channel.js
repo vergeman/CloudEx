@@ -16,6 +16,7 @@ socket.onmessage = function(message) {
 	var qty = data['qty'][0];
 
 	if ( $('#'+key).length > 0) {
+		
 		$('#' + key).html(price);
 	}
 	
@@ -40,17 +41,18 @@ socket.onerror = function() {
 
 $('.bid, .ask').click(function() {
 
-	//$( "#dialog").dialog( "destroy" );
+	/*we'll leave bid/offer change for later*/
+	
 	$('#dialog').attr('data', $(this).attr('id'));
 	console.log($(this));
 	
 	if ($(this).hasClass('bid')) {
-		$('#dialog_action').val('sell');
+		$('#dialog_action').val('buy');
 		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
 	}
 
 	if ($(this).hasClass('ask')) {
-		$('#dialog_action').val('buy');
+		$('#dialog_action').val('sell');
 		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
 	}
 	
