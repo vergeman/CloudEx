@@ -17,8 +17,8 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"
-	type="text/javascript"></script>
-
+	type="text/javascript">
+</script>
 <script src="/js/main.js" type="text/javascript"></script>
 
 <c:if test="${not empty token}">

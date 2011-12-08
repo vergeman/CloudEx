@@ -3,7 +3,7 @@ var channel = new goog.appengine.Channel(token);
 var socket = channel.open();
 
 socket.onopen = function() {
-	alert("opened channel");
+	//alert("opened channel");
 };
 
 socket.onmessage = function(message) {
@@ -16,7 +16,7 @@ socket.onmessage = function(message) {
 
 
 socket.onclose = function() {
-	alert("closed channel");
+	//alert("closed channel");
 };
 
 	
@@ -25,10 +25,13 @@ socket.onerror = function() {
 };
 
 
-$('#send_message').click(function(){
-    var msg = $('#input_message').val();
-    var channelkey = $('meta[name=channel_token]').attr("content");
-    
+
+$('.bid, .ask').click(function() {
+
+	var channelkey = $('meta[name=channel_token]').attr("content");
+	var msg = $(this).attr('id');
+	//alert(msg);
+
     $.ajax({
         url: '/message/',
         type: 'POST',
@@ -40,3 +43,8 @@ $('#send_message').click(function(){
         complete:function(){}
     });
 });
+
+
+	
+	
+

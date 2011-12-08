@@ -25,6 +25,8 @@ public class DisconnectHandlerServlet extends HttpServlet {
 		/* remove from a list of connected clients
 		 * so we know to no longer propagate messages to them
 		 */	
+		
+		//TODO: removal of submitted bid/offers from disconnected user?
 		ConnectedUserManager connectedUsers = new ConnectedUserManager();
 		connectedUsers.removeUser(presence.clientId());
 

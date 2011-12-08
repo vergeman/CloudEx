@@ -90,3 +90,12 @@ footerBorder
 #mainTableCell {
 	valign: top;
 }
+
+/*data stuff*/
+#view, #data td {
+	cursor:pointer;
+}
+#view li {
+	display: inline;
+}
+
