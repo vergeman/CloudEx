@@ -51,6 +51,7 @@ public class GenericToolkit {
 	public String[] reverseLookUpProfile(String profile){
 		String [] lookup = new String[5];
 		//TODO tweaks needed
+
 		lookup[REGION] 			= AWSCodes.Region.values()[Integer.valueOf(profile.substring(0, 2))].toString();
 		lookup[ZONE] 			= AWSCodes.Zone.values()[Integer.valueOf(profile.substring(2, 4))].getZone();
 		lookup[OS] 				= AWSCodes.OS.values()[Integer.valueOf(profile.substring(4, 6))].toString();

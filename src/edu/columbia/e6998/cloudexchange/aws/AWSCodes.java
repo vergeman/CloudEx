@@ -109,7 +109,6 @@ public class AWSCodes {
 			this.description = description;
 			this.code = code;
 		}
-		
 
 		public String getDescription() { return description; }
 		public String getCode() { return code; }
