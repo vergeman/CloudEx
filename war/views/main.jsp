@@ -160,8 +160,8 @@
 					<tr class="tbl_contract_row hour ${keys[i]}">
 						<td></td>
 						<td class="tbl_contract_data hour">${j}:00</td>
-						<td id="${keys[i]}${2*j}" class="tbl_contract_data bid">${contract[0][j]} .01 </td>
-						<td id="${keys[i]}${2*j+1}"class="tbl_contract_data ask">${contract[1][j]} .02 </td>
+						<td id="${keys[i]}${2*j}" class="tbl_contract_data bid">${contract[0][j]} - </td>
+						<td id="${keys[i]}${2*j+1}"class="tbl_contract_data ask">${contract[1][j]} - </td>
 					</tr>
 					
 				</c:forEach>
@@ -172,8 +172,35 @@
 		</c:forEach>
 		</table>
 
-	
+	<div id="dialog" title="Trade Execution">
+
+		<form id = "form_dialog">
+			<fieldset style="display:inline;">
+				
+				<label for="dialog_action">Side</label>
+				<select id="dialog_action">
+					<option selected value="buy">Buy</option>
+					<option value="sell">Sell</option>
+				</select>
+		
+				<label for="dialog_qty">Qty</label>
+				<input type="text" id="dialog_qty" value="1" style="width:10px;"/>
+			
+				<label for="dialog_price">Price</label>
+				<input type="text" id="dialog_price" style="width:40px;"/>
+				
+				
+			<div id = "dialog_desc">
+				<p>we'll space and align this horizontally and make buttons to increment & decrement prices</p>
+				<p>instead of this  babble we'll have a description of the contract</p>
+			</div>
+			
+			
+			</fieldset>
+		</form>
 	</div>
+	
+</div>
 
 
 	<div id="footer">

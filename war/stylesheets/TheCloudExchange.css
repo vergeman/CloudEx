@@ -99,3 +99,10 @@ footerBorder
 	display: inline;
 }
 
+#dialog {
+	display:inline;
+}
+
+#dialog label {
+	display:block;
+}
