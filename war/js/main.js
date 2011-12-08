@@ -24,6 +24,8 @@ $(document).ready(function() {
 	});
 	
 	
+	
+	
 });
 
 
@@ -95,7 +97,7 @@ function update_data() {
 	out['instance'] = $('select').val();
 
 	$.ajax({
-	        url: '/data/',
+	        url: '/main',
 	        type: 'POST',
 	        data:{
 	        	msg:"update",

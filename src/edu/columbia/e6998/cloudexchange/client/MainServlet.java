@@ -98,7 +98,59 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	
-	public void Populate_Contract_Data(String[] defaults,
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		
+		GenericToolkit gt = new GenericToolkit();
+
+		String msg_type = req.getParameter("msg");
+
+		
+		/*get block*/
+		if(msg_type.equals("update")) {
+			String region = req.getParameter("data[region]");
+			String os = req.getParameter("data[os]");
+			String zone = req.getParameter("data[zone]");
+			String instance = req.getParameter("data[instance]");
+		
+			System.out.println("msg recvd:" + msg_type + 
+					"[" + region + "|" + os + "|" + zone + "|" + instance + "]");
+			
+			String[] request = {region, zone, os, instance };
+			
+			ArrayList<String> key_list = new ArrayList<String>(NUM_DAYS);
+			ArrayList<String> dates_list = new ArrayList<String>(NUM_DAYS);
+			ArrayList<String[][]> contracts_list = new ArrayList<String[][]>(NUM_DAYS);
+
+			JSONArray contracts_jsondata = new JSONArray();
+
+			Populate_Contract_Data(request, key_list, dates_list, 
+						contracts_list, contracts_jsondata);
+
+		
+			try {
+				JSONObject out = new JSONObject();
+				out.put("contract_data", contracts_jsondata);
+				out.put("dates_data", dates_list);
+				resp.getWriter().println(out.toString());
+				
+			} catch (JSONException e) {
+
+				e.printStackTrace();
+			}
+			
+
+			
+		}
+		
+		
+		
+	}
+	
+	
+	
+	private void Populate_Contract_Data(String[] defaults,
 										ArrayList<String> key_list,
 										ArrayList<String> dates_list,
 										ArrayList<String[][]> contracts_list,
@@ -111,6 +163,7 @@ public class MainServlet extends HttpServlet {
 
 		
 		for (int d = 0; d < NUM_DAYS; d++) {
+			
 			String key = gt.generateProfileKey( defaults[0], 
 												defaults[1], 
 												defaults[2], 
