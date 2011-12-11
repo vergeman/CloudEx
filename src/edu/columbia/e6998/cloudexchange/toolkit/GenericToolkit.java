@@ -1,23 +1,18 @@
 package edu.columbia.e6998.cloudexchange.toolkit;
 import edu.columbia.e6998.cloudexchange.aws.*;
-import edu.columbia.e6998.cloudexchange.aws.AWSCodes.Zone;
-//import edu.columbia.e6998.cloudexchange.aws.AWSCodes.Zones;
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Formatter;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Transaction;
@@ -107,10 +102,10 @@ public class GenericToolkit {
 	}
 	
 	public String queryDataStore(){
-		return queryDataStore("");
+		return queryDataStore("", null);
 	}
 	
-	public String queryDataStore(String optProfile){
+	public String queryDataStore(String optProfile, Key deleted){
 		//TODO can be made into single i/o batch
 		String s = "";
 		Entity[] tmpList = new Entity[48];
@@ -123,7 +118,7 @@ public class GenericToolkit {
 			qSeller.addFilter("profile", FilterOperator.EQUAL, optProfile);
 		qSeller.addSort("price", Query.SortDirection.DESCENDING);
 		
-		
+
 		List<Entity> rSellers = datastore.prepare(qSeller).asList(FetchOptions.Builder.withDefaults());
 		for(Entity e: rSellers){
 			memKey = (String) e.getProperty("profile");
@@ -131,7 +126,8 @@ public class GenericToolkit {
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
 			if (tmpList != null){
-				tmpList[index] = e;
+				if ( deleted == null || deleted != e.getKey())
+					tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
 				tmpList[index] = e;
@@ -155,7 +151,8 @@ public class GenericToolkit {
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
 			if (tmpList != null){
-				tmpList[index] = e;
+				if ( deleted == null || deleted != e.getKey())
+					tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
 				tmpList[index] = e;
@@ -185,7 +182,7 @@ public class GenericToolkit {
 		contract.setProperty("seller", 			Integer.valueOf(arrayIndex)%2 == 0);
 		contract.setProperty("active", 			true);
 		datastore.put(contract);
-		queryDataStore(profile);
+		queryDataStore(profile, null);
 		return "read_memcache::" + profile + "_" + arrayIndex;
 		//updateMemcache(contract);
 	}
@@ -211,8 +208,7 @@ public class GenericToolkit {
 		transaction.setProperty("instanceID", 		"NA");
 		datastore.put(transaction);
 		deleteBidOffer(profile, arrayIndex);
-		queryDataStore(profile);
-		//txn.commit();
+		queryDataStore(profile, null);
 		return "read_memcache::" + profile + "_" + arrayIndex;
 		
 	}
@@ -225,12 +221,13 @@ public class GenericToolkit {
 			e = datastore.get(((Entity[])syncCache.get(profile))[index].getKey());
 			e.setProperty("active", false);
 			datastore.put(e);
+			syncCache.put(profile, null);
 			txn.commit();
 		} catch (EntityNotFoundException e1) {
 			return "entity not found::" + profile + "_" + arrayIndex;
 		}
 		
-		queryDataStore(profile);
+		queryDataStore(profile, e.getKey());
 		return "read_memcache::" + profile + "_" + arrayIndex;
 	}
 	private String indexToHour(String arrayIndex){
@@ -248,6 +245,7 @@ public class GenericToolkit {
 		else
 			return (h*2) + 1;
 	}
+	
 	/*
 	public boolean updateMemcache(Entity e){
 		//TODO visit later
@@ -278,6 +276,7 @@ public class GenericToolkit {
 		
 	}
 	*/
+	
 	public String test(){
 		String s = "\n";
 		s+= createBidOffer("0000000020110101", 0.3, "batman", "46");
@@ -296,6 +295,10 @@ public class GenericToolkit {
 
 		s+= createTransaction("0000000020110101", "46", "joker", "ami", "SG", "KP");
 		s+= "\n";
+		for(int i = 0; i <= 100000; i++){
+			//do nottin mon
+		}
+			
 		s+="After sell:\n";
 		s+= dumpMemCache();
 		s+= indexToHour("46");
