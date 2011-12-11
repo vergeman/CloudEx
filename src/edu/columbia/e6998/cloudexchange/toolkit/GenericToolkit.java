@@ -1,12 +1,18 @@
 package edu.columbia.e6998.cloudexchange.toolkit;
 import edu.columbia.e6998.cloudexchange.aws.*;
+import edu.columbia.e6998.cloudexchange.channel.*;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
+import com.google.appengine.api.channel.ChannelMessage;
+import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -23,7 +29,7 @@ public class GenericToolkit {
 	
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-	//private Transaction txn = datastore.beginTransaction();
+	private ChannelService chn = ChannelServiceFactory.getChannelService();
 
 	SimpleDateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
@@ -41,7 +47,7 @@ public class GenericToolkit {
 						+ String.format("%02d", AWSCodes.OS.valueOf(OS).ordinal())
 						+ String.format("%02d", AWSCodes.InstanceType.valueOf(instanceType).ordinal())
 						+ sDate;
-		
+		createData(profile);
 		return profile;
 
 		
@@ -49,7 +55,6 @@ public class GenericToolkit {
 	
 	public String[] reverseLookUpProfile(String profile){
 		String [] lookup = new String[5];
-		//TODO tweaks needed
 
 		lookup[REGION] 			= AWSCodes.Region.values()[Integer.valueOf(profile.substring(0, 2))].toString();
 		lookup[ZONE] 			= AWSCodes.Zone.values()[Integer.valueOf(profile.substring(2, 4))].getZone();
@@ -99,6 +104,21 @@ public class GenericToolkit {
 	
 	public ArrayList<String> getProfiles(){
 		return removeProfile("xxx");
+	}
+	
+	public String[][] getBidsOffers(String profile){
+		String[][] results = new String[2][24];
+		queryDataStore(profile, null);
+		for(Entity t : (Entity[]) syncCache.get(profile)){
+			int i = 1;
+			if (t!= null){
+				if ((Boolean) t.getProperty("seller"))
+					i = 0;
+				results[i][hourToIndex(((Entity) t).getProperty("hour").toString(), (Boolean) ((Entity) t).getProperty("seller"))] = ((Entity) t).getProperty("price").toString();
+			}
+		}
+
+		return results;
 	}
 	
 	public String queryDataStore(){
@@ -230,6 +250,11 @@ public class GenericToolkit {
 		queryDataStore(profile, e.getKey());
 		return "read_memcache::" + profile + "_" + arrayIndex;
 	}
+	
+	private void sendChannelMessage(){
+		
+	}
+	
 	private String indexToHour(String arrayIndex){
 		int index = Integer.valueOf(arrayIndex);
 		if(index%2 == 0)
@@ -278,31 +303,32 @@ public class GenericToolkit {
 	*/
 	
 	public String test(){
-		String s = "\n";
-		s+= createBidOffer("0000000020110101", 0.3, "batman", "46");
-		s+= "\n";
-		s+= createBidOffer("0000000020110101", 0.2, "robin", "47");
-		s+= "\n";
-		s+= createBidOffer("0000000020110201", 0.3, "lisa", "26");
-		s+= "\n";
-		s+= createBidOffer("0000000020110201", 0.3, "bart", "27");
-		s+= "\n";
-		s+= createBidOffer("0000000020110101", 0.3, "batman", "06");
-		s+= "\n";
-		s+="After inserts:\n";
-		s+= dumpMemCache();
-		s+= "\n";
-
-		s+= createTransaction("0000000020110101", "46", "joker", "ami", "SG", "KP");
-		s+= "\n";
-		for(int i = 0; i <= 100000; i++){
-			//do nottin mon
-		}
-			
-		s+="After sell:\n";
-		s+= dumpMemCache();
-		s+= indexToHour("46");
-		
+//		String s = "\n";
+//		s+= createBidOffer("0000000020110101", 0.3, "batman", "46");
+//		s+= "\n";
+//		s+= createBidOffer("0000000020110101", 0.2, "robin", "47");
+//		s+= "\n";
+//		s+= createBidOffer("0000000020110201", 0.3, "lisa", "26");
+//		s+= "\n";
+//		s+= createBidOffer("0000000020110201", 0.3, "bart", "27");
+//		s+= "\n";
+//		s+= createBidOffer("0000000020110101", 0.3, "batman", "06");
+//		s+= "\n";
+//		s+="After inserts:\n";
+//		s+= dumpMemCache();
+//		s+= "\n";
+//
+//		s+= createTransaction("0000000020110101", "46", "joker", "ami", "SG", "KP");
+//		s+= "\n";
+//		for(int i = 0; i <= 100000; i++){
+//			//do nottin mon
+//		}
+//			
+//		s+="After sell:\n";
+//		s+= dumpMemCache();
+//		s+= indexToHour("46");
+		String s;
+		s = "";
 		return s;
 		
 	}
@@ -320,8 +346,18 @@ public class GenericToolkit {
 			}
 			s 	+= "\n";
 		}
-		
 		return s;
+	}
+	
+	public void createData(String profile){
+		Random r = new Random();
+		r.setSeed(7/9);
+		String[] user = {"batman", "robin", "joker", "lisa"};
+		String[] hours = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20,",
+				"21", "22", "23"};
+		if(syncCache.get(profile) == null)
+			createBidOffer(profile, r.nextDouble() + 0.001, user[r.nextInt(4)], hours[r.nextInt(24)]);
 	}
 	
 }
