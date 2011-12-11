@@ -28,7 +28,7 @@ public class GenericToolkit {
 	
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-	private Transaction txn = datastore.beginTransaction();
+	//private Transaction txn = datastore.beginTransaction();
 
 	SimpleDateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
@@ -221,15 +221,16 @@ public class GenericToolkit {
 		int index = Integer.valueOf(arrayIndex);
 		Entity e;
 		try {
+			Transaction txn = datastore.beginTransaction();
 			e = datastore.get(((Entity[])syncCache.get(profile))[index].getKey());
 			e.setProperty("active", false);
 			datastore.put(e);
-			//txn.commit();
-			queryDataStore(profile);
+			txn.commit();
 		} catch (EntityNotFoundException e1) {
 			return "entity not found::" + profile + "_" + arrayIndex;
 		}
 		
+		queryDataStore(profile);
 		return "read_memcache::" + profile + "_" + arrayIndex;
 	}
 	private String indexToHour(String arrayIndex){
