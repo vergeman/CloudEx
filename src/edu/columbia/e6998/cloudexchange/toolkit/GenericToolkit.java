@@ -204,6 +204,7 @@ public class GenericToolkit {
 		transaction.setProperty("keyPair",			keyPairName);
 		transaction.setProperty("instanceID", 		"NA");
 		datastore.put(transaction);
+		deleteBidOffer(profile, arrayIndex);
 		queryDataStore(profile);
 		return "read_memcache::" + profile + "_" + String.format("%02d", arrayIndex);
 		
@@ -250,82 +251,32 @@ public class GenericToolkit {
 	}
 	
 	public String test(){
-		//String profile =   AWSCodes.Zone.ASIANE_2A.zone();
-		//String profile = generateProfileKey("US_EAST", "US_EAST1A", "Windows","MICRO", new Date());
-		//createData();
-		String[] r = reverseLookUpProfile("0004000120111207");
-		//String s = queryDataStore();
-		//String s = r[0] + r[1] + r[2] + r[3] + r[4];
-		//TODO remove testing
+		String s = "";
+		s+="Before inserts:\n";
+		s+= dumpMemCache();
+		createBidOffer("0000000020110101", 0.3, "batman", "07");
+		createBidOffer("0000000020110101", 0.2, "robin", "07");
+		createBidOffer("0000000020110201", 0.3, "lisa", "06");
+		createBidOffer("0000000020110201", 0.3, "bart", "06");
+		createBidOffer("0000000020110101", 0.3, "batman", "06");
+		s+="After inserts:\n";
+		s+= dumpMemCache();
+		return s;
+		
+	}
+	public String dumpMemCache(){
 		String s = "";
 		for (String k : getProfiles()){
 			for(Object t : (Entity[]) syncCache.get(k)){
 				if (t!= null)
 					s 	+= "\nProfile: " + ((Entity) t).getProperty("profile").toString()
-						+ " \t\nhour: " + ((Entity) t).getProperty("hour").toString()
+						+ " \thour: " + ((Entity) t).getProperty("hour").toString()
 						+ " \tprice: " + ((Entity) t).getProperty("price").toString()
 						+ " \tb/o: " + ((Entity) t).getProperty("seller").toString();
 			}
 		}
-	
-		return r[0] + " " + r[1] + " " + r[2] + " " + r[3] + " " + r[4];
-		//return AWSCodes.Region.values()[0].description();
+		
+		return s;
 	}
 	
-	public void createData(){
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		String[] region = {"US_EAST", "US_WEST_1", "US_WEST_2"};
-		String[] zone = {"US_EAST1A", "US_EAST1C", "US_EAST1D", "US_WEST1B", "US_WEST1C"};
-		String[] OS = {"Linux","Windows", "SUSE_Linux"};
-		String[] instanceType = {"MICRO", "STDSMALL"};
-		String[] user = {"batman", "robin", "bart", "lisa"};
-		
-		Date date = new Date();
-
-		Random rand = new Random(); 
-
-		String r,z,O,it;
-//		r = region[rand.nextInt(region.length)]; 
-//		rand = new Random(); 
-//		z =	zone[rand.nextInt(zone.length)];
-//		rand = new Random(); 
-//		O =	OS[rand.nextInt(OS.length)];
-//		rand = new Random(); 
-//		it =	instanceType[rand.nextInt(instanceType.length)]; 
-		r = region[0]; 
-		rand = new Random(); 
-		z =	zone[rand.nextInt(zone.length)];
-		rand = new Random(); 
-		O =	OS[0];
-		rand = new Random(); 
-		it =	instanceType[0];
-		String profile = generateProfileKey(r,z,O, it, date);
-		String sDate = new StringBuilder(dateYYYYMMDD.format(date)).toString();
-		
-		int hour = rand.nextInt(2);
-		insertNewOffer(profile, rand.nextDouble() + 0.001, user[rand.nextInt(4)], String.valueOf(hour));
-		
-		
-		
-		rand = new Random(); 
-		
-		for(int i = 0; i < 5 ; i++){
-		
-			Entity contract = new Entity("Contract");
-			contract.setProperty("profile", 		profile);
-			contract.setProperty("date", 			sDate);
-			contract.setProperty("qty", 			rand.nextInt(5) + 1);
-			contract.setProperty("price", 			rand.nextDouble() + 0.001);
-			contract.setProperty("hour", 			String.valueOf(hour));
-			contract.setProperty("user", 			user[rand.nextInt(4)]);
-			contract.setProperty("region", 			r);
-			contract.setProperty("zone", 			z);
-			contract.setProperty("OS", 				O);
-			contract.setProperty("instanceType", 	it);
-			contract.setProperty("active", 			true);
-			contract.setProperty("seller", 			true);
-			datastore.put(contract);
-			 
-		}
-	}
 }
