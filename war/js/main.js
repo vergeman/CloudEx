@@ -5,7 +5,7 @@ var dates_data;
 
 $(document).ready(function() {
 
-	$('select').change(function() {
+	$('#instancetype').change(function() {
 		update_data();
 	});
 
@@ -23,8 +23,52 @@ $(document).ready(function() {
 		}
 	});
 	
+
 	
-	
+	$("#dialog").dialog({
+		autoOpen: false,
+		height: 300,
+		width: 350,
+		minHeight: 350,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+					$(this).dialog("close");
+					
+					//prep message
+					var channelkey = $('meta[name=channel_token]').attr("content");
+					var key = $(this).attr('data');
+					
+					var action = $('#dialog_action').val();
+					var qty = $('#dialog_qty').val();
+					var price = $('#dialog_price').val();
+					
+					
+					/*add validations for data here
+					 * before sending
+					 */
+
+				    $.ajax({
+				        url: '/message/',
+				        type: 'POST',
+				        data:{
+				            msg:"update",
+				            key:key,
+				            action:action,
+				            qty:qty,
+				            price:price,
+				            channelkey:channelkey
+				        },
+				        success: function(data){},
+				        complete:function(){}
+				    });
+			},
+			Cancel: function() {
+				$(this).dialog("close");
+			}
+		},
+		close: function() {}
+	});
 	
 });
 
@@ -36,21 +80,17 @@ function render(oldKeys, newKeys) {
 		console.log(dates_data[i]);
 	});
 	
-
-	//update values
-
-	//$('.' + e).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
-	console.log(contract_data);
 	//iterate through old keys
 	$.each(oldKeys, function (i, day) {
 
-		//j - 23
 		$('.' + day).each(function (j, contract) {
 
 			//time/bid/offer
 			$(contract).children().each( function(k, e) {
-				//time
-				//console.log(contract_data[i]);
+				//time?
+
+				
+				//qty?
 				
 				//bid
 				if($(e).hasClass('bid')) {
@@ -67,21 +107,15 @@ function render(oldKeys, newKeys) {
 					$(e).html(contract_data[i][newKeys[i]][1][j]);
 					
 				}
+				//qty?
 				
 				//last?
 			});
-	
-		
 		});
+		
 		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
 		
 	});
-		
-		
-
-	
-	
-	
 }
 
 

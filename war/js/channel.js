@@ -8,10 +8,19 @@ socket.onopen = function() {
 
 socket.onmessage = function(message) {
 	var data = $.parseJSON(message.data);
-	/*will have to delineate what exactly is being replaced*/
+	
 	var msg = data['msg'][0];
-    $('#message_result').html(msg);
-    
+	var action = data['action'][0];
+	var key = data['key'][0];
+	var price = data['price'][0];
+	var qty = data['qty'][0];
+
+	if ( $('#'+key).length > 0) {
+		
+		$('#' + key).html(price);
+	}
+	
+
 };
 
 
@@ -26,25 +35,31 @@ socket.onerror = function() {
 
 
 
+
+
+
+
 $('.bid, .ask').click(function() {
 
-	var channelkey = $('meta[name=channel_token]').attr("content");
-	var msg = $(this).attr('id');
-	//alert(msg);
+	/*we'll leave bid/offer change for later*/
+	
+	$('#dialog').attr('data', $(this).attr('id'));
+	console.log($(this));
+	
+	if ($(this).hasClass('bid')) {
+		$('#dialog_action').val('buy');
+		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
+	}
 
-    $.ajax({
-        url: '/message/',
-        type: 'POST',
-        data:{
-            msg:msg,
-            channelkey:channelkey,
-        },
-        success: function(data){},
-        complete:function(){}
-    });
+	if ($(this).hasClass('ask')) {
+		$('#dialog_action').val('sell');
+		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
+	}
+	
+	$('#dialog').dialog("open");
+
+	
 });
 
 
-	
-	
 
