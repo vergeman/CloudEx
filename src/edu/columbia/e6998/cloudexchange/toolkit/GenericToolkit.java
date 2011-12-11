@@ -16,9 +16,11 @@ import java.util.Random;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
@@ -26,6 +28,8 @@ public class GenericToolkit {
 	
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+	private Transaction txn = datastore.beginTransaction();
+
 	SimpleDateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	final int REGION 		= 0;
@@ -107,10 +111,11 @@ public class GenericToolkit {
 	}
 	
 	public String queryDataStore(String optProfile){
+		//TODO can be made into single i/o batch
 		String s = "";
 		Entity[] tmpList = new Entity[48];
 		String memKey = "";
-		
+		int index = 0;
 		Query qSeller = new Query("Contract");
 		qSeller.addFilter("active", Query.FilterOperator.EQUAL, true);
 		qSeller.addFilter("seller", FilterOperator.EQUAL, true);
@@ -123,12 +128,13 @@ public class GenericToolkit {
 		for(Entity e: rSellers){
 			memKey = (String) e.getProperty("profile");
 			tmpList = (Entity[]) syncCache.get(memKey);
+			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
 			if (tmpList != null){
-				tmpList[Integer.valueOf((String) e.getProperty("hour"))*2] = e;
+				tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
-				tmpList[Integer.valueOf((String) e.getProperty("hour"))*2] = e;
+				tmpList[index] = e;
 			}
 			addProfile(memKey);
 			syncCache.put(memKey, tmpList);
@@ -146,12 +152,13 @@ public class GenericToolkit {
 		for(Entity e: rBuyers){
 			memKey = (String) e.getProperty("profile");
 			tmpList = (Entity[]) syncCache.get(memKey);
+			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
 			if (tmpList != null){
-				tmpList[Integer.valueOf((String) e.getProperty("hour"))*2 + 1] = e;
+				tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
-				tmpList[Integer.valueOf((String) e.getProperty("hour"))*2 + 1] = e;
+				tmpList[index] = e;
 			}
 			
 			addProfile(memKey);
@@ -169,58 +176,78 @@ public class GenericToolkit {
 		contract.setProperty("date", 			dateConvert(lookup[DATE]));
 		contract.setProperty("qty", 			1);
 		contract.setProperty("price", 			price);
-		contract.setProperty("hour", 			0);
-		contract.setProperty("user", 			"new market maker");
+		contract.setProperty("hour", 			indexToHour(arrayIndex));
+		contract.setProperty("user", 			user);
 		contract.setProperty("region", 			lookup[REGION]);
 		contract.setProperty("zone", 			lookup[ZONE]);
 		contract.setProperty("OS", 				lookup[OS]);
 		contract.setProperty("instanceType", 	lookup[INSTANCE_TYPE]);
 		contract.setProperty("seller", 			Integer.valueOf(arrayIndex)%2 == 0);
 		contract.setProperty("active", 			true);
-		contract.setProperty("user", 			user);
-		contract.setProperty("price", 			price);
 		datastore.put(contract);
 		queryDataStore(profile);
-		return "read_memcache::" + profile + "_" + String.format("%02d", arrayIndex);
+		return "read_memcache::" + profile + "_" + arrayIndex;
 		//updateMemcache(contract);
 	}
 	
-	public String createTransaction(String profile, String arrayIndex, String buyer, String offerOwner, String ami, String instanceType, String securityGroupName, String keyPairName){
-		Entity offer = ((Entity[])syncCache.get(profile))[Integer.valueOf(arrayIndex)];
+	public String createTransaction(String profile, String arrayIndex, String buyer, String ami, String securityGroupName, String keyPairName){
+		int index = Integer.valueOf(arrayIndex);
+		Entity offer = ((Entity[])syncCache.get(profile))[index];
 		String[] lookup = reverseLookUpProfile(profile);
 		
 		Entity transaction = new Entity("Transaction");
 		transaction.setProperty("buyer", buyer);
 		transaction.setProperty("seller", 			offer.getProperty("user"));
-		transaction.setProperty("buy/sell", 		offer.getProperty("seller"));
+		transaction.setProperty("is_buy", 			offer.getProperty("seller"));
 		transaction.setProperty("price", 			offer.getProperty("price"));
 		transaction.setProperty("date", 			offer.getProperty("date"));
-		transaction.setProperty("time", 			arrayIndex);	//calendar always 1 hour after this
-		transaction.setProperty("ami", 				ami);				//variable - user provided
-		transaction.setProperty("instanceType", 	instanceType);	//micro, large
-		transaction.setProperty("region", 			lookup[REGION]);			//usa, jp etc
-		transaction.setProperty("zone", 			lookup[ZONE]);			//variable
+		transaction.setProperty("time", 			indexToHour(arrayIndex));	//calendar always 1 hour after this
+		transaction.setProperty("ami", 				ami);			//variable - user provided
+		transaction.setProperty("instanceType", 	lookup[INSTANCE_TYPE]);	//micro, large
+		transaction.setProperty("region", 			lookup[REGION]);//usa, jp etc
+		transaction.setProperty("zone", 			lookup[ZONE]);	//variable
 		transaction.setProperty("securityGroup", 	securityGroupName);	//user provided or system generated by http and ssh access only
 		transaction.setProperty("keyPair",			keyPairName);
 		transaction.setProperty("instanceID", 		"NA");
 		datastore.put(transaction);
 		deleteBidOffer(profile, arrayIndex);
 		queryDataStore(profile);
-		return "read_memcache::" + profile + "_" + String.format("%02d", arrayIndex);
+		//txn.commit();
+		return "read_memcache::" + profile + "_" + arrayIndex;
 		
 	}
 	
 	public String deleteBidOffer(String profile, String arrayIndex){
-		Entity delete = ((Entity[])syncCache.get(profile))[Integer.valueOf(arrayIndex)];
-		Entity e = new Entity("Contract");
-		e.setPropertiesFrom(e);
-		e.setProperty("active", false);
-		datastore.delete(delete.getKey());
-		datastore.put(e);
-		queryDataStore(profile);
-		return "read_memcache::" + profile + "_" + String.format("%02d", arrayIndex);
+		int index = Integer.valueOf(arrayIndex);
+		Entity e;
+		try {
+			e = datastore.get(((Entity[])syncCache.get(profile))[index].getKey());
+			e.setProperty("active", false);
+			datastore.put(e);
+			//txn.commit();
+			queryDataStore(profile);
+		} catch (EntityNotFoundException e1) {
+			return "entity not found::" + profile + "_" + arrayIndex;
+		}
+		
+		return "read_memcache::" + profile + "_" + arrayIndex;
+	}
+	private String indexToHour(String arrayIndex){
+		int index = Integer.valueOf(arrayIndex);
+		if(index%2 == 0)
+			return String.format("%02d", index/2);
+		else
+			return String.format("%02d", (index - 1)/2);
 	}
 	
+	private int hourToIndex(String hour, Boolean seller){
+		int h = Integer.valueOf(hour);
+		if(seller)
+			return h*2;
+		else
+			return (h*2) + 1;
+	}
+	/*
 	public boolean updateMemcache(Entity e){
 		//TODO visit later
 		Entity[] tmpList = new Entity[48];
@@ -249,31 +276,45 @@ public class GenericToolkit {
 		return false;
 		
 	}
-	
+	*/
 	public String test(){
-		String s = "";
-		s+="Before inserts:\n";
-		s+= dumpMemCache();
-		createBidOffer("0000000020110101", 0.3, "batman", "07");
-		createBidOffer("0000000020110101", 0.2, "robin", "07");
-		createBidOffer("0000000020110201", 0.3, "lisa", "06");
-		createBidOffer("0000000020110201", 0.3, "bart", "06");
-		createBidOffer("0000000020110101", 0.3, "batman", "06");
+		String s = "\n";
+		s+= createBidOffer("0000000020110101", 0.3, "batman", "46");
+		s+= "\n";
+		s+= createBidOffer("0000000020110101", 0.2, "robin", "47");
+		s+= "\n";
+		s+= createBidOffer("0000000020110201", 0.3, "lisa", "26");
+		s+= "\n";
+		s+= createBidOffer("0000000020110201", 0.3, "bart", "27");
+		s+= "\n";
+		s+= createBidOffer("0000000020110101", 0.3, "batman", "06");
+		s+= "\n";
 		s+="After inserts:\n";
 		s+= dumpMemCache();
+		s+= "\n";
+
+		s+= createTransaction("0000000020110101", "46", "joker", "ami", "SG", "KP");
+		s+= "\n";
+		s+="After sell:\n";
+		s+= dumpMemCache();
+		s+= indexToHour("46");
+		
 		return s;
 		
 	}
 	public String dumpMemCache(){
 		String s = "";
+		queryDataStore();
 		for (String k : getProfiles()){
 			for(Object t : (Entity[]) syncCache.get(k)){
 				if (t!= null)
 					s 	+= "\nProfile: " + ((Entity) t).getProperty("profile").toString()
 						+ " \thour: " + ((Entity) t).getProperty("hour").toString()
+						+ " \towner: " + ((Entity) t).getProperty("user").toString()
 						+ " \tprice: " + ((Entity) t).getProperty("price").toString()
-						+ " \tb/o: " + ((Entity) t).getProperty("seller").toString();
+						+ " \tseller: " + ((Entity) t).getProperty("seller").toString();
 			}
+			s 	+= "\n";
 		}
 		
 		return s;
