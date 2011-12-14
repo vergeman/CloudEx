@@ -107,14 +107,24 @@ public class GenericToolkit {
 	}
 	
 	public String[][] getBidsOffers(String profile){
+		System.out.println("[getBidsOffers] : " + profile);
 		String[][] results = new String[2][24];
+		
 		queryDataStore(profile, null);
+		
+		//can't iterate through null list (but can an empty list..)
+		if (!syncCache.contains(profile))
+			return results;	
+		
 		for(Entity t : (Entity[]) syncCache.get(profile)){
 			int i = 1;
 			if (t!= null){
 				if ((Boolean) t.getProperty("seller"))
 					i = 0;
-				results[i][hourToIndex(((Entity) t).getProperty("hour").toString(), (Boolean) ((Entity) t).getProperty("seller"))] = ((Entity) t).getProperty("price").toString();
+				//results[i][hourToIndex(((Entity) t).getProperty("hour").toString(), (Boolean) ((Entity) t).getProperty("seller"))] = ((Entity) t).getProperty("price").toString();
+				//[2][24] - hourIndex unnecessary for now
+				results[i][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
+
 			}
 		}
 
