@@ -138,6 +138,9 @@ public class MainServlet extends HttpServlet {
 				JSONObject out = new JSONObject();
 				out.put("contract_data", contracts_jsondata);
 				out.put("dates_data", dates_list);
+				
+				resp.setContentType("application/json");
+
 				resp.getWriter().println(out.toString());
 				
 			} catch (JSONException e) {

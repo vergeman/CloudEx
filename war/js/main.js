@@ -138,10 +138,10 @@ function update_data() {
 	        	data: out
 	        },
 	        success: function(data, textStatus){
-	        	var obj = $.parseJSON(data);
+	        	var obj = data;
 
-	        	contract_data = obj['contract_data'];
-	        	dates_data = obj['dates_data'];
+	        	contract_data = obj["contract_data"];
+	        	dates_data = obj["dates_data"];
 	        },
 	        complete:function(data, textStatus){
 	        	var newk = Keys();
