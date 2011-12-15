@@ -14,10 +14,26 @@ $(document).ready(function() {
 		
 		//update "selected"
 		if(!$(this).hasClass("selected")) {
-		
-			$('.' + $(this).attr('class')).removeClass("selected");
+			var classes = $(this).attr('class').split(' ');
+			var sel_class = classes[0];
+			var sel_region = classes[1];
+						
+			$('.' + sel_class).removeClass("selected");
 			$(this).addClass("selected");
 
+			//if we changed regions, we need to update availability zones
+			if (sel_class == "regions") {
+				var region = $(this).attr('id');
+				$('.zones').css('display', 'none');
+				$('.' + region).toggle();
+				
+				$('.zones').removeClass("selected");
+				$('.' + region).first().addClass("selected");
+				
+			}
+
+			
+			
 			// make post with block in message
 			update_data();
 		}

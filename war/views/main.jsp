@@ -85,20 +85,36 @@
 		</ul>
 
 		<ul id="zones">
-			<c:forEach var="z" items="${zone}">
+			<c:set var="i" value = "0"/> <!--  learn how to use enums please -->
 
-				<c:choose>
-					<c:when test="${z == defaults[1]}">
-						<li id="${z}" class="zones selected">
-					</c:when>
-					<c:otherwise>
-						<li id="${z}" class="zones">
-					</c:otherwise>
-				</c:choose>
+			<c:forEach var="z" items="${zones}">
+
 				
-					${z.zone}
-				</li>
+				<c:forEach var="av_zone" items="${z.zones}">
+					
+
+					<c:choose>
+									
+						<c:when test="${zone[i] == defaults[1]}">
+							<li id="${zone[i]}" class="zones ${z} selected" style="display:inline;">
+						</c:when>		
+						<c:when test="${z == defaults[0]}">
+							<li id="${zone[i]}" class="zones ${z}" style="display:inline;">
+						</c:when>		
+						<c:otherwise>
+							<li id="${zone[i]}" class="zones ${z}" style="display:none;">
+						</c:otherwise>
+								
+					</c:choose>
+				
+					${av_zone}
+					</li>
+					
+				<c:set var="i" value="${i+1}" />
+				</c:forEach>
+					
 			</c:forEach>
+
 		</ul>
 
 

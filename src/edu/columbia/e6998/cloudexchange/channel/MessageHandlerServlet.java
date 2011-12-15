@@ -53,10 +53,10 @@ public class MessageHandlerServlet extends HttpServlet {
 			
 			if (msg.type.trim().equals("update")) {
 
-				message.append("action", msg.action);
-				message.append("key", msg.key);
-				message.append("price", msg.price);
-				message.append("qty", msg.qty);
+				message.append("action", msg.action.trim());
+				message.append("key", msg.key.trim());
+				message.append("price", msg.price.trim());
+				message.append("qty", msg.qty.trim());
 			}
 
 			
@@ -104,10 +104,10 @@ public class MessageHandlerServlet extends HttpServlet {
 		/*update: action of bid, offer, cancel*/
 		if (msg_type.equals("update")) {
 			
-			Msg msg = new Msg(msg_type, req.getParameter("action"),
-							  req.getParameter("price"),
-							  req.getParameter("qty"),
-							  req.getParameter("key")); 
+			Msg msg = new Msg(msg_type, req.getParameter("action").trim(),
+							  req.getParameter("price").trim(),
+							  req.getParameter("qty").trim(),
+							  req.getParameter("key").trim()); 
 			
 			msg.printString();
 			/*need validation checks*/
