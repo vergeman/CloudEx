@@ -30,6 +30,14 @@ $(document).ready(function() {
 				$('.zones').removeClass("selected");
 				$('.' + region).first().addClass("selected");
 				
+				
+				//regions --> instance types: Only East offers clusters
+				if ($(".regions.selected").attr('id') != 'US_EAST') {
+					$('#instancetype option[value*="CLUSTER"]').hide();
+				}
+				else {
+					$('#instancetype option[value*="CLUSTER"]').show()
+				}	
 			}
 
 			
