@@ -138,19 +138,17 @@ function render(oldKeys, newKeys) {
 				//last?
 			});
 		
-			
-			if(j % 2 != 0) {
-				$(contract + "tr").addClass("odd");
-			}
-			
-			console.log(contract);
+
 		});
 		
-		//oddball day header
-		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i] );
-
+		//update keys
+		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
 		
+		$('.' + newKeys[i] +':odd').addClass("odd")
+
 	});
+	
+
 }
 
 
