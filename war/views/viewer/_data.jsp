@@ -21,7 +21,8 @@
 	</thead>
 
 	<c:forEach var="contract" items="${contracts}">
-
+		
+		<tr class="tbl_contract_date_row">
 		<td id="${date[i]}" class="tbl_contract_date">${dates[i]}</td>
 		<td></td>
 		<td></td>
@@ -31,6 +32,7 @@
 		<td></td>
 		<td></td>
 		<td></td>		
+		</tr>
 		
 		<c:forEach var="j" begin="0" end="23" step="1">
 

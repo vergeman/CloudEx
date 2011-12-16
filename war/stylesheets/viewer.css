@@ -32,6 +32,12 @@
 	margin-right: 24px;
 }
 
+#selection li:hover {
+	color: #1589FF;
+}
+.selected {
+	color: orange;
+}
 <!-- data table-->
 #data {
 	font-family: 'Muli', sans-serif;
@@ -44,6 +50,10 @@ table {
 }
 tr {
 	border: 1px solid black;
+}
+tr.tbl_contract_date_row {
+	background: white;
+	color:black;
 }
 td, th {
 	width: 60px;
