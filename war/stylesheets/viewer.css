@@ -11,18 +11,30 @@
 	margin: 0px auto;
 }
 #selection {
-	width: 480px; /*todo: center on font*/
+	font-family: 'Rokkitt', sans-serif;
+	font-weight: 400;
+	width: 460px; /*todo: center on font*/
 	margin: 0px auto;
-	
+
 }
-
-
+#selection ul {
+	padding: 4px;
+}
 #selection li {
+	padding: 6px;
 	display: inline;
-	cursor:pointer;
+	cursor: pointer;
 }
 
+#selection select {
+	float: right;
+	margin-top: -24px;
+	margin-right: 24px;
+}
+
+<!-- data table-->
 #data {
+	font-family: 'Muli', sans-serif;
 	width: 960px; /*todo: center on font*/
 	margin: 0px auto;
 }
@@ -31,22 +43,30 @@ table {
 	text-align:center;
 }
 tr {
-	border: 1px solid;
+	border: 1px solid black;
 }
 td, th {
 	width: 60px;
-	padding: 10px;
+	padding: 4px;
+	border: 1px solid black;
 }
 
+.tbl_contract_headers {
+	background: grey;
+	font-weight: 600;
+}
+.odd {
+	background:#4D4D4D;	
+}
 .bid, .ask {
 	cursor:pointer;
 }
 
-.hour {
-	border-right: 1px solid;
+.bid_status {
+	background: green;
 }
-.last {
-	border: 1px solid;
+.ask_status {
+	background: #8B0000;
 }
 
 /*#submit*/

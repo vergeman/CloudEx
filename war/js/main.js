@@ -138,8 +138,12 @@ function render(oldKeys, newKeys) {
 			});
 		});
 		
-		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
-		
+		if (j % 2 == 0) {
+			$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
+		}
+		else {
+			$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i] + ' odd');
+		}
 	});
 }
 

@@ -1,8 +1,8 @@
 
 /*typography*/
 h1 {
-	font-size: 2em;
-	font-family: arial, helvetica;
+	font-family: 'Electrolize', arial, helvetica, sans-serif;
+	font-size: 2.2em;
 }
 
 body
@@ -40,10 +40,10 @@ body
 
 #main {
   	width: 100%;
-  	height: auto;
-    background: #ffffff;
+  	min-height: 1024px;
+    background: black;
   	padding: 10px 0 60px 0;
-  
+  	color: white;
 }
 
 #container {
