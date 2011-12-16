@@ -127,7 +127,7 @@ function render(oldKeys, newKeys) {
 	$.each(oldKeys, function (i, day) {
 
 		//hourly
-		$('.' + day).each(function (j, contract) {
+		$('.tbl_contract_row.hour.' + day).each(function (j, contract) {
 
 			//time/bid/offer (columns for that hour)
 			$(contract).children().each( function(k, e) {
