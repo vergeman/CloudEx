@@ -3,7 +3,7 @@
   <cron>
     <url>/launch</url>
     <description>Check for launchable instances</description>
-    <schedule>every 1 hours</schedule>
+    <schedule>every 1 hours synchronized</schedule>
   </cron>
 
 </cronentries>
