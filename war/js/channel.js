@@ -42,9 +42,7 @@ socket.onerror = function() {
 $('.bid, .ask').click(function() {
 
 	/*we'll leave bid/offer change for later*/
-	
 	$('#dialog').attr('data', $(this).attr('id'));
-	console.log($(this));
 	
 	if ($(this).hasClass('bid')) {
 		$('#dialog_action').val('buy');

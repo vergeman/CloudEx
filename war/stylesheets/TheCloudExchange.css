@@ -92,10 +92,10 @@ footerBorder
 }
 
 /*data stuff*/
-#view, #data td {
+#selection, #data td {
 	cursor:pointer;
 }
-#view li {
+#selection li {
 	display: inline;
 }
 

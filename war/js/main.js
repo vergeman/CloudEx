@@ -10,7 +10,7 @@ $(document).ready(function() {
 	});
 
 	
-	$('#view li').click(function() {
+	$('#selection li').click(function() {
 		
 		//update "selected"
 		if(!$(this).hasClass("selected")) {
