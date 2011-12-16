@@ -79,6 +79,9 @@ td, th {
 	background: #8B0000;
 }
 
+.arrow {
+	cursor:pointer;
+}
 /*#submit*/
 #dialog {
 	display:inline;

@@ -22,8 +22,17 @@
 
 	<c:forEach var="contract" items="${contracts}">
 		
-		<tr class="tbl_contract_date_row">
-		<td id="${date[i]}" class="tbl_contract_date">${dates[i]}</td>
+		<tr class="tbl_contract_date_row ${keys[i]}">
+		
+			<td id="${keys[i]}" class="tbl_contract_date">
+				<span class="arrow ui-icon ${i ==0 ? 'ui-icon-circle-triangle-s' : 'ui-icon-circle-triangle-e'}" style="float:left;"></span>
+				${dates[i]}
+			</td>
+
+			
+			
+			
+		
 		<td></td>
 		<td></td>
 		<td></td>
@@ -36,7 +45,7 @@
 		
 		<c:forEach var="j" begin="0" end="23" step="1">
 
-				<tr class="tbl_contract_row hour ${keys[i]} ${j % 2 ==0 ? '' : 'odd'}">
+				<tr class="tbl_contract_row hour ${keys[i]} ${j % 2 ==0 ? '' : 'odd'} ${i ==0 ? '' : '"style=display:none;"'}">
 				<td></td>
 				<td class="tbl_contract_data hour">${j}:00</td>
 				<td class="tbl_contract_data ask_status"></td>

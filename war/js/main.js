@@ -5,6 +5,24 @@ var dates_data;
 
 $(document).ready(function() {
 
+	$('.arrow').click(function() {
+		var id = $(this).parent().attr('id');
+		
+		if ($(this).hasClass('ui-icon-circle-triangle-s')) {
+			$(this).removeClass('ui-icon-circle-triangle-s');
+			$(this).addClass('ui-icon-circle-triangle-e');
+			
+			$(".tbl_contract_row.hour." + id).toggle();
+		}
+		else {
+			$(this).removeClass('ui-icon-circle-triangle-e');
+			$(this).addClass('ui-icon-circle-triangle-s');
+			
+			$(".tbl_contract_row.hour." + id).toggle();
+		}
+	});
+
+	
 	$('#instancetype').change(function() {
 		update_data();
 	});
@@ -41,8 +59,6 @@ $(document).ready(function() {
 				}	
 			}
 
-			
-			
 			// make post with block in message
 			update_data();
 		}
@@ -98,6 +114,7 @@ $(document).ready(function() {
 });
 
 
+/*this is terrible and I apologize*/
 function render(oldKeys, newKeys) {
 
 	//update dates
@@ -115,7 +132,6 @@ function render(oldKeys, newKeys) {
 			$(contract).children().each( function(k, e) {
 				//time?
 
-				
 				//qty?
 				
 				//bid
@@ -137,17 +153,16 @@ function render(oldKeys, newKeys) {
 				
 				//last?
 			});
-		
-
 		});
 		
 		//update keys
-		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
+		$('.tbl_contract_row.hour.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
+		$('.tbl_contract_date_row.' + day).attr('class', 'tbl_contract_date_row ' + newKeys[i]);
+		$('#' + day).attr('id', newKeys[i]);
 		
-		$('.' + newKeys[i] +':odd').addClass("odd")
+		$('.' + newKeys[i] +':even').addClass("odd")
 
 	});
-	
 
 }
 
