@@ -104,13 +104,14 @@ function render(oldKeys, newKeys) {
 	$('.tbl_contract.date').each(function (i, e) {
 		console.log(dates_data[i]);
 	});
-	
+
 	//iterate through old keys
 	$.each(oldKeys, function (i, day) {
 
+		//hourly
 		$('.' + day).each(function (j, contract) {
 
-			//time/bid/offer
+			//time/bid/offer (columns for that hour)
 			$(contract).children().each( function(k, e) {
 				//time?
 
@@ -136,14 +137,19 @@ function render(oldKeys, newKeys) {
 				
 				//last?
 			});
+		
+			
+			if(j % 2 != 0) {
+				$(contract + "tr").addClass("odd");
+			}
+			
+			console.log(contract);
 		});
 		
-		if (j % 2 == 0) {
-			$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i]);
-		}
-		else {
-			$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i] + ' odd');
-		}
+		//oddball day header
+		$('.' + day).attr('class', 'tbl_contract_row hour ' + newKeys[i] );
+
+		
 	});
 }
 
