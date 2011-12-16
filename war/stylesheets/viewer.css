@@ -1,0 +1,59 @@
+
+
+/*#selection*/
+
+
+
+
+
+#selection_container, #data_container {
+	width: 980px;
+	margin: 0px auto;
+}
+#selection {
+	width: 480px; /*todo: center on font*/
+	margin: 0px auto;
+	
+}
+
+
+#selection li {
+	display: inline;
+	cursor:pointer;
+}
+
+#data {
+	width: 960px; /*todo: center on font*/
+	margin: 0px auto;
+}
+table {
+	width: 100%;
+	text-align:center;
+}
+tr {
+	border: 1px solid;
+}
+td, th {
+	width: 60px;
+	padding: 10px;
+}
+
+.bid, .ask {
+	cursor:pointer;
+}
+
+.hour {
+	border-right: 1px solid;
+}
+.last {
+	border: 1px solid;
+}
+
+/*#submit*/
+#dialog {
+	display:inline;
+}
+
+#dialog label {
+	display:block;
+}

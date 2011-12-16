@@ -183,6 +183,7 @@ public class MainServlet extends HttpServlet {
 			//TODO: calls some toolkit function to get real array using key
 			//TODO: need to prune first day for time (this seems like model logic)
 			//TODO: i'm going to separate buyers/sellers, easier to render
+			//TODO: need to maintain strict input for prices i.e. 4 decimals out.
 			String formatted_date = sdf.format(day.getTime());
 			
 			String[][] results = gt.getBidsOffers(key);

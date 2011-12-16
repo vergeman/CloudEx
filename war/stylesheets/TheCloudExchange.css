@@ -1,6 +1,5 @@
-/** Add css rules here for your application. */
 
-/*font stuff*/
+/*typography*/
 h1 {
 	font-size: 2em;
 	font-family: arial, helvetica;
@@ -11,14 +10,45 @@ body
 	*font-size:small;
 	*font:x-small;
 	height:100%;
+	overflow-x:hidden;
+	overflow-y: scroll;
 }
 
 
-/*div stuff*/
+/*layout*/
 #header {
-	width: 960px;
+	width: 100%;
+	padding: 16px 0px 0px 0px;
+	height: 40px;
+
+}
+#header_container {
+	width: 980px;
 	margin: 0px auto;
-	padding: 16px;
+	
+}
+#title {
+	float:left;
+}
+
+#auth
+{
+	float:right;
+}
+
+
+
+#main {
+  	width: 100%;
+  	height: auto;
+    background: #ffffff;
+  	padding: 10px 0 60px 0;
+  
+}
+
+#container {
+	width: 980px;
+	margin: 0px auto;
 }
 
 footerBorder
@@ -28,12 +58,8 @@ footerBorder
 	margin:.5em .5em 0 .5em
 }
 
-#main {
-    background: #ffffff;
-    padding-top: 10px;
-    padding-bottom: 60px;
-}
 
+/*auth*/
 #mcontainer {
     margin-left: 16em;
     padding-top: 4ex;
@@ -89,20 +115,4 @@ footerBorder
 
 #mainTableCell {
 	valign: top;
-}
-
-/*data stuff*/
-#selection, #data td {
-	cursor:pointer;
-}
-#selection li {
-	display: inline;
-}
-
-#dialog {
-	display:inline;
-}
-
-#dialog label {
-	display:block;
 }

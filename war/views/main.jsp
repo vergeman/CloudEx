@@ -11,34 +11,38 @@
 
 <html>
 <head>
-<jsp:include page="/views/_header.jsp" />
+	<jsp:include page="/views/_header.jsp" />
+	<link type="text/css" rel="stylesheet" href="/stylesheets/viewer.css">
 </head>
 
 
 <body>
 
-	<div id="auth">
-		<jsp:include page="/views/_auth.jsp" />
-	</div>
-
-
 	<div id="header">
-		<h1>CloudEx</h1>
+		<jsp:include page="/views/_topbar.jsp" />
 	</div>
 
 	<div id="main">
 		<div id="container">
 		
-			<div id="selection">
-				<jsp:include page="/views/viewer/_selection.jsp" />
+			<div id="selection_container">
+				<div id="selection">
+					<jsp:include page="/views/viewer/_selection.jsp" />
+				</div>
 			</div>
-
 			<hr>
-
-			<div id="data">
-				<jsp:include page="/views/viewer/_data.jsp" />
+			
+			<div id="spotprice_container">
+				<div id="spotprice">
+					<jsp:include page="/views/viewer/_spotprice.jsp" />
+				</div>
 			</div>
 			
+			<div id="data_container">
+				<div id="data">
+					<jsp:include page="/views/viewer/_data.jsp" />
+				</div>
+			</div>
 		</div>
 	</div>
 
