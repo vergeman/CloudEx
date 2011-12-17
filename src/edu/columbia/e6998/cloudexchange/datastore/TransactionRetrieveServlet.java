@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class TransactionRetrieveServlet {
+public class TransactionRetrieveServlet extends HttpServlet {
 	
 	final String destination = "/views/account.jsp";
 
