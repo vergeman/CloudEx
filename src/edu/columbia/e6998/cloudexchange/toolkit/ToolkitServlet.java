@@ -14,8 +14,11 @@ public class ToolkitServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+		String date = (String) req.getParameter("d");
+		String time = (String) req.getParameter("t");
+		 
 		GenericToolkit asd = new GenericToolkit();
-		resp.getWriter().write(asd.test());
+		resp.getWriter().write(asd.createTestTransaction(date, time));
 		
 	
 	}

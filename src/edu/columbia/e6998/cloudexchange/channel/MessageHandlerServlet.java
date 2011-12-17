@@ -104,63 +104,35 @@ public class MessageHandlerServlet extends HttpServlet {
 		/*update: action of bid, offer, cancel*/
 		if (msg_type.equals("update")) {
 			
-			Msg msg = new Msg(msg_type, req.getParameter("action").trim(),
-							  req.getParameter("price").trim(),
-							  req.getParameter("qty").trim(),
-							  req.getParameter("key").trim()); 
+			Msg msg = null;
 			
-			msg.printString();
 			/*need validation checks*/
 				//TODO: is it a valid message?
 						//a logged in user
 						//legitimate data
 				//TODO: are they allowed to do this (i.e. not their 100th instance, they have money)
 			
-			
 			/*do appropriate datastore handling for a bid offer cancel action */
 			GenericToolkit gt = new GenericToolkit();
-
 			
-			gt.createBidOffer(msg.key.substring(0, 16),
-							  Double.parseDouble(msg.price),
+			msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
+							  Double.parseDouble(req.getParameter("price").trim()),
 							  userId, 
-							  String.format("%02d", Integer.parseInt(msg.key.substring(16, msg.key.length()))));
+							  String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length()))));
 								//ugly i know...
 			
 			/*propagate the message to clients*/
-			sendUpdates(msg);
+			if(msg != null){
+				msg.printString();
+				sendUpdates(msg);
+			}else{
+				//do nottin mon!
+			}
 			
 		}
 
 	}
 	
 	
-	/* internal class for messages*/
-	/* we will probably add the validations to this class
-	 * validity will be handled (on the client first)
-	 * but also as a property of a recieved msg
-	 */
-	class Msg {
-		String type = null;
-		String action = null;
-		String price = null;
-		String qty = null;
-		String key = null;
 
-		Msg(String type, String action, String price, String qty, String key) {
-			this.type = type;
-			this.action = action;
-			this.price = price;
-			this.qty = qty;
-			this.key = key;
-		}
-		
-		public String toString() {
-			return type + " " + action + " " + price + " " + qty + " " + key;
-		}
-
-		public void printString() {
-			System.out.println(this.toString());
-		}
-	}
 }
