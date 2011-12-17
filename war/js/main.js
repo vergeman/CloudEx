@@ -35,7 +35,7 @@ $(document).ready(function() {
 			var classes = $(this).attr('class').split(' ');
 			var sel_class = classes[0];
 			var sel_region = classes[1];
-						
+        	
 			$('.' + sel_class).removeClass("selected");
 			$(this).addClass("selected");
 
@@ -48,7 +48,7 @@ $(document).ready(function() {
 				$('.zones').removeClass("selected");
 				$('.' + region).first().addClass("selected");
 				
-
+				
 				//regions --> instance types: Only East offers clusters
 				if ($(".regions.selected").attr('id') != 'US_EAST') {
 					$('#instancetype option[value*="CLUSTER"]').hide();
@@ -60,6 +60,7 @@ $(document).ready(function() {
 			}
 
 			// make post with block in message
+        	
 			update_data();
 		}
 	});
@@ -126,7 +127,7 @@ function render(oldKeys, newKeys) {
 	$.each(oldKeys, function (i, day) {
 
 		//hourly
-		$('.' + day).each(function (j, contract) {
+		$('.tbl_contract_row.hour.' + day).each(function (j, contract) {
 
 			//time/bid/offer (columns for that hour)
 			$(contract).children().each( function(k, e) {
@@ -177,7 +178,7 @@ function update_data() {
 	out['zone'] = $('.selected.zones').attr('id');
 	out['os'] = $('.selected.os').attr('id');
 	out['instance'] = $('select').val();
-
+	$('body').css('cursor', 'wait');
 	$.ajax({
 	        url: '/main',
 	        type: 'POST',
@@ -194,6 +195,7 @@ function update_data() {
 	        complete:function(data, textStatus){
 	        	var newk = Keys();
 	        	render(oldk, newk);
+	        	$('body').css('cursor', 'auto');
 	        }
 	    });
 	
