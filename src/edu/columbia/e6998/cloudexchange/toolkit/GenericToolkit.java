@@ -219,7 +219,7 @@ public class GenericToolkit {
 		return s + "\n DONE!";
 	}
 
-	public String createBidOffer(String profile, double price, String user, String arrayIndex){
+	public Msg createBidOffer(String profile, double price, String user, String arrayIndex){
 		Entity contract = new Entity("Contract");
 		String[] lookup = reverseLookUpProfile(profile);
 		contract.setProperty("profile", 		profile);
@@ -236,13 +236,13 @@ public class GenericToolkit {
 		contract.setProperty("active", 			true);
 		
 		datastore.put(contract);
-		updateMemcache(contract);
-		
-		return "read_memcache::" + profile + "_" + arrayIndex;
-		
+		if (updateMemcache(contract))
+				return sendChannelMessage("update", "bidOffer", String.valueOf(price), "1", profile, indexToHour(arrayIndex));
+		else
+			return null;
 	}
 	
-	public String createTransaction(String profile, String arrayIndex, String buyer, String ami, String securityGroupName, String keyPairName){
+	public Msg createTransaction(String profile, String arrayIndex, String buyer, String ami, String securityGroupName, String keyPairName){
 		
 		
 		Entity offer = ((Entity[])syncCache.get(profile))[Integer.valueOf(arrayIndex)];
@@ -277,7 +277,8 @@ public class GenericToolkit {
 		transaction.setProperty("instanceID", 		"NA");
 		datastore.put(transaction);
 		deleteBidOffer(profile, arrayIndex);
-		return "read_memcache::" + profile + "_" + arrayIndex;
+		//return "read_memcache::" + profile + "_" + arrayIndex;
+		return sendChannelMessage("update", "transaction", (String) offer.getProperty("price"), "1", profile, indexToHour(arrayIndex));
 	}
 	
 	public String createTestTransaction(String date, String time) {
@@ -323,9 +324,10 @@ public class GenericToolkit {
 		return profile + "_" + arrayIndex;
 	}
 	
-	private void sendChannelMessage(String type, String action, String value, String qty, String profile){
-		Msg msg =  new Msg(type, action, value, qty, profile); 
-		
+	private Msg sendChannelMessage(String type, String action, String value, String qty, String profile, String hour){
+		//Msg msg =  new Msg(type, action, value, qty, profile);
+		Msg msg = new Msg(type, action, value, "1", profile + Integer.valueOf(hour).toString());
+		return msg;
 	}
 	
 	private String indexToHour(String arrayIndex){
