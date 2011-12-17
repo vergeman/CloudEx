@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.columbia.e6998.cloudexchange.aws.spotprices.SpotPriceManager;
+
 
 
 
@@ -40,7 +42,10 @@ public class LaunchServlet extends HttpServlet {
 		
 		
 		//testInstance t = new testInstance(resp);
+		SpotPriceManager sm = new SpotPriceManager(new CredentialsManager());
+
+		String price = sm.getSpotprice("0000000020110101");
 		
-		
+		System.out.println(price);
 	}
 }
