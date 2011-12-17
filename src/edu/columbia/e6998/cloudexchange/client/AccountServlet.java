@@ -36,14 +36,9 @@ public class AccountServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
-
+		
 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/serve");
-
-		String fileName = "random file name";
-	
-		req.setAttribute("fileName", fileName);
-
-		rd = getServletContext().getRequestDispatcher(destination);
+		
 		try {
 			rd.forward(req, resp);
 		} catch (ServletException e) {

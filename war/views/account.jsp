@@ -27,9 +27,7 @@
 <div id="left">
 <b>My Amazon Credentials</b>
 <br><br>
-<%
-
-%>
+<a>Current File:&nbsp ${fileName}</a>
 <br>
 <form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
      <input type="file" name="myFile">
@@ -42,6 +40,20 @@
 <td id="mainTableCell">
 <div id="center">
 <b>My Portfolio</b>
+<table class="positionTable">
+		<tr>
+			<td align=center><b>#</b></td>
+			<td align=center><b>Buy/Sell</b></td>
+			<td align=center><b>Date</b></td>
+			<td align=center><b>Time</b></td>
+			<td align=center><b>Ami</b></td>
+			<td align=center><b>Instance</b></td>
+			<td align=center><b>Region</b></td>
+			<td align=center><b>Zone</b></td>
+			<td align=center><b>Contract price</b></td>
+			<td align=center><b>Spot price</b></td>
+		</tr>
+</table>
 </div>
 </td>
 </tr>

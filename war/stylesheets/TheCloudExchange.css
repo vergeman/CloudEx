@@ -91,6 +91,25 @@ footerBorder
 	valign: top;
 }
 
+table.positionTable
+{
+	width: 80%;
+	border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-color: #CCCCCC;
+    border-style: solid;
+}
+
+table.positionTable td
+{
+	border-color: #CCCCCC;
+    border-style: solid;
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+}
+
 /*data stuff*/
 #view, #data td {
 	cursor:pointer;
