@@ -41,7 +41,6 @@ public class LaunchServlet extends HttpServlet {
 		
 		//testInstance t = new testInstance(resp);
 		
-		SpotPrices sp = new SpotPrices(resp);
 		
 	}
 }

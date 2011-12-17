@@ -1,4 +1,4 @@
-package edu.columbia.e6998.cloudexchange.aws;
+package edu.columbia.e6998.cloudexchange.aws.spotprices;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -20,26 +20,33 @@ import com.amazonaws.services.ec2.model.DescribeSpotPriceHistoryRequest;
 import com.amazonaws.services.ec2.model.Region;
 import com.amazonaws.services.ec2.model.SpotPrice;
 
-public class SpotPrices {
-	static AmazonEC2 ec2;
+import edu.columbia.e6998.cloudexchange.aws.CredentialsManager;
 
-	/*
-	 * test code to get prices via Amazon
-	 * had to fork and update the aws-sdk-for-java-on-gae library
-	 * to reflect availabilityZones which is desired functionality
-	 */
-	public SpotPrices(HttpServletResponse resp) throws IOException {
-		CredentialsManager credentials = new CredentialsManager();
-		
-		ec2 = new AmazonEC2Client(credentials.getCredentials());
+public class SpotPriceManager {
+	private static AmazonEC2 ec2;
+	private Date lastUpdate;
 	
+	
+	
+	public SpotPriceManager(CredentialsManager credentials) throws IOException {
+		ec2 = new AmazonEC2Client(credentials.getCredentials());
+			
+	}
+	
+	
+	public double getSpotprice(String key) {
 		
+		return 0.0;	
+	}
+	
+	public void updateSpotPrice() {
+		
+	}
+	
+	private void downloadSpotPrice() {
 		try {
 
 			DescribeRegionsResult regionResult = ec2.describeRegions();
-			//resp.getWriter().println(
-			//		"You have access to "
-			//				+ regionResult.getRegions().size() + " Regions.");
 
 			for (Region r : regionResult.getRegions()) {
 				//resp.getWriter().println(r.getRegionName());
@@ -79,7 +86,7 @@ public class SpotPrices {
 					out += "\t\t" + sp.getSpotPrice();
 					out += "\t\t" + sp.getAvailabilityZone();
 					
-				resp.getWriter().println(out);
+				//resp.getWriter().println(out);
 				}
 			}
 			
@@ -96,4 +103,8 @@ public class SpotPrices {
 		
 		ec2.shutdown();
 	}
+	
+	
+	
+
 }
