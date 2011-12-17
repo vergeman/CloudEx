@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -32,9 +33,11 @@ import com.google.appengine.api.users.UserServiceFactory;
 @SuppressWarnings("serial")
 public class BlobServeHandler extends HttpServlet {
 
-	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	//private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+	//private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+	
+	final String destination = "/views/account.jsp";
 
 	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -54,20 +57,25 @@ public class BlobServeHandler extends HttpServlet {
 			fileName = "No AWS credentials file uploaded";
 		} else {
 			String blobKeyString = (String) userProfile.getProperty("CredentialsBlobKey");
-			//	BlobKey blobKey = new BlobKey(blobKeyString);
-			fileName = blobKeyString;
+			BlobKey blobKey = new BlobKey(blobKeyString);
+			BlobInfoFactory bFactory = new BlobInfoFactory();
+			BlobInfo bInfo = bFactory.loadBlobInfo(blobKey);
+			fileName = bInfo.getFilename() + " created at "+ bInfo.getCreation().toString();
 		}
 
-		/*
-	req.setAttribute("fileName", fileName);
-	RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
-	try {
-	rd.forward(req, resp);
-	} catch (ServletException e) {
-	e.printStackTrace();
+		System.out.println("fileName:" + fileName);
+		req.setAttribute("fileName", fileName);
+		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
+		try {
+			rd.forward(req, resp);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}
 	}
-		 */
-		out.println(fileName);
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+		throws ServletException, IOException {
+		doGet(req, resp);
 	}
 }
 

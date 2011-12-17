@@ -28,7 +28,7 @@
   
   <servlet-mapping>
     <servlet-name>ToolkitServlet</servlet-name>
-    <url-pattern>/data/</url-pattern>
+    <url-pattern>/data</url-pattern>
   </servlet-mapping>
   
 
@@ -51,7 +51,16 @@
 		<servlet-name>BlobServeHandler</servlet-name>
 		<url-pattern>/serve</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet>
+		<servlet-name>TransactionHandler</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.datastore.TransactionHandler</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BlobServeHandler</servlet-name>
+		<url-pattern>/serve</url-pattern>
+	</servlet-mapping>	
 	
 	
  <!--  channel servlets for message passing and connection status/update-->
