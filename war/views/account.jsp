@@ -1,15 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+	pageEncoding="utf-8"%>
+<%@ page
+	import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"%>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService"%>
 
 <%
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	BlobstoreService blobstoreService = BlobstoreServiceFactory
+			.getBlobstoreService();
 %>
 
 <!doctype html>
 <html>
-  <head>
+<head>
 <jsp:include page="/views/_header.jsp" />
   </head>
   <body>

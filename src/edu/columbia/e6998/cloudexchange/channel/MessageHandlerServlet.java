@@ -12,6 +12,8 @@ import com.google.appengine.api.channel.ChannelFailureException;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
@@ -51,10 +53,10 @@ public class MessageHandlerServlet extends HttpServlet {
 			
 			if (msg.type.trim().equals("update")) {
 
-				message.append("action", msg.action);
-				message.append("key", msg.key);
-				message.append("price", msg.price);
-				message.append("qty", msg.qty);
+				message.append("action", msg.action.trim());
+				message.append("key", msg.key.trim());
+				message.append("price", msg.price.trim());
+				message.append("qty", msg.qty.trim());
 			}
 
 			
@@ -70,7 +72,7 @@ public class MessageHandlerServlet extends HttpServlet {
 			try {
 				channelService.sendMessage(new ChannelMessage(channelKey,
 						message.toString()));
-				
+				System.out.println("[Channel] Propogating message to: " + user);
 			} catch (ChannelFailureException e) {
 				e.printStackTrace();
 			}
@@ -86,6 +88,10 @@ public class MessageHandlerServlet extends HttpServlet {
 		 * filter content accordingly and forward to appropriate
 		 * action / servlet
 		 */
+		UserService userService = UserServiceFactory.getUserService();
+		String userId = userService.getCurrentUser().getUserId();
+		
+		
 		String msg_type = req.getParameter("msg");
 		
 		/*here we handle the type of message and
@@ -98,29 +104,42 @@ public class MessageHandlerServlet extends HttpServlet {
 		/*update: action of bid, offer, cancel*/
 		if (msg_type.equals("update")) {
 			
-			Msg msg = new Msg(msg_type, req.getParameter("action"), req.getParameter("price"),
-							  req.getParameter("qty"), req.getParameter("key")); 
+			Msg msg = new Msg(msg_type, req.getParameter("action").trim(),
+							  req.getParameter("price").trim(),
+							  req.getParameter("qty").trim(),
+							  req.getParameter("key").trim()); 
+			
+			msg.printString();
+			/*need validation checks*/
+				//TODO: is it a valid message?
+						//a logged in user
+						//legitimate data
+				//TODO: are they allowed to do this (i.e. not their 100th instance, they have money)
 			
 			
 			/*do appropriate datastore handling for a bid offer cancel action */
 			GenericToolkit gt = new GenericToolkit();
-			//gt.killdragon
+
 			
+			gt.createBidOffer(msg.key.substring(0, 16),
+							  Double.parseDouble(msg.price),
+							  userId, 
+							  String.format("%02d", Integer.parseInt(msg.key.substring(16, msg.key.length()))));
+								//ugly i know...
 			
 			/*propagate the message to clients*/
 			sendUpdates(msg);
 			
-			
 		}
-		
-		
-		
-	
-		
 
 	}
 	
 	
+	/* internal class for messages*/
+	/* we will probably add the validations to this class
+	 * validity will be handled (on the client first)
+	 * but also as a property of a recieved msg
+	 */
 	class Msg {
 		String type = null;
 		String action = null;
@@ -140,5 +159,8 @@ public class MessageHandlerServlet extends HttpServlet {
 			return type + " " + action + " " + price + " " + qty + " " + key;
 		}
 
+		public void printString() {
+			System.out.println(this.toString());
+		}
 	}
 }

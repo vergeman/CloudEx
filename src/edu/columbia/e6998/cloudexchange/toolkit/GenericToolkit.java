@@ -1,18 +1,15 @@
 package edu.columbia.e6998.cloudexchange.toolkit;
-import edu.columbia.e6998.cloudexchange.aws.*;
-import edu.columbia.e6998.cloudexchange.channel.*;
+import edu.columbia.e6998.cloudexchange.aws.AWSCodes;
+import edu.columbia.e6998.cloudexchange.channel.Msg;
 
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
-import com.google.appengine.api.channel.ChannelMessage;
-import com.google.appengine.api.channel.ChannelService;
-import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,7 +26,6 @@ public class GenericToolkit {
 	
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-	private ChannelService chn = ChannelServiceFactory.getChannelService();
 
 	SimpleDateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
@@ -47,10 +43,7 @@ public class GenericToolkit {
 						+ String.format("%02d", AWSCodes.OS.valueOf(OS).ordinal())
 						+ String.format("%02d", AWSCodes.InstanceType.valueOf(instanceType).ordinal())
 						+ sDate;
-		createData(profile);
 		return profile;
-
-		
 	}
 	
 	public String[] reverseLookUpProfile(String profile){
@@ -73,10 +66,9 @@ public class GenericToolkit {
 			return new Date();
 		}
 	}
-	
 
 	private ArrayList<String> removeProfile(String profile){
-		
+		//TODO fix unchecked
 		@SuppressWarnings("unchecked")
 		ArrayList<String> profiles = (ArrayList<String>) syncCache.get("Profiles");
 		if (profiles == null)
@@ -84,11 +76,10 @@ public class GenericToolkit {
 		if(profiles.remove(profile));
 			syncCache.put("Profiles", profiles);
 		return profiles;
-		
 	}
 
 	private ArrayList<String> addProfile(String profile){
-		
+		//TODO fix unchecked
 		@SuppressWarnings("unchecked")
 		ArrayList<String> profiles = (ArrayList<String>) syncCache.get("Profiles");
 		if (profiles == null)
@@ -99,22 +90,62 @@ public class GenericToolkit {
 		profiles.add(profile);
 		syncCache.put("Profiles", profiles);
 		return profiles;
-		
+
 	}
 	
 	public ArrayList<String> getProfiles(){
 		return removeProfile("xxx");
 	}
 	
+	private ArrayList<String> removeDelete(String delete){
+		//TODO fix unchecked
+		@SuppressWarnings("unchecked")
+		ArrayList<String> deletes = (ArrayList<String>) syncCache.get("Deletes");
+		if (deletes == null)
+			return null;
+		if(deletes.remove(delete));
+			syncCache.put("Deletes", deletes);
+		return deletes;
+	}
+
+	private ArrayList<String> addDelete(String delete){
+		//TODO fix unchecked
+		@SuppressWarnings("unchecked")
+		ArrayList<String> deletes = (ArrayList<String>) syncCache.get("Deletes");
+		if (deletes == null)
+			deletes = new ArrayList<String>();
+		if (deletes.contains(delete))
+			return deletes;
+
+		deletes.add(delete);
+		syncCache.put("Deletes", deletes);
+		return deletes;
+
+	}
+	
+	public ArrayList<String> getDeletes(){
+		return removeDelete("xxx");
+	}
+	
+	
 	public String[][] getBidsOffers(String profile){
 		String[][] results = new String[2][24];
-		queryDataStore(profile, null);
+		
+		if(!syncCache.contains("Profiles"))
+			queryDataStore(profile);
+		
+		//can't iterate through null list (but can an empty list..)
+		if (!syncCache.contains(profile))
+			return results;	
+		
 		for(Entity t : (Entity[]) syncCache.get(profile)){
 			int i = 1;
 			if (t!= null){
 				if ((Boolean) t.getProperty("seller"))
 					i = 0;
-				results[i][hourToIndex(((Entity) t).getProperty("hour").toString(), (Boolean) ((Entity) t).getProperty("seller"))] = ((Entity) t).getProperty("price").toString();
+				//[2][24] - hourIndex unnecessary for now
+				results[i][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
+
 			}
 		}
 
@@ -122,22 +153,26 @@ public class GenericToolkit {
 	}
 	
 	public String queryDataStore(){
-		return queryDataStore("", null);
+		return queryDataStore("");
 	}
 	
-	public String queryDataStore(String optProfile, Key deleted){
+	public String queryDataStore(String optProfile){
 		//TODO can be made into single i/o batch
 		String s = "";
 		Entity[] tmpList = new Entity[48];
 		String memKey = "";
 		int index = 0;
+		List<String> deletes = new ArrayList<String>();
+		deletes = getDeletes();
+		if (deletes==null)
+			deletes = Collections.emptyList();
+		
 		Query qSeller = new Query("Contract");
 		qSeller.addFilter("active", Query.FilterOperator.EQUAL, true);
 		qSeller.addFilter("seller", FilterOperator.EQUAL, true);
 		if (!optProfile.equals(""))
 			qSeller.addFilter("profile", FilterOperator.EQUAL, optProfile);
 		qSeller.addSort("price", Query.SortDirection.DESCENDING);
-		
 
 		List<Entity> rSellers = datastore.prepare(qSeller).asList(FetchOptions.Builder.withDefaults());
 		for(Entity e: rSellers){
@@ -145,9 +180,8 @@ public class GenericToolkit {
 			tmpList = (Entity[]) syncCache.get(memKey);
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
-			if (tmpList != null){
-				if ( deleted == null || deleted != e.getKey())
-					tmpList[index] = e;
+			if (tmpList != null  && !deletes.contains(e.getKey())){
+				tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
 				tmpList[index] = e;
@@ -170,8 +204,7 @@ public class GenericToolkit {
 			tmpList = (Entity[]) syncCache.get(memKey);
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			
-			if (tmpList != null){
-				if ( deleted == null || deleted != e.getKey())
+			if (tmpList != null && !deletes.contains(e.getKey())){
 					tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
@@ -185,7 +218,7 @@ public class GenericToolkit {
 		
 		return s + "\n DONE!";
 	}
-	
+
 	public String createBidOffer(String profile, double price, String user, String arrayIndex){
 		Entity contract = new Entity("Contract");
 		String[] lookup = reverseLookUpProfile(profile);
@@ -201,15 +234,31 @@ public class GenericToolkit {
 		contract.setProperty("instanceType", 	lookup[INSTANCE_TYPE]);
 		contract.setProperty("seller", 			Integer.valueOf(arrayIndex)%2 == 0);
 		contract.setProperty("active", 			true);
+		
 		datastore.put(contract);
-		queryDataStore(profile, null);
+		updateMemcache(contract);
+		
 		return "read_memcache::" + profile + "_" + arrayIndex;
-		//updateMemcache(contract);
+		
 	}
 	
 	public String createTransaction(String profile, String arrayIndex, String buyer, String ami, String securityGroupName, String keyPairName){
-		int index = Integer.valueOf(arrayIndex);
-		Entity offer = ((Entity[])syncCache.get(profile))[index];
+		
+		
+		Entity offer = ((Entity[])syncCache.get(profile))[Integer.valueOf(arrayIndex)];
+//		for(int i =0; i< 48; i++){
+//			if(offer[i]!=null)
+//				System.out.println("\nfound: " + i);
+//		}
+//		if(!syncCache.contains(profile)){
+//			System.out.println("not found: " + profile);
+//			return "no";
+//		}
+//		
+//		if (offer==null){
+//			System.out.println("not found: " + profile + " index: " + index);
+//			return "no";
+//		}
 		String[] lookup = reverseLookUpProfile(profile);
 		
 		Entity transaction = new Entity("Transaction");
@@ -228,7 +277,6 @@ public class GenericToolkit {
 		transaction.setProperty("instanceID", 		"NA");
 		datastore.put(transaction);
 		deleteBidOffer(profile, arrayIndex);
-		queryDataStore(profile, null);
 		return "read_memcache::" + profile + "_" + arrayIndex;
 	}
 	
@@ -266,11 +314,17 @@ public class GenericToolkit {
 			return "entity not found::" + profile + "_" + arrayIndex;
 		}
 		
-		queryDataStore(profile, e.getKey());
+		addDelete(e.getKey().toString());
+		queryDataStore(profile);
 		return "read_memcache::" + profile + "_" + arrayIndex;
 	}
+
+	public String profileToKey(String profile, String arrayIndex){
+		return profile + "_" + arrayIndex;
+	}
 	
-	private void sendChannelMessage(){
+	private void sendChannelMessage(String type, String action, String value, String qty, String profile){
+		Msg msg =  new Msg(type, action, value, qty, profile); 
 		
 	}
 	
@@ -289,6 +343,35 @@ public class GenericToolkit {
 		else
 			return (h*2) + 1;
 	}
+	
+	private boolean updateMemcache(Entity e){
+		Entity[] tmpList;
+		Entity m;
+		int index = hourToIndex((String) e.getProperty("hour"), true);
+		String profile = (String) e.getProperty("profile");
+		//first check if profile exists
+		if(!syncCache.contains(profile))
+			return false;
+		else
+			tmpList = (Entity[]) syncCache.get(profile);
+		m = tmpList[index];
+		
+		if((Boolean) m.getProperty("seller")){
+			//compare
+			if(Double.valueOf((String) m.getProperty("price")) <= Double.valueOf((String) e.getProperty("price")))
+				return false;
+		}else{
+			if(Double.valueOf((String) m.getProperty("price")) >= Double.valueOf((String) e.getProperty("price")))
+				return false;
+		}
+		
+		tmpList[index] = e;
+		syncCache.put(profile, tmpList);
+		return true;
+		
+	}
+	
+	
 	
 	/*
 	public boolean updateMemcache(Entity e){
@@ -322,7 +405,7 @@ public class GenericToolkit {
 	*/
 	
 	public String test(){
-//		String s = "\n";
+		String s = "\n";
 //		s+= createBidOffer("0000000020110101", 0.3, "batman", "46");
 //		s+= "\n";
 //		s+= createBidOffer("0000000020110101", 0.2, "robin", "47");
@@ -333,12 +416,14 @@ public class GenericToolkit {
 //		s+= "\n";
 //		s+= createBidOffer("0000000020110101", 0.3, "batman", "06");
 //		s+= "\n";
-//		s+="After inserts:\n";
-//		s+= dumpMemCache();
+		s+="Query Data Store:\n";
+		s+= dumpMemCache();
 //		s+= "\n";
 //
-//		s+= createTransaction("0000000020110101", "46", "joker", "ami", "SG", "KP");
-//		s+= "\n";
+		s+= createTransaction("0000000020111216", "01", "joker", "ami", "SG", "KP");
+		s+= "\n";
+		s+= "After Buy:\n";
+		s+= dumpMemCache();
 //		for(int i = 0; i <= 100000; i++){
 //			//do nottin mon
 //		}
@@ -346,11 +431,11 @@ public class GenericToolkit {
 //		s+="After sell:\n";
 //		s+= dumpMemCache();
 //		s+= indexToHour("46");
-		String s;
-		s = "";
+
 		return s;
 		
 	}
+	
 	public String dumpMemCache(){
 		String s = "";
 		queryDataStore();
@@ -368,15 +453,15 @@ public class GenericToolkit {
 		return s;
 	}
 	
-	public void createData(String profile){
-		Random r = new Random();
-		r.setSeed(7/9);
-		String[] user = {"batman", "robin", "joker", "lisa"};
-		String[] hours = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20,",
-				"21", "22", "23"};
-		if(syncCache.get(profile) == null)
-			createBidOffer(profile, r.nextDouble() + 0.001, user[r.nextInt(4)], hours[r.nextInt(24)]);
-	}
+//	public void createData(String profile){
+//		Random r = new Random();
+//		r.setSeed(7/9);
+//		String[] user = {"batman", "robin", "joker", "lisa"};
+//		String[] hours = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+//				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20,",
+//				"21", "22", "23"};
+//		if(syncCache.get(profile) == null)
+//			createBidOffer(profile, r.nextDouble() + 0.001, user[r.nextInt(4)], hours[r.nextInt(24)]);
+//	}
 	
 }

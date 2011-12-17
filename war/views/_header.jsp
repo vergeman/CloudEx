@@ -17,6 +17,6 @@
 <link type="text/css" rel="stylesheet"
 	href="/stylesheets/TheCloudExchange.css">
 
-
+<link href='http://fonts.googleapis.com/css?family=Muli|Electrolize|Rokkit' rel='stylesheet' type='text/css'>
 
 <title>The Cloud Exchange</title>

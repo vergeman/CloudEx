@@ -98,6 +98,11 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	
+	/* this is used when a user selects a new region/os/zone/instances
+	 * the client sends a POST request containing the selection
+	 * data is queried and sent over
+	 * then dynamically repopulated via javascript on the client end.
+	 */
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -133,6 +138,9 @@ public class MainServlet extends HttpServlet {
 				JSONObject out = new JSONObject();
 				out.put("contract_data", contracts_jsondata);
 				out.put("dates_data", dates_list);
+				
+				resp.setContentType("application/json");
+
 				resp.getWriter().println(out.toString());
 				
 			} catch (JSONException e) {
@@ -175,8 +183,10 @@ public class MainServlet extends HttpServlet {
 			//TODO: calls some toolkit function to get real array using key
 			//TODO: need to prune first day for time (this seems like model logic)
 			//TODO: i'm going to separate buyers/sellers, easier to render
+			//TODO: need to maintain strict input for prices i.e. 4 decimals out.
 			String formatted_date = sdf.format(day.getTime());
-			String[][] results = new String[2][24];
+			
+			String[][] results = gt.getBidsOffers(key);
 			
 			dates_list.add(formatted_date);
 			contracts_list.add(results);

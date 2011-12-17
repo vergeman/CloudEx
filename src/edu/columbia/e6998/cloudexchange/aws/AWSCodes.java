@@ -68,6 +68,7 @@ public class AWSCodes {
 		
 		public String getZone() { return zone; }
 		public String getOrdinal() { return String.format("%02d", this.ordinal()); }
+
 	}
 	
 
