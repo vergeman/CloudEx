@@ -232,12 +232,16 @@ public class GenericToolkit {
 		contract.setProperty("zone", 			lookup[ZONE]);
 		contract.setProperty("OS", 				lookup[OS]);
 		contract.setProperty("instanceType", 	lookup[INSTANCE_TYPE]);
-		contract.setProperty("seller", 			Integer.valueOf(arrayIndex)%2 == 0);
+		contract.setProperty("seller", 			Integer.valueOf(arrayIndex)%2 != 0);
 		contract.setProperty("active", 			true);
-		
+		System.out.println(	"CreateBidOffer::" + 
+							profile + " " + 
+							price + " " + 
+							arrayIndex + " " + 
+							indexToHour(arrayIndex));
 		datastore.put(contract);
 		if (updateMemcache(contract))
-				return sendChannelMessage("update", "bidOffer", String.valueOf(price), "1", profile, indexToHour(arrayIndex));
+				return sendChannelMessage("update", "bidOffer", String.valueOf(price), "1", profile, arrayIndex);
 		else
 			return null;
 	}
@@ -324,9 +328,11 @@ public class GenericToolkit {
 		return profile + "_" + arrayIndex;
 	}
 	
-	private Msg sendChannelMessage(String type, String action, String value, String qty, String profile, String hour){
+	private Msg sendChannelMessage(String type, String action, String value, String qty, String profile, String arrayIndex){
 		//Msg msg =  new Msg(type, action, value, qty, profile);
-		Msg msg = new Msg(type, action, value, "1", profile + Integer.valueOf(hour).toString());
+		int i = Integer.valueOf(arrayIndex);
+		
+		Msg msg = new Msg(type, action, value, "1", profile + String.format("%d", i));
 		return msg;
 	}
 	
@@ -349,25 +355,42 @@ public class GenericToolkit {
 	private boolean updateMemcache(Entity e){
 		Entity[] tmpList;
 		Entity m;
-		int index = hourToIndex((String) e.getProperty("hour"), true);
+		int index = hourToIndex((String) e.getProperty("hour"), (Boolean) e.getProperty("seller"));
 		String profile = (String) e.getProperty("profile");
-		//first check if profile exists
-		if(!syncCache.contains(profile))
-			return false;
-		else
+		//first check if profile exists - if not, add it!!!!
+//		System.out.println("updateMemCache::1");
+		if(!syncCache.contains(profile)){
+			tmpList = new Entity[48];
+			tmpList[index] = e;
+			syncCache.put(profile, tmpList);
+			return true;
+		}else
 			tmpList = (Entity[]) syncCache.get(profile);
 		
+//		System.out.println("updateMemCache::2");
+		if (tmpList==null)
+			return false;
+//		System.out.println("updateMemCache::3");
 		m = tmpList[index];
 		
+		if(m==null){
+			tmpList[index] = e;
+			syncCache.put(profile, tmpList);
+			return true;
+		}
+
+//		System.out.println("updateMemCache::4");
 		if((Boolean) m.getProperty("seller")){
 			//compare
-			if(Double.valueOf((String) m.getProperty("price")) <= Double.valueOf((String) e.getProperty("price")))
+//			System.out.println("updateMemCache::5");
+			if((Double) m.getProperty("price") <= (Double) e.getProperty("price"))
 				return false;
 		}else{
-			if(Double.valueOf((String) m.getProperty("price")) >= Double.valueOf((String) e.getProperty("price")))
+//			System.out.println("updateMemCache::6");
+			if((Double) m.getProperty("price") >= (Double) e.getProperty("price"))
 				return false;
 		}
-		
+//		System.out.println("updateMemCache::7");
 		tmpList[index] = e;
 		syncCache.put(profile, tmpList);
 		return true;

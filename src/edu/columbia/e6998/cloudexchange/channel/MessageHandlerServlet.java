@@ -100,6 +100,12 @@ public class MessageHandlerServlet extends HttpServlet {
 		 */
 	
 		System.out.println("msg recv: " + msg_type);
+		Msg msg_temp = new Msg(msg_type, req.getParameter("action").trim(),
+				  req.getParameter("price").trim(),
+				  req.getParameter("qty").trim(),
+				  req.getParameter("key").trim()); 
+
+		msg_temp.printString();
 		
 		/*update: action of bid, offer, cancel*/
 		if (msg_type.equals("update")) {
@@ -123,7 +129,8 @@ public class MessageHandlerServlet extends HttpServlet {
 			
 			/*propagate the message to clients*/
 			if(msg != null){
-				msg.printString();
+				//System.out.println("Datastore says:");
+				//msg.printString();
 				sendUpdates(msg);
 			}else{
 				//do nottin mon!
