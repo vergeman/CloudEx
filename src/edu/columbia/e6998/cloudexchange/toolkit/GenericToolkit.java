@@ -335,6 +335,7 @@ public class GenericToolkit {
 			return false;
 		else
 			tmpList = (Entity[]) syncCache.get(profile);
+		
 		m = tmpList[index];
 		
 		if((Boolean) m.getProperty("seller")){
@@ -397,14 +398,14 @@ public class GenericToolkit {
 //		s+= "\n";
 //		s+= createBidOffer("0000000020110101", 0.3, "batman", "06");
 //		s+= "\n";
-		s+="Query Data Store:\n";
-		s+= dumpMemCache();
+//		s+="Query Data Store:\n";
+//		s+= dumpMemCache();
 //		s+= "\n";
 //
-		s+= createTransaction("0000000020111216", "01", "joker", "ami", "SG", "KP");
-		s+= "\n";
-		s+= "After Buy:\n";
-		s+= dumpMemCache();
+//		s+= createTransaction("0000000020111216", "01", "joker", "ami", "SG", "KP");
+//		s+= "\n";
+//		s+= "After Buy:\n";
+//		s+= dumpMemCache();
 //		for(int i = 0; i <= 100000; i++){
 //			//do nottin mon
 //		}
