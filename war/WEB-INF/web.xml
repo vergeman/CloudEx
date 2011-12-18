@@ -89,7 +89,17 @@
 		<servlet-name>DisconnectHandlerServlet</servlet-name>
 		<servlet-class>edu.columbia.e6998.cloudexchange.channel.DisconnectHandlerServlet</servlet-class>
 	</servlet>  
-	
+
+<!-- spotPRICE servlet -->
+	<servlet-mapping>
+		<servlet-name>PriceQueueServlet</servlet-name>
+		<url-pattern>/marketprice</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>PriceQueueServlet</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.aws.spotprices.PriceQueueServlet</servlet-class>
+	</servlet>
 	
  <!--  main "viewer" - exchange screen -->
   <servlet>

@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 
+import edu.columbia.e6998.cloudexchange.aws.spotprices.SpotPriceManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 @SuppressWarnings("serial")
@@ -25,7 +26,13 @@ public class LaunchServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-
+		
+		/*
+		SpotPriceManager sm = new SpotPriceManager(new CredentialsManager());
+		String price = sm.getSpotprice("0000000020110101");
+		System.out.println(price);
+		*/
+		
 		List<Entity> entities = 
 			GenericToolkit.getInstance().getOpenTransactions();
 		
@@ -35,7 +42,7 @@ public class LaunchServlet extends HttpServlet {
 		int currentHour = currentTime.get(Calendar.HOUR_OF_DAY); // get hour in 24-hour format
 		int currentDate = currentTime.get(Calendar.DAY_OF_YEAR); // get date
 		int currentYear = currentTime.get(Calendar.YEAR);
-		
+	
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 		
 		//log.info("Current time:" + currentHour + " hrs " + currentDate + " " + currentYear);
