@@ -1,6 +1,10 @@
 package edu.columbia.e6998.cloudexchange.aws;
 
-public class InstanceConfiguration {
+import java.io.Serializable;
+
+public class InstanceConfiguration implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	public String instanceType;	//micro, large
 	public String region;			//usa, jp etc

@@ -1,6 +1,10 @@
 package edu.columbia.e6998.cloudexchange.aws;
 
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -13,8 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreInputStream;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.repackaged.com.google.common.util.Base64;
 
 import edu.columbia.e6998.cloudexchange.aws.spotprices.SpotPriceManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
@@ -75,7 +81,7 @@ public class LaunchServlet extends HttpServlet {
 			
 						String blobKeyString = (String) userProfile.getProperty("CredentialsBlobKey");
 						BlobKey blobKey = new BlobKey(blobKeyString);
-						BlobstoreInputStream iStream = new BlobstoreInputStream(blobKey);
+						//BlobstoreInputStream iStream = new BlobstoreInputStream(blobKey);
 					
 						// Get launch configuration
 						InstanceConfiguration config = new InstanceConfiguration();
@@ -86,10 +92,33 @@ public class LaunchServlet extends HttpServlet {
 						config.securityGroup = (String) e.getProperty("securityGroup");
 						config.keyPair = (String) e.getProperty("keyPair");
 					
-						// TODO: Add to task queue instead of launching
-						log.info("Launching instance on behalf of " + tUserId);
-						SpotInstanceLauncher sl = new SpotInstanceLauncher(resp, iStream, config);
-						sl.run();
+						// Serialize config
+						ByteArrayOutputStream bosConfig = new ByteArrayOutputStream();
+						ObjectOutputStream outConfig = new ObjectOutputStream(bosConfig);
+						outConfig.writeObject(config);
+						outConfig.close();
+						
+						// Serialize blobKey
+						ByteArrayOutputStream bosBlob = new ByteArrayOutputStream();
+						ObjectOutputStream outBlob = new ObjectOutputStream(bosBlob);
+						outBlob.writeObject(blobKey);
+						outBlob.close();
+						
+						// Get datastore key to update transaction once the instance is launched
+						Key transactionKey = e.getKey();
+						// Serialize transaction datastore key
+						ByteArrayOutputStream bosKey = new ByteArrayOutputStream();
+						ObjectOutputStream outKey = new ObjectOutputStream(bosKey);
+						outKey.writeObject(transactionKey);
+						outKey.close();
+						
+						// Add to the worker queue
+						log.info("Adding to queue...");
+						
+						queue.add(withUrl("/worker").
+								param("config", Base64.encode(bosConfig.toByteArray())).
+								param("credentials", Base64.encode(bosBlob.toByteArray())).
+								param("key", Base64.encode(bosKey.toByteArray())));
 					}
 				}
 			}

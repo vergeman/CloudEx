@@ -1,10 +1,14 @@
 package edu.columbia.e6998.cloudexchange.aws;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.amazonaws.AmazonServiceException;
@@ -19,30 +23,63 @@ import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesResult;
 import com.amazonaws.services.ec2.model.SpotInstanceRequest;
 
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreInputStream;
+import com.google.appengine.api.datastore.Key;
+
+import com.google.appengine.repackaged.com.google.common.util.Base64;
+import com.google.appengine.repackaged.com.google.common.util.Base64DecoderException;
+
+import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
+
 import java.util.logging.Logger;
 
-public class SpotInstanceLauncher {
+@SuppressWarnings("serial")
+public class SpotInstanceLauncher extends HttpServlet {
 	
 	private static final Logger log = Logger.getLogger(SpotInstanceLauncher.class.getName());
-
-	private InputStream credentialsInputStream; 
-	private InstanceConfiguration config;
 	
-	public SpotInstanceLauncher(HttpServletResponse resp, InputStream credentialsInputStream, InstanceConfiguration config) {
-		this.credentialsInputStream = credentialsInputStream;
-		this.config = config;
-	}
-	
-	public void run() {
-
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+	throws IOException {
+		
+		log.info("Queue PUSH request received");
 		AWSCredentials credentials = null;
+	    InstanceConfiguration config = null;
+	    Key key = null;
 		try {
+			log.info("Decoding config");
+			String s = "";
+			
+			byte[] configBytes = Base64.decode((String)req.getParameter("config"));
+			byte[] blobKeyBytes = Base64.decode((String)req.getParameter("credentials"));
+			log.info("Decoding key");
+			byte[] transactionKeyBytes = Base64.decode((String)req.getParameter("key"));
+			
+			ObjectInputStream inConfig = new ObjectInputStream(new ByteArrayInputStream(configBytes));
+			ObjectInputStream inBlob = new ObjectInputStream(new ByteArrayInputStream(blobKeyBytes));
+			ObjectInputStream inTransactionKey = new ObjectInputStream(new ByteArrayInputStream(transactionKeyBytes));
+			
+			config = (InstanceConfiguration) inConfig.readObject();
+			inConfig.close();
+			
+			BlobKey blobKey = (BlobKey) inBlob.readObject();
+			inBlob.close();
+			
+			key = (Key) inTransactionKey.readObject();
+			inTransactionKey.close();
+			
+			BlobstoreInputStream credentialsInputStream = new BlobstoreInputStream(blobKey);
+			
 			// Trying buyer's credentials file from blobstore
 			credentials = new PropertiesCredentials(credentialsInputStream);
 			
 		} catch (IOException e1) {
 			log.severe("Credentials were not properly entered into AwsCredentials.properties.");
 			log.severe(e1.getMessage());
+		} catch (Base64DecoderException ne) {
+			log.severe(ne.getMessage());
+		} catch (ClassNotFoundException ne) {
+			log.severe(ne.getMessage());
 		}
 		
 		try {
@@ -125,8 +162,15 @@ public class SpotInstanceLauncher {
 	            			anyOpen = true;
 	            			break;
 	            		}
+	            		
+	            		// Update transaction with new instanceID
+	            		String instanceId = describeResponse.getInstanceId();
+	            		GenericToolkit.getInstance().updateTransaction(key, "instanceID", instanceId);
+	            	
 	            		// Add the instance id to the list we will eventually terminate.
-	        			instanceIds.add(describeResponse.getInstanceId());
+	            		instanceIds.add(describeResponse.getInstanceId());
+	            		
+	            		//TODO: email buyer & seller
 	            }
 	    	} catch (AmazonServiceException e) {
 	            // If we have an exception, ensure we don't break out of the loop.
@@ -145,5 +189,5 @@ public class SpotInstanceLauncher {
 		} catch (Exception e) {
 			log.severe(e.getMessage());
 		}
-	}
+	}	
 }

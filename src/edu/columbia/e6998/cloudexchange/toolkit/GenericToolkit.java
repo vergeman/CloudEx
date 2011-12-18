@@ -327,6 +327,16 @@ public class GenericToolkit {
 		return openTransactions;
 	}
 	
+	public void updateTransaction(Key key, String propertyName, String value) {
+		try {
+			Entity transaction = datastore.get(key);
+			transaction.setProperty("instanceID", value);
+			datastore.put(transaction);
+		} catch (EntityNotFoundException e) {
+			System.err.print(e.getMessage());
+		}
+	}
+	
 	// Get user profile entity for a specified userId
 	public Entity getUserProfileForUser(String userId) {
 		Query q = new Query("UserProfile");

@@ -88,7 +88,19 @@
 	<servlet>
 		<servlet-name>DisconnectHandlerServlet</servlet-name>
 		<servlet-class>edu.columbia.e6998.cloudexchange.channel.DisconnectHandlerServlet</servlet-class>
-	</servlet>  
+	</servlet>
+	  
+<!-- instance launch worker servlet -->
+	<servlet-mapping>
+		<servlet-name>SpotInstanceLauncher</servlet-name>
+		<url-pattern>/worker</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SpotInstanceLauncher</servlet-name>
+		<servlet-class>edu.columbia.e6998.cloudexchange.aws.SpotInstanceLauncher</servlet-class>
+	</servlet>	
+	
 
 <!-- spotPRICE servlet -->
 	<servlet-mapping>
