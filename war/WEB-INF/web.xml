@@ -52,11 +52,6 @@
 		<url-pattern>/serve</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>TransactionHandler</servlet-name>
-		<servlet-class>edu.columbia.e6998.cloudexchange.datastore.TransactionHandler</servlet-class>
-	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>BlobServeHandler</servlet-name>
 		<url-pattern>/serve</url-pattern>

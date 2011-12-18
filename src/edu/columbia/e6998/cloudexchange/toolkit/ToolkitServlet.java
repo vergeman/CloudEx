@@ -17,7 +17,7 @@ public class ToolkitServlet extends HttpServlet {
 		String date = (String) req.getParameter("d");
 		String time = (String) req.getParameter("t");
 		 
-		GenericToolkit asd = new GenericToolkit();
+		GenericToolkit asd = GenericToolkit.getInstance();
 		resp.getWriter().write(asd.createTestTransaction(date, time));
 		
 	

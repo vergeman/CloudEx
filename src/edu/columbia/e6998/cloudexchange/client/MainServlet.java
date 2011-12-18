@@ -106,8 +106,6 @@ public class MainServlet extends HttpServlet {
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		
-		GenericToolkit gt = new GenericToolkit();
 
 		String msg_type = req.getParameter("msg");
 
@@ -167,7 +165,7 @@ public class MainServlet extends HttpServlet {
 		Calendar day = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd");
 
-		GenericToolkit gt = new GenericToolkit();
+		GenericToolkit gt = GenericToolkit.getInstance();
 
 		
 		for (int d = 0; d < NUM_DAYS; d++) {

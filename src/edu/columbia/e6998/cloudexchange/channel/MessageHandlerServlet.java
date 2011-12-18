@@ -118,7 +118,7 @@ public class MessageHandlerServlet extends HttpServlet {
 			
 			
 			/*do appropriate datastore handling for a bid offer cancel action */
-			GenericToolkit gt = new GenericToolkit();
+			GenericToolkit gt = GenericToolkit.getInstance();
 
 			
 			gt.createBidOffer(msg.key.substring(0, 16),

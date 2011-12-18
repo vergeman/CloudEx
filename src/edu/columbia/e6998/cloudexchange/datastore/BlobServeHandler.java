@@ -30,12 +30,12 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
+
 @SuppressWarnings("serial")
 public class BlobServeHandler extends HttpServlet {
 
 	//private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	//private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
 	
 	final String destination = "/views/account.jsp";
 
@@ -44,13 +44,10 @@ public class BlobServeHandler extends HttpServlet {
 		throws ServletException, IOException {
 
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-		PrintWriter out = resp.getWriter();
+		//PrintWriter out = resp.getWriter();
 		String fileName = null;
-
-		// 	Store the blob key in user table
-		Query q = new Query("UserProfile");
-		q.addFilter("userId", Query.FilterOperator.EQUAL, userId);
-		Entity userProfile = datastore.prepare(q).asSingleEntity();
+		
+		Entity userProfile = getUserProfile(userId);
 
 		// if userProfile does not exist, create entry in the database
 		if (userProfile == null) {
@@ -63,7 +60,7 @@ public class BlobServeHandler extends HttpServlet {
 			fileName = bInfo.getFilename() + " created at "+ bInfo.getCreation().toString();
 		}
 
-		System.out.println("fileName:" + fileName);
+		//System.out.println("fileName:" + fileName);
 		req.setAttribute("fileName", fileName);
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
 		try {
@@ -77,5 +74,10 @@ public class BlobServeHandler extends HttpServlet {
 		throws ServletException, IOException {
 		doGet(req, resp);
 	}
+	
+	public Entity getUserProfile(String userId) {
+		return GenericToolkit.getInstance().getUserProfileForUser(userId);
+	}
+	
 }
 
