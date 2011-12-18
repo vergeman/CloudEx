@@ -19,6 +19,7 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsRequest;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsResult;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
+import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesResult;
 import com.amazonaws.services.ec2.model.SpotInstanceRequest;
@@ -47,12 +48,8 @@ public class SpotInstanceLauncher extends HttpServlet {
 	    InstanceConfiguration config = null;
 	    Key key = null;
 		try {
-			log.info("Decoding config");
-			String s = "";
-			
 			byte[] configBytes = Base64.decode((String)req.getParameter("config"));
 			byte[] blobKeyBytes = Base64.decode((String)req.getParameter("credentials"));
-			log.info("Decoding key");
 			byte[] transactionKeyBytes = Base64.decode((String)req.getParameter("key"));
 			
 			ObjectInputStream inConfig = new ObjectInputStream(new ByteArrayInputStream(configBytes));
@@ -91,13 +88,18 @@ public class SpotInstanceLauncher extends HttpServlet {
     	RequestSpotInstancesRequest requestRequest = new RequestSpotInstancesRequest();
    
     	// TODO: Get spot prices here to make an educated bid	 
-    	requestRequest.setSpotPrice("1");
+    	requestRequest.setSpotPrice("10");
     	requestRequest.setInstanceCount(Integer.valueOf(1));
     	
     	// Setup the specifications of the launch. This includes the instance type (e.g. t1.micro)
     	// and the latest Amazon Linux AMI id available. Note, you should always use the latest 
     	// Amazon Linux AMI id or another of your choosing.
     	LaunchSpecification launchSpecification = new LaunchSpecification();
+    	
+    	Placement placement = new Placement();
+    	placement.setAvailabilityZone(config.zone);
+    	
+    	launchSpecification.setPlacement(placement);
     	launchSpecification.setKeyName(config.keyPair);
     	launchSpecification.setInstanceType(config.instanceType);
     	launchSpecification.setImageId(config.ami);
@@ -163,14 +165,17 @@ public class SpotInstanceLauncher extends HttpServlet {
 	            			break;
 	            		}
 	            		
-	            		// Update transaction with new instanceID
-	            		String instanceId = describeResponse.getInstanceId();
-	            		GenericToolkit.getInstance().updateTransaction(key, "instanceID", instanceId);
+	            		// Update transaction with new instanceID and price
+	            		String priceExecuted = describeResponse.getSpotPrice();
+	            		
+	            		GenericToolkit.getInstance().updateTransaction(key, "instanceID",  describeResponse.getInstanceId());
+	            		GenericToolkit.getInstance().updateTransaction(key, "priceExecuted", priceExecuted);
 	            	
 	            		// Add the instance id to the list we will eventually terminate.
 	            		instanceIds.add(describeResponse.getInstanceId());
 	            		
 	            		//TODO: email buyer & seller
+	            		
 	            }
 	    	} catch (AmazonServiceException e) {
 	            // If we have an exception, ensure we don't break out of the loop.
@@ -180,7 +185,7 @@ public class SpotInstanceLauncher extends HttpServlet {
 	
 	    	try {
 		    	// Sleep for 60 seconds.
-		    	Thread.sleep(60*1000);
+		    	Thread.sleep(30*1000);
 	    	} catch (Exception e) {
 	    		// Do nothing because it woke up early.
 	    	}

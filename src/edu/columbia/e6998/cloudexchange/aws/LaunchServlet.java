@@ -29,6 +29,7 @@ import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 public class LaunchServlet extends HttpServlet {
 	
 	private static final Logger log = Logger.getLogger(LaunchServlet.class.getName());
+	private static final int ETA_TIME = 5*60*1000; // Approximate time to execute task, set to 5 mins
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -73,7 +74,7 @@ public class LaunchServlet extends HttpServlet {
 						currentYear == tDate.get(Calendar.YEAR)) {
 					
 					// Check if hour is the same hour or previous hour in case we missed smth
-					if (currentHour == tHour || currentHour == tHour-1 ) {
+					if (tHour == currentHour || tHour == currentHour-1 ) {
 	
 						// Get input stream for credentials file
 						Entity userProfile = 
@@ -118,7 +119,8 @@ public class LaunchServlet extends HttpServlet {
 						queue.add(withUrl("/worker").
 								param("config", Base64.encode(bosConfig.toByteArray())).
 								param("credentials", Base64.encode(bosBlob.toByteArray())).
-								param("key", Base64.encode(bosKey.toByteArray())));
+								param("key", Base64.encode(bosKey.toByteArray())).
+								etaMillis(ETA_TIME));
 					}
 				}
 			}
