@@ -331,6 +331,7 @@ public class GenericToolkit {
 		return openTransactions;
 	}
 	
+	// update transaction entry once the instance is launched
 	public void updateTransaction(Key key, String propertyName, String value) {
 		try {
 			Entity transaction = datastore.get(key);

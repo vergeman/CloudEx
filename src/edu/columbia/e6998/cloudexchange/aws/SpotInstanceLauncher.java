@@ -90,9 +90,9 @@ public class SpotInstanceLauncher extends HttpServlet {
     	RequestSpotInstancesRequest requestRequest = new RequestSpotInstancesRequest();
    
     	// TODO: Get spot prices here to make an educated bid	 
-    	// Increase current spot price by 10% to make sure we get an instance
+    	// Increase current spot price by $1 to make sure we get an instance
     	Double currentSpotPrice = Double.parseDouble(price);
-    	Double bidPrice = currentSpotPrice * 1.1;
+    	Double bidPrice = currentSpotPrice + 1;
     	requestRequest.setSpotPrice(bidPrice.toString());
     	requestRequest.setInstanceCount(Integer.valueOf(1));
     	

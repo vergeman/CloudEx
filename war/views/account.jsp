@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-<%@ page
-	import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"%>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"%>
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreService"%>
+<%@ page import="java.util.*"%>
+<%@ page import="edu.columbia.e6998.cloudexchange.client.PositionEntry"%>
 
 <%
 	BlobstoreService blobstoreService = BlobstoreServiceFactory
@@ -42,21 +43,60 @@
 <td id="mainTableCell">
 <div id="center">
 <b>My Portfolio</b>
+<br><br>
+
+ <%
+ 	ArrayList<PositionEntry> entries = null;
+ 	try {
+ 		entries = (ArrayList<PositionEntry>) request.getAttribute("positions");
+ 	} catch (Exception e) {
+ 		// oops
+ 	}
+ 	if (entries == null) {
+ 		out.println("<a> You have no positions in your portfolio </a>");
+ 	} else if (entries.size() == 0) {
+ 		out.println("<a> You have no positions in your portfolio </a>");
+ 	} else {
+ 		
+ %>
 <table class="positionTable">
 		<tr>
 			<td align=center><b>#</b></td>
 			<td align=center><b>Buy/Sell</b></td>
 			<td align=center><b>Date</b></td>
-			<td align=center><b>Time</b></td>
 			<td align=center><b>Ami</b></td>
-			<td align=center><b>Instance</b></td>
+			<td align=center><b>Instance Type</b></td>
 			<td align=center><b>Region</b></td>
 			<td align=center><b>Zone</b></td>
 			<td align=center><b>Contract price</b></td>
+			<td align=center><b>Bid/Ask price</b></td>
 			<td align=center><b>Spot price</b></td>
 		</tr>
+		
+		<%
+		
+		int i = 1;
+		for (PositionEntry e : entries) {
+			out.println("<tr>");
+			out.println("<td>" + i + "</td>");
+			out.println("<td>" + e.buyOrSell + "</td>");
+			out.println("<td>" + e.date.toString() + "</td>");
+			out.println("<td>" + e.ami + "</td>");
+			out.println("<td>" + e.instance + "</td>");
+			out.println("<td>" + e.region + "</td>");
+			out.println("<td>" + e.zone + "</td>");
+			out.println("<td>" + e.contractPrice + "</td>");
+			out.println("<td>" + e.bidAskPrice + "</td>");
+			out.println("<td>" + e.spotPrice + "</td>");
+			out.println("</tr>");
+		}
+		%>
 </table>
 </div>
+<%
+	// end of big else
+ 	}
+%>
 </td>
 </tr>
 </table>
