@@ -15,6 +15,7 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.channel.Msg.*;
 import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
@@ -36,6 +37,7 @@ import com.google.appengine.repackaged.org.json.JSONObject;
  */
 @SuppressWarnings("serial")
 public class MessageHandlerServlet extends HttpServlet {
+
 
 	private void sendUpdates(Msg msg) {
 		/*need to get all users and send messages to them*/
@@ -106,37 +108,72 @@ public class MessageHandlerServlet extends HttpServlet {
 				  req.getParameter("key").trim()); 
 
 		msg_temp.printString();
+		/*need validation checks*/
+		//TODO: is it a valid message?
+				//a logged in user
+				//legitimate data
+		//TODO: are they allowed to do this (i.e. not their 100th instance, they have money)
+	
+	/*do appropriate datastore handling for a bid offer cancel action */
+		
+		Msg msg = null;
+		GenericToolkit gt = GenericToolkit.getInstance();	
+		String arrayIndex = String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length())));
+
+		switch(Msg.MsgType.valueOf(msg_temp.type)){
+			case	UPDATE:
+				switch(Msg.MsgAction.valueOf(msg_temp.action)){
+				case SELL:msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
+										  Double.parseDouble(req.getParameter("price").trim()),
+										  userId, 
+										  arrayIndex);
+				case BUY:msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
+						  Double.parseDouble(req.getParameter("price").trim()),
+						  userId, 
+						  arrayIndex);
+				case CANCEL:msg = gt.createTransaction(req.getParameter("key").trim().substring(0, 16),
+						arrayIndex,
+						userId,
+						req.getParameter("ami").trim(),
+						req.getParameter("SG").trim(),
+						req.getParameter("KP").trim());
+				default:
+					break;
+				}
+				break;
+		case	REFRESH: 
+				break;
+		case	LAUNCH: 
+				break;
+		
+		default :
+			break;
+		}
+		
+		/*propagate the message to clients*/
+		if(msg != null){
+			//System.out.println("Datastore says:");
+			//msg.printString();
+			sendUpdates(msg);
+		}else{
+			//do nottin mon!
+		}
 		
 		/*update: action of bid, offer, cancel*/
-		if (msg_type.equals("update")) {
-			
-			Msg msg = null;
-			
-			/*need validation checks*/
-				//TODO: is it a valid message?
-						//a logged in user
-						//legitimate data
-				//TODO: are they allowed to do this (i.e. not their 100th instance, they have money)
-			
-			/*do appropriate datastore handling for a bid offer cancel action */
-			GenericToolkit gt = GenericToolkit.getInstance();
-			
-			msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
-							  Double.parseDouble(req.getParameter("price").trim()),
-							  userId, 
-							  String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length()))));
-								//ugly i know...
-			
-			/*propagate the message to clients*/
-			if(msg != null){
-				//System.out.println("Datastore says:");
-				//msg.printString();
-				sendUpdates(msg);
-			}else{
-				//do nottin mon!
-			}
-			
-		}
+//		if (msg_type.equals("update")) {
+//
+//		
+//			GenericToolkit gt = GenericToolkit.getInstance();
+//			
+//			msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
+//							  Double.parseDouble(req.getParameter("price").trim()),
+//							  userId, 
+//							  String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length()))));
+//								//ugly i know...
+//			
+//
+//			
+//		}
 
 	}
 	

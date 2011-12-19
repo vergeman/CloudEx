@@ -13,6 +13,43 @@ public class Msg {
 	String qty = null;
 	String key = null;
 
+	public enum MsgType{
+		UPDATE	("update"),
+		REFRESH	("refresh"),
+		LAUNCH	("launch"),
+		CONFIRM	("confirm");
+				
+		private final String message;
+		
+		MsgType(String message){
+			this.message = message;
+		}
+		
+		public final String getMessage(){
+			return this.message;
+		}
+		
+	}
+	
+	public enum MsgAction{
+		BUY 	("buy"),
+		SELL	("sell"),
+		CANCEL	("cancel"),
+		EMAIL	("email"),
+		CONFIRM ("confirm");
+		
+		private final String action;
+		
+		MsgAction(String action){
+			this.action = action;
+		}
+		
+		public String getAction(){
+			return this.action;
+		}
+		
+	}
+	
 	public Msg(String type, String action, String price, String qty, String key) {
 		this.type = type;
 		this.action = action;

@@ -293,6 +293,7 @@ public class GenericToolkit {
 		transaction.setProperty("keyPair",			keyPairName);
 		transaction.setProperty("instanceID", 		"N/A");
 		transaction.setProperty("priceExecuted", 	"N/A");
+		
 		datastore.put(transaction);
 		deleteBidOffer(profile, arrayIndex);
 		//return "read_memcache::" + profile + "_" + arrayIndex;
