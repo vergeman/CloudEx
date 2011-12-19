@@ -1,12 +1,14 @@
 package edu.columbia.e6998.cloudexchange.aws.spotprices;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.DescribeSpotPriceHistoryRequest;
@@ -36,6 +38,14 @@ public class SpotPriceManager {
 		ec2 = new AmazonEC2Client(credentials.getCredentials());
 	}
 	
+	public SpotPriceManager (InputStream inputStream) {
+		try {
+			ec2 = new AmazonEC2Client(new PropertiesCredentials(inputStream));
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
 	
 	public String getSpotprice(String profile) {
 		
@@ -60,6 +70,8 @@ public class SpotPriceManager {
 		 * set the taskname to hack a "singleton" queue type
 		 */
 
+		// Eugene: commented for now as it was causing some weird unstoppable calls to /marketprice
+		/**
 		try {
 			Queue queue = QueueFactory.getDefaultQueue();
 			queue.add(withUrl("/marketprice").taskName(profile).param("profile", profile).countdownMillis(DEFER_TIME));
@@ -69,35 +81,38 @@ public class SpotPriceManager {
 	    System.out.println("now " + now.getTime().toString());
 	    System.out.println(sp.getTimestamp().toString());
 	    System.out.println(sp.toString());
-	    
+	    */
 		return sp.getSpotPrice();
 	}
 	
 	
 	private SpotPrice queryDataStore(SpotPriceRequest spr) {
 
-		/* check memcache */
-
-		/* build query */
-		//TODO: optimize query
-		Query q = new Query("SpotPrice");
-		q.addFilter("zone", Query.FilterOperator.EQUAL, spr.getZone());
-		q.addFilter("description", Query.FilterOperator.EQUAL, spr.getDescription());
-		q.addFilter("instance", Query.FilterOperator.EQUAL, spr.getInstanceType());
-		q.addSort("timestamp", SortDirection.DESCENDING);
-
-		PreparedQuery pq = datastore.prepare(q);
-
 		SpotPrice sp = new SpotPrice();
+		
+		try {
+			/* check memcache */
 
-		for (Entity e : pq.asIterable(FetchOptions.Builder.withLimit(1))) {
-			sp.setAvailabilityZone((String) e.getProperty("zone"));
-			sp.setProductDescription((String) e.getProperty("description"));
-			sp.setInstanceType((String) e.getProperty("instance"));
-			sp.setTimestamp((Date) e.getProperty("timestamp"));
-			sp.setSpotPrice((String) e.getProperty("price"));
+			/* build query */
+			//TODO: optimize query
+			Query q = new Query("SpotPrice");
+			q.addFilter("zone", Query.FilterOperator.EQUAL, spr.getZone());
+			q.addFilter("description", Query.FilterOperator.EQUAL, spr.getDescription());
+			q.addFilter("instance", Query.FilterOperator.EQUAL, spr.getInstanceType());
+			q.addSort("timestamp", SortDirection.DESCENDING);
+
+			PreparedQuery pq = datastore.prepare(q);
+		
+			for (Entity e : pq.asIterable(FetchOptions.Builder.withLimit(1))) {
+				sp.setAvailabilityZone((String) e.getProperty("zone"));
+				sp.setProductDescription((String) e.getProperty("description"));
+				sp.setInstanceType((String) e.getProperty("instance"));
+				sp.setTimestamp((Date) e.getProperty("timestamp"));
+				sp.setSpotPrice((String) e.getProperty("price"));
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
-
 		return sp;
 	}
 	

@@ -278,6 +278,7 @@ public class GenericToolkit {
 		String[] lookup = reverseLookUpProfile(profile);
 		
 		Entity transaction = new Entity("Transaction");
+		transaction.setProperty("profile",profile);
 		transaction.setProperty("buyer", buyer);
 		transaction.setProperty("seller", 			offer.getProperty("user"));
 		transaction.setProperty("is_buy", 			offer.getProperty("seller"));
@@ -301,6 +302,7 @@ public class GenericToolkit {
 	public String createTestTransaction(String date, String time) {
 		
 		Entity transaction = new Entity("Transaction");
+		transaction.setProperty("profile", "0000000020110101");
 		transaction.setProperty("buyer", "114224896744063045840"); // fedotoveugene@gmail.com
 		transaction.setProperty("seller", "110709289717792221869"); // 
 		transaction.setProperty("is_buy", true);

@@ -34,12 +34,6 @@ public class LaunchServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
-		/*
-		SpotPriceManager sm = new SpotPriceManager(new CredentialsManager());
-		String price = sm.getSpotprice("0000000020110101");
-		System.out.println(price);
-		*/
-		
 		List<Entity> entities = 
 			GenericToolkit.getInstance().getOpenTransactions();
 		
@@ -74,6 +68,8 @@ public class LaunchServlet extends HttpServlet {
 						currentYear == tDate.get(Calendar.YEAR)) {
 					
 					// Check if hour is the same hour or previous hour in case we missed smth
+					
+					// TODO: Use Calendar.add(Calendar.HOUR, -1) instead of currentHour-1
 					if (tHour == currentHour || tHour == currentHour-1 ) {
 	
 						// Get input stream for credentials file
@@ -82,7 +78,7 @@ public class LaunchServlet extends HttpServlet {
 			
 						String blobKeyString = (String) userProfile.getProperty("CredentialsBlobKey");
 						BlobKey blobKey = new BlobKey(blobKeyString);
-						//BlobstoreInputStream iStream = new BlobstoreInputStream(blobKey);
+						BlobstoreInputStream iStream = new BlobstoreInputStream(blobKey);
 					
 						// Get launch configuration
 						InstanceConfiguration config = new InstanceConfiguration();
@@ -92,6 +88,12 @@ public class LaunchServlet extends HttpServlet {
 						config.instanceType = (String) e.getProperty("instanceType");
 						config.securityGroup = (String) e.getProperty("securityGroup");
 						config.keyPair = (String) e.getProperty("keyPair");
+						
+						// Get profile
+						String profile = (String) e.getProperty("profile");
+
+						SpotPriceManager sm = new SpotPriceManager(iStream);
+						String price = sm.getSpotprice(profile);
 					
 						// Serialize config
 						ByteArrayOutputStream bosConfig = new ByteArrayOutputStream();
@@ -120,6 +122,7 @@ public class LaunchServlet extends HttpServlet {
 								param("config", Base64.encode(bosConfig.toByteArray())).
 								param("credentials", Base64.encode(bosBlob.toByteArray())).
 								param("key", Base64.encode(bosKey.toByteArray())).
+								param("price", price).
 								etaMillis(ETA_TIME));
 					}
 				}

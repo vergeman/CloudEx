@@ -2,7 +2,6 @@ package edu.columbia.e6998.cloudexchange.aws;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CancelSpotInstanceRequestsRequest;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsRequest;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsResult;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
@@ -47,10 +47,12 @@ public class SpotInstanceLauncher extends HttpServlet {
 		AWSCredentials credentials = null;
 	    InstanceConfiguration config = null;
 	    Key key = null;
+	    String price = null;
 		try {
 			byte[] configBytes = Base64.decode((String)req.getParameter("config"));
 			byte[] blobKeyBytes = Base64.decode((String)req.getParameter("credentials"));
 			byte[] transactionKeyBytes = Base64.decode((String)req.getParameter("key"));
+			price = (String) req.getParameter("price");
 			
 			ObjectInputStream inConfig = new ObjectInputStream(new ByteArrayInputStream(configBytes));
 			ObjectInputStream inBlob = new ObjectInputStream(new ByteArrayInputStream(blobKeyBytes));
@@ -88,7 +90,10 @@ public class SpotInstanceLauncher extends HttpServlet {
     	RequestSpotInstancesRequest requestRequest = new RequestSpotInstancesRequest();
    
     	// TODO: Get spot prices here to make an educated bid	 
-    	requestRequest.setSpotPrice("10");
+    	// Increase current spot price by 10% to make sure we get an instance
+    	Double currentSpotPrice = Double.parseDouble(price);
+    	Double bidPrice = currentSpotPrice * 1.1;
+    	requestRequest.setSpotPrice(bidPrice.toString());
     	requestRequest.setInstanceCount(Integer.valueOf(1));
     	
     	// Setup the specifications of the launch. This includes the instance type (e.g. t1.micro)
@@ -184,12 +189,16 @@ public class SpotInstanceLauncher extends HttpServlet {
 	        }
 	
 	    	try {
-		    	// Sleep for 60 seconds.
+		    	// Sleep for 30 seconds.
 		    	Thread.sleep(30*1000);
 	    	} catch (Exception e) {
 	    		// Do nothing because it woke up early.
 	    	}
 	    } while (anyOpen);
+	   
+        // Cancel requests.
+        CancelSpotInstanceRequestsRequest cancelRequest = new CancelSpotInstanceRequestsRequest(spotInstanceRequestIds);
+        ec2.cancelSpotInstanceRequests(cancelRequest);
 		
 		} catch (Exception e) {
 			log.severe(e.getMessage());
