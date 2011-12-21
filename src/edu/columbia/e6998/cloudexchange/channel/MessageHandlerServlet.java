@@ -71,7 +71,6 @@ public class MessageHandlerServlet extends HttpServlet {
 		 *keys later on..
 		 */
 		
-		System.out.println("messge prop:");
 		System.out.println(message.toString());
 		for (String user : users.values()) {
 			String channelKey = user;
@@ -104,8 +103,7 @@ public class MessageHandlerServlet extends HttpServlet {
 		 *determine which handler the bid/offer/some other kind message 
 		 *is to be passed on to
 		 */
-	
-		System.out.println("msg recv: " + msg_type);
+
 		
 		Msg msg = new Msg(msg_type,
 				  req.getParameter("action").trim(),
@@ -113,6 +111,8 @@ public class MessageHandlerServlet extends HttpServlet {
 				  req.getParameter("qty").trim(),
 				  req.getParameter("key").trim()); 
 
+		
+		System.out.println("msg recv: ");
 		msg.printString();
 		
 		/*need validation checks*/
@@ -181,9 +181,6 @@ public class MessageHandlerServlet extends HttpServlet {
 		
 		/*propagate the message to clients*/
 		if(msg != null){
-			//System.out.println("Datastore says:");
-			System.out.println("msg--string");
-			msg.printString();
 			sendUpdates(msg);
 		}else{
 			//do nottin mon!
