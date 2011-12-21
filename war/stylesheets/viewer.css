@@ -72,10 +72,10 @@ td, th {
 	cursor:pointer;
 }
 
-.hit {
+.lift {
 	background: green;
 }
-.lift {
+.hit {
 	background: #8B0000;
 }
 
