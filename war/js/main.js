@@ -24,13 +24,13 @@ $(document).ready(function() {
 
 	
 	$('#instancetype').change(function() {
-		update_data();
+		refresh_data();
 	});
 
 	
 	$('#selection li').click(function() {
 		
-		//update "selected"
+		//refresh "selected"
 		if(!$(this).hasClass("selected")) {
 			var classes = $(this).attr('class').split(' ');
 			var sel_class = classes[0];
@@ -39,7 +39,7 @@ $(document).ready(function() {
 			$('.' + sel_class).removeClass("selected");
 			$(this).addClass("selected");
 
-			//if we changed regions, we need to update availability zones
+			//if we changed regions, we need to refresh availability zones
 			if (sel_class == "regions") {
 				var region = $(this).attr('id');
 				$('.zones').css('display', 'none');
@@ -61,7 +61,7 @@ $(document).ready(function() {
 
 			// make post with block in message
         	
-			update_data();
+			refresh_data();
 		}
 	});
 	
@@ -81,7 +81,7 @@ $(document).ready(function() {
 					var channelkey = $('meta[name=channel_token]').attr("content");
 					var key = $(this).attr('data');
 					
-					var action = $('#dialog_action').val();
+					var action = $('#dialog_action').val().toUpperCase();
 					var qty = $('#dialog_qty').val();
 					var price = $('#dialog_price').val();
 					
@@ -94,7 +94,7 @@ $(document).ready(function() {
 				        url: '/message/',
 				        type: 'POST',
 				        data:{
-				            msg:"update",
+				            msg:"UPDATE",
 				            key:key,
 				            action:action,
 				            qty:qty,
@@ -168,7 +168,7 @@ function render(oldKeys, newKeys) {
 }
 
 
-function update_data() {
+function refresh_data() {
 
 	var data;
 	var out = new Object();
@@ -183,7 +183,7 @@ function update_data() {
 	        url: '/main',
 	        type: 'POST',
 	        data:{
-	        	msg:"update",
+	        	msg:"REFRESH",
 	        	data: out
 	        },
 	        success: function(data, textStatus){

@@ -153,13 +153,11 @@ public class GenericToolkit {
 			return results;	
 		
 		for(Entity t : (Entity[]) syncCache.get(profile)){
-			int i = 1;
 			if (t!= null){
 				if ((Boolean) t.getProperty("seller"))
-					i = 0;
-				//[2][24] - hourIndex unnecessary for now
-				results[i][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
-
+					results[1][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
+				else
+					results[0][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
 			}
 		}
 
@@ -255,7 +253,7 @@ public class GenericToolkit {
 							indexToHour(arrayIndex));
 		datastore.put(contract);
 		if (updateMemcache(contract))
-				return sendChannelMessage("update", "bidOffer", String.valueOf(price), "1", profile, arrayIndex);
+			return sendChannelMessage("UPDATE", "bidOffer", String.valueOf(price), "1", profile, arrayIndex);
 		else
 			return null;
 	}

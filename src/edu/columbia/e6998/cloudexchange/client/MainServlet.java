@@ -111,7 +111,7 @@ public class MainServlet extends HttpServlet {
 
 		
 		/*get block*/
-		if(msg_type.equals("update")) {
+		if(msg_type.equals("REFRESH")) {
 			String region = req.getParameter("data[region]");
 			String os = req.getParameter("data[os]");
 			String zone = req.getParameter("data[zone]");

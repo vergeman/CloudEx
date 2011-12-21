@@ -9,6 +9,7 @@ socket.onopen = function() {
 socket.onmessage = function(message) {
 	var data = $.parseJSON(message.data);
 	
+	
 	var msg = data['msg'][0];
 	var action = data['action'][0];
 	var key = data['key'][0];

@@ -6,7 +6,6 @@ import edu.columbia.e6998.cloudexchange.aws.AWSCodes.*;
 
 public class SpotPriceRequest {
 
-
 	private String profile;
 	
 	private Region region;
@@ -40,7 +39,6 @@ public class SpotPriceRequest {
 	}
 
 	public String getEndPoint() {
-		String z = zone.getZone();
 		return "ec2." + getRegion() + ".amazonaws.com";
 	}
 	

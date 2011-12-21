@@ -13,12 +13,16 @@ public class Msg {
 	String qty = null;
 	String key = null;
 
+	MsgType msg_type = null;
+	MsgAction msg_action = null;
+	
+	
 	public enum MsgType{
 		UPDATE	("update"),
 		REFRESH	("refresh"),
 		LAUNCH	("launch"),
 		CONFIRM	("confirm");
-				
+		
 		private final String message;
 		
 		MsgType(String message){
@@ -36,7 +40,8 @@ public class Msg {
 		SELL	("sell"),
 		CANCEL	("cancel"),
 		EMAIL	("email"),
-		CONFIRM ("confirm");
+		CONFIRM ("confirm"),
+		bidOffer ("bidOffer");	//i don't understand this datastore shouldn't be sending message types
 		
 		private final String action;
 		
@@ -56,6 +61,9 @@ public class Msg {
 		this.price = price;
 		this.qty = qty;
 		this.key = key;
+		
+		this.msg_type = MsgType.valueOf(type);
+		this.msg_action = MsgAction.valueOf(action);
 	}
 	
 	public String toString() {

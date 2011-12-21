@@ -47,18 +47,19 @@ public class MessageHandlerServlet extends HttpServlet {
 		
 		JSONObject message = null;
 		
-		System.out.println("Sending " + msg.toString());
+
 		
 		try {
 			message = new JSONObject();
 			message.append("msg", msg.type);
 			
-			if (msg.type.trim().equals("update")) {
+			//good lord
+			if (msg.msg_type.equals(MsgType.UPDATE)) {
 
-				message.append("action", msg.action.trim());
-				message.append("key", msg.key.trim());
-				message.append("price", msg.price.trim());
-				message.append("qty", msg.qty.trim());
+				message.append("action", msg.action);
+				message.append("key", msg.key);
+				message.append("price", msg.price);
+				message.append("qty", msg.qty);
 			}
 
 			
@@ -69,6 +70,9 @@ public class MessageHandlerServlet extends HttpServlet {
 		/*right now we are just going by userID, but they may be different 
 		 *keys later on..
 		 */
+		
+		System.out.println("messge prop:");
+		System.out.println(message.toString());
 		for (String user : users.values()) {
 			String channelKey = user;
 			try {
@@ -94,7 +98,7 @@ public class MessageHandlerServlet extends HttpServlet {
 		String userId = userService.getCurrentUser().getUserId();
 		
 		
-		String msg_type = req.getParameter("msg");
+		String msg_type = req.getParameter("msg").trim();
 		
 		/*here we handle the type of message and
 		 *determine which handler the bid/offer/some other kind message 
@@ -102,12 +106,15 @@ public class MessageHandlerServlet extends HttpServlet {
 		 */
 	
 		System.out.println("msg recv: " + msg_type);
-		Msg msg_temp = new Msg(msg_type, req.getParameter("action").trim(),
+		
+		Msg msg = new Msg(msg_type,
+				  req.getParameter("action").trim(),
 				  req.getParameter("price").trim(),
 				  req.getParameter("qty").trim(),
 				  req.getParameter("key").trim()); 
 
-		msg_temp.printString();
+		msg.printString();
+		
 		/*need validation checks*/
 		//TODO: is it a valid message?
 				//a logged in user
@@ -116,33 +123,55 @@ public class MessageHandlerServlet extends HttpServlet {
 	
 	/*do appropriate datastore handling for a bid offer cancel action */
 		
-		Msg msg = null;
-		GenericToolkit gt = GenericToolkit.getInstance();	
-		String arrayIndex = String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length())));
+		
+		GenericToolkit gt = GenericToolkit.getInstance();
+		
+		String arrayIndex = String.format("%02d", Integer.parseInt(msg.key.substring(16, msg.key.length())));
 
-		switch(Msg.MsgType.valueOf(msg_temp.type)){
+		switch(msg.msg_type){
+		
 			case	UPDATE:
-				switch(Msg.MsgAction.valueOf(msg_temp.action)){
-				case SELL:msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
-										  Double.parseDouble(req.getParameter("price").trim()),
-										  userId, 
-										  arrayIndex);
-				case BUY:msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
-						  Double.parseDouble(req.getParameter("price").trim()),
-						  userId, 
-						  arrayIndex);
-				case CANCEL:msg = gt.createTransaction(req.getParameter("key").trim().substring(0, 16),
-						arrayIndex,
-						userId,
-						req.getParameter("ami").trim(),
-						req.getParameter("SG").trim(),
-						req.getParameter("KP").trim());
-				default:
-					break;
-				}
+				
+				switch(msg.msg_action){
+					
+					case SELL:
+						
+						msg = gt.createBidOffer(msg.key.substring(0, 16),
+											  Double.parseDouble(msg.price),
+											  userId, 
+											  arrayIndex);
+						
+						break;
+						
+					case BUY:
+						
+						msg = gt.createBidOffer(msg.key.substring(0, 16),
+							  Double.parseDouble(msg.price),
+							  userId, 
+							  arrayIndex);
+						
+						break;
+						
+					case CANCEL:
+						//what is ami/sg/kp why would these parameters exist?
+						//why would a CANCEL action create a transaction?
+						msg = gt.createTransaction(msg.key.substring(0, 16),
+							arrayIndex,
+							userId,
+							req.getParameter("ami").trim(),
+							req.getParameter("SG").trim(),
+							req.getParameter("KP").trim());
+						break;
+						
+					default:
+						break;
+					}
+				
 				break;
+				
 		case	REFRESH: 
 				break;
+				
 		case	LAUNCH: 
 				break;
 		
@@ -153,27 +182,13 @@ public class MessageHandlerServlet extends HttpServlet {
 		/*propagate the message to clients*/
 		if(msg != null){
 			//System.out.println("Datastore says:");
-			//msg.printString();
+			System.out.println("msg--string");
+			msg.printString();
 			sendUpdates(msg);
 		}else{
 			//do nottin mon!
 		}
 		
-		/*update: action of bid, offer, cancel*/
-//		if (msg_type.equals("update")) {
-//
-//		
-//			GenericToolkit gt = GenericToolkit.getInstance();
-//			
-//			msg = gt.createBidOffer(req.getParameter("key").trim().substring(0, 16),
-//							  Double.parseDouble(req.getParameter("price").trim()),
-//							  userId, 
-//							  String.format("%02d", Integer.parseInt(req.getParameter("key").trim().substring(16, req.getParameter("key").trim().length()))));
-//								//ugly i know...
-//			
-//
-//			
-//		}
 
 	}
 	
