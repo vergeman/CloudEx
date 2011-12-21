@@ -100,7 +100,7 @@ $(document).ready(function() {
 		            price:price,
 		            channelkey:channelkey
 		        },
-		        success: function(data){},
+		        success: function(){},
 		        complete:function(){}
 		    });
 	

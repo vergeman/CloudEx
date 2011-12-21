@@ -9,18 +9,21 @@ socket.onopen = function() {
 socket.onmessage = function(message) {
 	var data = $.parseJSON(message.data);
 	
+	try {
+		var msg = data['msg'][0];
+		var action = data['action'][0];
+		var key = data['key'][0];
+		var price = data['price'][0];
+		var qty = data['qty'][0];
 	
-	var msg = data['msg'][0];
-	var action = data['action'][0];
-	var key = data['key'][0];
-	var price = data['price'][0];
-	var qty = data['qty'][0];
-
-	if ( $('#'+key).length > 0) {
-		
-		$('#' + key).html(price);
+		if ( $('#'+key).length > 0) {
+			
+			$('#' + key).html(price);
+		}
 	}
-	
+	catch(err) {
+		console.log("channel data rcv err");
+	}
 
 };
 
