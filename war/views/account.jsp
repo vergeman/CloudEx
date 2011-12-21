@@ -1,3 +1,4 @@
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"%>
@@ -24,28 +25,30 @@
 </div>
 
 <div id="main">
-<table>
-<tr>
-<td id="mainTableCell">
-<div id="left">
-<b>My Amazon Credentials</b>
-<br><br>
-<a>Current File:&nbsp ${fileName}</a>
-<br>
-<form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
-     <input type="file" name="myFile">
-     <br>
-     <input type="submit" value="Submit">
-     </form>
-</div>
-</td>
-
-<td id="mainTableCell">
-<div id="center">
-<b>My Portfolio</b>
-<br><br>
-
- <%
+	<table>
+		<tr>
+			<td id="mainTableCell">
+				<div id="left">
+					<b>My Amazon Credentials</b>
+					<br><br>
+					<a>Current File:&nbsp ${fileName}</a>
+					<br>
+					<br>
+					<form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
+     					<input type="file" name="myFile">
+     					<br>
+     					<br>
+     					<input type="submit" value="Submit">
+     				</form>
+				</div>
+			</td>
+			
+			<td id="mainTableCell">
+				<div id="center">
+					<b>My Portfolio</b>
+					<br><br>
+					
+<%
  	ArrayList<PositionEntry> entries = null;
  	try {
  		entries = (ArrayList<PositionEntry>) request.getAttribute("positions");
@@ -59,47 +62,52 @@
  	} else {
  		
  %>
-<table class="positionTable">
-		<tr>
-			<td align=center><b>#</b></td>
-			<td align=center><b>Buy/Sell</b></td>
-			<td align=center><b>Date</b></td>
-			<td align=center><b>Ami</b></td>
-			<td align=center><b>Instance Type</b></td>
-			<td align=center><b>Region</b></td>
-			<td align=center><b>Zone</b></td>
-			<td align=center><b>Contract price</b></td>
-			<td align=center><b>Bid/Ask price</b></td>
-			<td align=center><b>Spot price</b></td>
-		</tr>
-		
+				<table class="positionTable">
+					<tr>
+						<td align=center><b>#</b></td>
+						<td align=center><b>Buy/Sell</b></td>
+						<td align=center><b>Date/Time</b></td>
+						<td align=center><b>Region</b></td>
+						<td align=center><b>Zone</b></td>
+						<td align=center><b>Instance Type</b></td>
+						<td align=center><b>Ami</b></td>
+						<td align=center><b>Contract price</b></td>
+						<td align=center><b>Bid/Ask price</b></td>
+						<td align=center><b>Spot price</b></td>
+					</tr>
 		<%
-		
 		int i = 1;
+		SimpleDateFormat sfd = new SimpleDateFormat("MM/dd/yyyy hh a");
 		for (PositionEntry e : entries) {
 			out.println("<tr>");
 			out.println("<td>" + i + "</td>");
 			out.println("<td>" + e.buyOrSell + "</td>");
-			out.println("<td>" + e.date.toString() + "</td>");
-			out.println("<td>" + e.ami + "</td>");
-			out.println("<td>" + e.instance + "</td>");
+			out.println("<td>" + sfd.format(e.date) + "</td>");
 			out.println("<td>" + e.region + "</td>");
 			out.println("<td>" + e.zone + "</td>");
+			out.println("<td>" + e.instance + "</td>");
+			out.println("<td>" + e.ami + "</td>");
 			out.println("<td>" + e.contractPrice + "</td>");
 			out.println("<td>" + e.bidAskPrice + "</td>");
 			out.println("<td>" + e.spotPrice + "</td>");
 			out.println("</tr>");
 		}
 		%>
-</table>
-</div>
+					</table>
+				</div>
 <%
 	// end of big else
  	}
 %>
-</td>
-</tr>
-</table>
+			</td>
+			<td>
+				<div class="right">
+					<b>My Accounting</b>
+					<br><br>
+				</div>
+			</td>
+		</tr>
+	</table>
 </div>
 <div id="footer">
 <jsp:include page="/views/_footer.jsp" />

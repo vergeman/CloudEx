@@ -10,9 +10,9 @@ public class PositionEntry {
 	public String instance;
 	public String region;
 	public String zone;
-	public String contractPrice;
-	public String bidAskPrice;
-	public String spotPrice;
+	public Double contractPrice;
+	public Double bidAskPrice;
+	public Double spotPrice;
 	
 	public PositionEntry () {
 		

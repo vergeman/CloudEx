@@ -28,25 +28,7 @@ public class BlobServeHandler extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 
-		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-		//PrintWriter out = resp.getWriter();
-		String fileName = null;
-		
-		Entity userProfile = getUserProfile(userId);
 
-		// if userProfile does not exist, create entry in the database
-		if (userProfile == null) {
-			fileName = "No AWS credentials file uploaded";
-		} else {
-			String blobKeyString = (String) userProfile.getProperty("CredentialsBlobKey");
-			BlobKey blobKey = new BlobKey(blobKeyString);
-			BlobInfoFactory bFactory = new BlobInfoFactory();
-			BlobInfo bInfo = bFactory.loadBlobInfo(blobKey);
-			fileName = bInfo.getFilename() + " created at "+ bInfo.getCreation().toString();
-		}
-
-		//System.out.println("fileName:" + fileName);
-		req.setAttribute("fileName", fileName);
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
 		try {
 			rd.forward(req, resp);
@@ -59,10 +41,5 @@ public class BlobServeHandler extends HttpServlet {
 		throws ServletException, IOException {
 		doGet(req, resp);
 	}
-	
-	public Entity getUserProfile(String userId) {
-		return GenericToolkit.getInstance().getUserProfileForUser(userId);
-	}
-	
 }
 

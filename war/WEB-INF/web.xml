@@ -149,6 +149,8 @@
       <web-resource-name>Secure Pages</web-resource-name>
       <url-pattern>/views/*</url-pattern>
       <url-pattern>/js/*</url-pattern>
+      <url-pattern>/account/*</url-pattern>
+      <url-pattern>/main/*</url-pattern>
       <http-method>GET</http-method>
       <http-method>POST</http-method>
       <http-method>FORWARD</http-method>
