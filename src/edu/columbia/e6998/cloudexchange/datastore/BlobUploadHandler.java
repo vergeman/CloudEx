@@ -51,6 +51,7 @@ public class BlobUploadHandler extends HttpServlet {
 				userProfile = new Entity("UserProfile");
 				userProfile.setProperty("userId", UserServiceFactory.getUserService().getCurrentUser().getUserId());
 				userProfile.setProperty("CredentialsBlobKey", blobKey.getKeyString());
+				userProfile.setProperty("email", UserServiceFactory.getUserService().getCurrentUser().getEmail());
 			} else {
 				userProfile.setProperty("CredentialsBlobKey", blobKey.getKeyString());
 			}

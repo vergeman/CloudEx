@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.repackaged.com.google.common.util.Base64;
 import com.google.appengine.repackaged.com.google.common.util.Base64DecoderException;
 
+import edu.columbia.e6998.cloudexchange.mailer.MailManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 import java.util.logging.Logger;
@@ -171,15 +172,26 @@ public class SpotInstanceLauncher extends HttpServlet {
 	            		}
 	            		
 	            		// Update transaction with new instanceID and price
-	            		String priceExecuted = describeResponse.getSpotPrice();
+	            		
+	            		//String priceExecuted = describeResponse.getSpotPrice();
 	            		
 	            		GenericToolkit.getInstance().updateTransaction(key, "instanceID",  describeResponse.getInstanceId());
-	            		GenericToolkit.getInstance().updateTransaction(key, "priceExecuted", priceExecuted);
+	            		GenericToolkit.getInstance().updateTransaction(key, "priceExecuted", currentSpotPrice.toString());
 	            	
 	            		// Add the instance id to the list we will eventually terminate.
 	            		instanceIds.add(describeResponse.getInstanceId());
 	            		
 	            		//TODO: email buyer & seller
+	            		String[] mails = GenericToolkit.getInstance().getBuyerSellerMailForTransaction(key);
+	            		
+	            		// TODO: create generic email for TheCloudExchange
+	            		MailManager mm = new MailManager("fedotoveugene@gmail.com", "TheCloudExchange",
+	            				mails[0], "Customer", "Spot instance delivered");
+	            		String message = "Dear TheCloudExchange Customer,\n\nYour spot instance has been created:\n" +
+	            				"Instance ID = " + instanceIds + "\nPrice Executed = " + currentSpotPrice.toString() +"\n\n" +
+	            						"Yours truly,\nTheCloudExchange";
+	            		mm.setMsgBody(message);
+	            		mm.Send();
 	            		
 	            }
 	    	} catch (AmazonServiceException e) {

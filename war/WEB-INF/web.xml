@@ -151,6 +151,10 @@
       <url-pattern>/js/*</url-pattern>
       <url-pattern>/account/*</url-pattern>
       <url-pattern>/main/*</url-pattern>
+      <url-pattern>/data/*</url-pattern>
+      <url-pattern>/marketplace/*</url-pattern>
+      <url-pattern>/worker/*</url-pattern>
+      <url-pattern>/upload/*</url-pattern>
       <http-method>GET</http-method>
       <http-method>POST</http-method>
       <http-method>FORWARD</http-method>
@@ -165,6 +169,7 @@
     <web-resource-collection>
       <web-resource-name>Admin Pages</web-resource-name>
       <url-pattern>/admin/*</url-pattern>
+      <url-pattern>/launch/*</url-pattern>
       <http-method>GET</http-method>
       <http-method>POST</http-method>
     </web-resource-collection>

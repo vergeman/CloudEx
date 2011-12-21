@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.users.UserServiceFactory;
 
 public class GenericToolkit {
 	
@@ -348,6 +349,21 @@ public class GenericToolkit {
 		q.addFilter("userId", Query.FilterOperator.EQUAL, userId);
 		Entity userProfile = datastore.prepare(q).asSingleEntity();
 		return userProfile;
+	}
+	
+	// Return e-mail addresses for buyer - String[0], and seller - String[1]
+	public String[] getBuyerSellerMailForTransaction(Key key) {
+		String[] mails = new String[2];
+		try {
+			Entity transaction = datastore.get(key);
+			String buyerId = (String) transaction.getProperty("buyer");
+			String sellerId = (String) transaction.getProperty("seller");
+			mails[0] = (String) getUserProfileForUser(buyerId).getProperty("email");
+			mails[1] = (String) getUserProfileForUser(sellerId).getProperty("email");
+		} catch (EntityNotFoundException e) {
+			System.err.print(e.getMessage());
+		}
+		return mails;
 	}
 	
 	public String deleteBidOffer(String profile, String arrayIndex){
