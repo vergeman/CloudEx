@@ -193,6 +193,14 @@ public class SpotInstanceLauncher extends HttpServlet {
 	            		mm.setMsgBody(message);
 	            		mm.Send();
 	            		
+	            		mm = new MailManager("fedotoveugene@gmail.com", "TheCloudExchange",
+	            				mails[1], "Customer", "Spot instance delivered");
+	            		message = "Dear TheCloudExchange Customer,\n\nA spot instance for your short contract has been delivered:\n" +
+	            				"\nPrice Executed = " + currentSpotPrice.toString() +"\n\n" +
+	            						"Yours truly,\nTheCloudExchange";
+	            		mm.setMsgBody(message);
+	            		mm.Send();
+	            		
 	            }
 	    	} catch (AmazonServiceException e) {
 	            // If we have an exception, ensure we don't break out of the loop.
