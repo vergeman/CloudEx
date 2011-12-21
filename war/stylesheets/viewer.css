@@ -72,10 +72,10 @@ td, th {
 	cursor:pointer;
 }
 
-.bid_status {
+.hit {
 	background: green;
 }
-.ask_status {
+.lift {
 	background: #8B0000;
 }
 

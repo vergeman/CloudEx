@@ -66,6 +66,46 @@ $(document).ready(function() {
 	});
 	
 
+	$(".hit, .lift").click(function() {
+		var channelkey = $('meta[name=channel_token]').attr("content");
+		var key;
+		var action;
+		var qty = 1;
+		var price;
+		
+		if ($(this).attr('class').split(' ')[1] == 'hit') {
+			price = $(this).next().next().text();
+			key = $(this).next().next().attr('id');
+			action = "SELL";
+			
+			
+		}
+		if ($(this).attr('class').split(' ')[1] == 'lift') {		
+			price = $(this).prev().prev().text();
+			key = $(this).prev().prev().attr('id');
+			action = "BUY";
+		}
+		
+		if (price.length <= 0) {
+			return;
+		}
+		$.ajax({
+		        url: '/message/',
+		        type: 'POST',
+		        data:{
+		            msg:"CONFIRM",
+		            key:key,
+		            action:action,
+		            qty:qty,
+		            price:price,
+		            channelkey:channelkey
+		        },
+		        success: function(data){},
+		        complete:function(){}
+		    });
+	
+		
+	});
 	
 	$("#dialog").dialog({
 		autoOpen: false,

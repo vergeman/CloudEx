@@ -48,12 +48,12 @@
 				<tr class="tbl_contract_row hour ${keys[i]} ${j % 2 ==0 ? '' : 'odd'} ${i ==0 ? '' : '"style=display:none;"'}">
 				<td></td>
 				<td class="tbl_contract_data hour">${j}:00</td>
-				<td class="tbl_contract_data ask_status"></td>
+				<td class="tbl_contract_data hit">HIT</td>
 				<td class="tbl_contract_data bid_qty"> </td>
 				<td id="${keys[i]}${2*j}" class="tbl_contract_data bid">${contract[0][j]}</td>
 				<td id="${keys[i]}${2*j+1}" class="tbl_contract_data ask">${contract[1][j]}</td>
 				<td class="tbl_contract_data ask_qty"> </td>
-				<td class="tbl_contract_data bid_status"></td>
+				<td class="tbl_contract_data lift">LIFT</td>
 				<td class="tbl_contract_data last"> </td>
 			</tr>
 
