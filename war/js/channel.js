@@ -66,12 +66,22 @@ $('.bid, .ask').click(function() {
 	
 	if ($(this).hasClass('bid')) {
 		$('#dialog_action').val('buy');
-		$('#dialog_price').attr('value', $(this).text());
+		if ($(this).text().length <=0) {
+			$('#dialog_price').val(0.001);
+		}
+		else {
+			$('#dialog_price').val((parseFloat($(this).text()) + .001).toFixed(3));
+		}
 	}
 
 	if ($(this).hasClass('ask')) {
 		$('#dialog_action').val('sell');
-		$('#dialog_price').attr('value', $(this).text());
+		if ($(this).text().length <=0) {
+			$('#dialog_price').val(0.001);
+		}
+		else {
+			$('#dialog_price').val((parseFloat($(this).text()) - .001).toFixed(3));
+		}
 	}
 	
 	//description
@@ -89,11 +99,14 @@ $('.bid, .ask').click(function() {
 	
 	$('.ui-dialog-buttonpane button:first').css("margin-left", "16px");
 	$('.ui-dialog-buttonpane button:last').css("margin-left", "140px");
+	
 	$('.ui-dialog-buttonpane button:first').removeClass('ui-corner-all');
 	$('.ui-dialog-buttonpane button:last').removeClass('ui-corner-all');
 	
-	$('.ui-button-text:first').css("background-color", "green");
-	$('.ui-button-text:last').css("background-color", "#8B0000");
+	$('.ui-button-text:first').css("background-color", "#8B0000");
+	$('.ui-button-text:last').css("background-color", "green");
+
+
 });
 
 

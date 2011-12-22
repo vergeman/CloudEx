@@ -117,7 +117,36 @@ $(document).ready(function() {
 		width: 350,
 		minHeight: 350,
 		modal: true,
-		buttons: {
+		buttons: {	"Offer": function() {
+				$(this).dialog("close");
+				//prep message
+				var channelkey = $('meta[name=channel_token]').attr("content");
+				var key = $(this).attr('ask_data');
+				
+				var action;
+				var qty = $('#dialog_qty').val();
+				var price = $('#dialog_price').val();
+				
+				
+				/*add validations for data here
+				 * before sending
+				 */
+	
+			    $.ajax({
+			        url: '/message/',
+			        type: 'POST',
+			        data:{
+			            msg:"UPDATE",
+			            key:key,
+			            action:"SELL",
+			            qty:qty,
+			            price:price,
+			            channelkey:channelkey
+			        },
+			        success: function(data){},
+			        complete:function(){}
+			    });
+			},
 			"Bid": function() {
 					$(this).dialog("close");
 					//prep message
@@ -127,7 +156,6 @@ $(document).ready(function() {
 					var action;
 					var qty = $('#dialog_qty').val();
 					var price = $('#dialog_price').val();
-					
 					
 					/*add validations for data here
 					 * before sending
@@ -148,36 +176,7 @@ $(document).ready(function() {
 				        complete:function(){}
 				    });
 			},
-			"Offer": function() {
-				$(this).dialog("close");
-				//prep message
-				var channelkey = $('meta[name=channel_token]').attr("content");
-				var key = $(this).attr('ask_data');
-				
-				var action;
-				var qty = $('#dialog_qty').val();
-				var price = $('#dialog_price').val();
-				
-				
-				/*add validations for data here
-				 * before sending
-				 */
-
-			    $.ajax({
-			        url: '/message/',
-			        type: 'POST',
-			        data:{
-			            msg:"UPDATE",
-			            key:key,
-			            action:"SELL",
-			            qty:qty,
-			            price:price,
-			            channelkey:channelkey
-			        },
-			        success: function(data){},
-			        complete:function(){}
-			    });
-			}
+		
 		},
 		close: function() {}
 	});
