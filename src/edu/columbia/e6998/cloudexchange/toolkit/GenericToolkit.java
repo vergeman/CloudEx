@@ -145,27 +145,31 @@ public class GenericToolkit {
 	
 	public String[][] getBidsOffers(String profile){
 		String[][] results = new String[2][24];
-		
-		if(!syncCache.contains("Profiles"))
-			queryDataStore(profile);
+		//System.out.println("GetBidOffer::Start::" + profile);
+		//if(!syncCache.contains("Profiles"))
+		queryDataStore(profile);
 		
 		//can't iterate through null list (but can an empty list..)
-		if (!syncCache.contains(profile))
+		if (!syncCache.contains(profile)){
+			System.out.println("Profile is not in memcache yet!");
 			return results;	
-		
+		}
 		for(Entity t : (Entity[]) syncCache.get(profile)){
 			if (t!= null){
+				//System.out.println(t.toString());
 				if ((Boolean) t.getProperty("seller"))
 					results[1][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
 				else
 					results[0][Integer.parseInt(((Entity) t).getProperty("hour").toString())] = ((Entity) t).getProperty("price").toString();
 			}
 		}
-		
+		//System.out.println("GetBidOffer::End::" + profile);
 		return results;
 	}
 	
 	public String queryDataStore(){
+		syncCache.clearAll();
+		queryDataStore("");
 		return "Done";
 	}
 	
@@ -203,7 +207,7 @@ public class GenericToolkit {
 				tmpList[index] = e;
 			}
 			addProfile(memKey);
-			//syncCache.put(memKey, tmpList);
+			syncCache.put(memKey, tmpList);
 		}
 		
 		Query qBuyer = new Query("Contract");
@@ -229,10 +233,9 @@ public class GenericToolkit {
 			}
 			
 			addProfile(memKey);
-
+			syncCache.put(memKey, tmpList);
 		}
-		
-		syncCache.put(memKey, tmpList);		
+				
 		return tmpList;
 	}
 
@@ -392,7 +395,7 @@ public class GenericToolkit {
 		return charges;
 	}
 	
-	private Entity[] deleteBidOffer(String profile, String arrayIndex){
+	private Entity[] deleteBidOffer(String profile, String arrayIndex) {
 		int index = Integer.valueOf(arrayIndex);
 		Entity e;
 		try {
@@ -407,6 +410,12 @@ public class GenericToolkit {
 		}
 		
 		addDelete(e.getKey().toString());
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		return queryDataStore(profile); 
 	}
 
@@ -470,16 +479,18 @@ public class GenericToolkit {
 				}
 		}
 		
-		if(cache!=null){
-			tmpList = cache;
-			m = tmpList[index];
-		}
+		
+		if(syncCache.contains(profile))
+			tmpList = (Entity[]) syncCache.get(profile);
+		else
+			tmpList = new Entity[48];
+		m = tmpList[index];
 		
 		if(m==null){
 			//Simple insert
-			tmpList = new Entity[48];
 			tmpList[index] = e;
 			syncCache.put(profile, tmpList);
+
 			return sendChannelMessage("UPDATE", 
 					"bidOffer", 
 					String.valueOf((Double) e.getProperty("price")), 
