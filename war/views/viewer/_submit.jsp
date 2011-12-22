@@ -6,22 +6,43 @@
 <form id="form_dialog">
 	<fieldset style="display: inline;">
 
-		<label for="dialog_action">Side</label> <select id="dialog_action">
+<!-- 
+	<div id="dialog_action_container">
+		<label for="dialog_action">Side</label> 
+		<select id="dialog_action">
 			<option selected value="buy">Buy</option>
 			<option value="sell">Sell</option>
-		</select> <label for="dialog_qty">Qty</label> <input type="text"
-			id="dialog_qty" value="1" style="width: 10px;" /> <label
-			for="dialog_price">Price</label> <input type="text" id="dialog_price"
-			style="width: 40px;" />
+		</select> 
+	</div>
+-->
+	<div id=dialog_wrap">
+		<div id="dialog_qty_container">
+			<label for="dialog_qty">Qty</label> 
+			<input type="text" id="dialog_qty" value="1"/>
 
-
-		<div id="dialog_desc">
-			<p>we'll space and align this horizontally and make buttons to
-				increment & decrement prices</p>
-			<p>instead of this babble we'll have a description of the
-				contract</p>
 		</div>
+			
+			<div id ="dialog_inputs">
+				<span class="ui-icon ui-icon-circle-plus"></span>
+				<span class="ui-icon ui-icon-circle-minus"></span>
+			</div>
+		
+		<div id="dialog_price_container">		
+			<label for="dialog_price">Price</label> 
+			<input type="text" id="dialog_price"/>
+		</div>
+		
+			<div id ="dialog_inputs">
+				<span class="ui-icon ui-icon-circle-plus"></span>
+				<span class="ui-icon ui-icon-circle-minus"></span>
+			</div>
+	</div>
 
+<hr>
+	<div id="dialog_desc_container">
+		<label for="dialog_desc">Contract</label>
+		<div id="dialog_desc"></div>
+	</div>
 
 	</fieldset>
 </form>

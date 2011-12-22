@@ -107,6 +107,9 @@ $(document).ready(function() {
 		
 	});
 	
+
+
+	
 	$("#dialog").dialog({
 		autoOpen: false,
 		height: 300,
@@ -114,14 +117,13 @@ $(document).ready(function() {
 		minHeight: 350,
 		modal: true,
 		buttons: {
-			"Submit": function() {
+			"Bid": function() {
 					$(this).dialog("close");
-					
 					//prep message
 					var channelkey = $('meta[name=channel_token]').attr("content");
-					var key = $(this).attr('data');
+					var key = $(this).attr('bid_data');
 					
-					var action = $('#dialog_action').val().toUpperCase();
+					var action;
 					var qty = $('#dialog_qty').val();
 					var price = $('#dialog_price').val();
 					
@@ -136,7 +138,7 @@ $(document).ready(function() {
 				        data:{
 				            msg:"UPDATE",
 				            key:key,
-				            action:action,
+				            action:"BUY",
 				            qty:qty,
 				            price:price,
 				            channelkey:channelkey
@@ -145,11 +147,66 @@ $(document).ready(function() {
 				        complete:function(){}
 				    });
 			},
-			Cancel: function() {
+			"Offer": function() {
 				$(this).dialog("close");
+				//prep message
+				var channelkey = $('meta[name=channel_token]').attr("content");
+				var key = $(this).attr('ask_data');
+				
+				var action;
+				var qty = $('#dialog_qty').val();
+				var price = $('#dialog_price').val();
+				
+				
+				/*add validations for data here
+				 * before sending
+				 */
+
+			    $.ajax({
+			        url: '/message/',
+			        type: 'POST',
+			        data:{
+			            msg:"UPDATE",
+			            key:key,
+			            action:"SELL",
+			            qty:qty,
+			            price:price,
+			            channelkey:channelkey
+			        },
+			        success: function(data){},
+			        complete:function(){}
+			    });
 			}
 		},
 		close: function() {}
+	});
+	
+	
+	$('.ui-icon-circle-plus, .ui-icon-circle-minus').click(function() {
+		//qty
+		if ($(this).parent().prev().attr('id') == "dialog_qty_container") {
+			var val = $(this).parent().prev().children("input").val();
+			
+			if ($(this).hasClass('ui-icon-circle-plus')) {
+				$(this).parent().prev().children("input").val( Math.max( (parseFloat(val) + 1), 0) );
+			}
+			else {
+				$(this).parent().prev().children("input").val( Math.max((parseFloat(val) - 1), 0) );
+			}
+		}
+		//price
+		if ($(this).parent().prev().attr('id') == "dialog_price_container") {
+			var val = $(this).parent().prev().children("input").val();
+			if (val.length <= 0) {
+				val = 0.000;
+			}
+			if ($(this).hasClass('ui-icon-circle-plus')) {
+				$(this).parent().prev().children("input").val( Math.max((parseFloat(val) + .001).toFixed(3),0.000) );
+			}
+			else {
+				$(this).parent().prev().children("input").val( Math.max((parseFloat(val) - .001).toFixed(3), 0.000) );
+			}
+		}
 	});
 	
 });

@@ -47,20 +47,53 @@ $('.bid, .ask').click(function() {
 
 	/*we'll leave bid/offer change for later*/
 	$('#dialog').attr('data', $(this).attr('id'));
+	var datastr = $('#dialog').attr('data');
+	var id = parseInt(datastr.substring(16, datastr.length));
+	var bid_id;
+	var ask_id;
+	
+	if ( id % 2 == 0) {
+		bid_id = datastr.substring(0, 16) + id;
+		ask_id = datastr.substring(0, 16) + (id + 1);
+	}
+	if ( id % 2 == 1) {
+		bid_id = datastr.substring(0, 16) + (id -1);
+		ask_id = datastr.substring(0, 16) + id;
+	}
+	$('#dialog').attr('bid_data', bid_id);
+	$('#dialog').attr('ask_data', ask_id);
+
 	
 	if ($(this).hasClass('bid')) {
 		$('#dialog_action').val('buy');
-		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
+		$('#dialog_price').attr('value', $(this).text());
 	}
 
 	if ($(this).hasClass('ask')) {
 		$('#dialog_action').val('sell');
-		$('#dialog_price').attr('value', $(this).val().replace("-", ""));
+		$('#dialog_price').attr('value', $(this).text());
 	}
 	
-	$('#dialog').dialog("open");
+	//description
+	var day = $.trim($('#' + $(this).attr('id').substring(0, 16)).text());
+	var hour = $.trim($(this).parent().children('.hour').text());
+	var zone = $.trim($('.selected.zones').text());
+	var os = $.trim($('.selected.os').text());
+	var instance = $('#instancetype').val();
 
+	$('#dialog_desc').html("<p>" + day + " " + hour + 
+			"</p><p>" + " " + zone + " " + os + " " + instance + "</p>");
+
+	$('#dialog').dialog("open");
 	
+	
+	$('.ui-dialog-buttonpane button:first').css("margin-left", "16px");
+	$('.ui-dialog-buttonpane button:last').css("margin-left", "140px");
+	$('.ui-dialog-buttonpane button:first').removeClass('ui-corner-all');
+	$('.ui-dialog-buttonpane button:last').removeClass('ui-corner-all');
+	
+	$('.ui-button-text:first').css("background-color", "green");
+	$('.ui-button-text:last').css("background-color", "#8B0000");
 });
 
 
