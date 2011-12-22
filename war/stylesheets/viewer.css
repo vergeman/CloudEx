@@ -48,9 +48,11 @@ table {
 	width: 100%;
 	text-align:center;
 }
+
 tr {
 	border: 1px solid black;
 }
+
 tr.tbl_contract_date_row {
 	background: white;
 	color:black;
@@ -82,11 +84,90 @@ td, th {
 .arrow {
 	cursor:pointer;
 }
+
+/*#order book*/
+#orderbook_container {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 180px;
+	height: 10px;
+	background-color: #ffffff;
+	color: black;
+	
+}
+#orderbook_tag {
+	width: 70px;
+	background-color: #ffffff;
+	border-radius: 3px 3px 0 0;
+	-moz-border-radius: 3px 3px 0 0;
+	margin-top: -24px;
+	padding: 6px;
+	font-size: 1.1em;
+}
+#orderbook_tag:hover  {
+	color:orange;
+	cursor:pointer;
+}
 /*#submit*/
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+	float:left;
+}
+
 #dialog {
 	display:inline;
 }
-
+#dialog fieldset {
+	padding: 20px;
+}
+#dialog input {
+	padding: 3px 5px 3px 5px;
+	text-align: center;
+	font-size: 1.6em;
+	border: 1px solid;
+}
 #dialog label {
 	display:block;
+	margin-bottom: 10px;
+}
+.ui-button-text {
+	border: none;
+	font-size: 1.2em;
+}
+
+.ui-icon.ui-icon-circle-plus {
+	float:left;	
+	margin-top:-1px;
+	cursor:pointer;
+}
+
+.ui-icon.ui-icon-circle-minus {
+	margin-top: 20px;
+	cursor:pointer;
+}
+
+#dialog_qty_container {
+	float:left;
+	//margin-left:8px;
+}
+#dialog_inputs {
+	float: left;
+	margin: 30px 12px;
+
+}
+#dialog_qty {
+	width: 40px;
+}
+#dialog_price_container {
+	float:left;
+	margin-left: 30px;
+}
+#dialog_price {
+	width: 80px;
+}
+#dialog_desc_container {
+	margin: 16px 0 0 0;
+}
+#dialog_desc {
+	font-size: 1.1em;
 }
