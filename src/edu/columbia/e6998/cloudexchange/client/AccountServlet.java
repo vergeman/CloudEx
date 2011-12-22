@@ -115,6 +115,11 @@ public class AccountServlet extends HttpServlet {
 		String keyPair = (String) req.getParameter("keyPair");
 		String securityGroup = (String) req.getParameter("securityGroup");
 		
+		System.out.println("[AccountServlet doPost]");
+		System.out.println(defaultAmi);
+		System.out.println(keyPair);
+		System.out.println(securityGroup);
+		
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 		if (defaultAmi != null)
 			GenericToolkit.getInstance().updateUserProfile(userId, "defaultAmi", defaultAmi.trim());
@@ -160,16 +165,21 @@ public class AccountServlet extends HttpServlet {
 				entry.instance = (String) transaction.getProperty("instanceType");
 				entry.contractPrice = (Double) transaction.getProperty("price");
 				
+				Date date = (Date) transaction.getProperty("date");
+				//alan: seems we're using dates now
+				/**
 				String dateString = (String) transaction.getProperty("date");
+				
 				String timeString = (String) transaction.getProperty("time");
 				String dateTime = dateString + " " + timeString;
 				SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH");
 				Date date = null;
 				try {
-					date = sdf.parse(dateTime);
+					//date = sdf.parse(dateTime);
 				} catch (Exception e) {
 				
 				}
+				*/
 				entry.date = date;
 				
 				// TODO: get current price

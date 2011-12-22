@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.amazonaws.services.ec2.model.CreateKeyPairRequest;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreInputStream;
 import com.google.appengine.api.datastore.Entity;
@@ -55,13 +57,18 @@ public class LaunchServlet extends HttpServlet {
 		try {
 			for (Entity e : entities) {
 			
-				String tDateString = (String) e.getProperty("date"); // get transaction date
+				//String tDateString = (String) e.getProperty("date"); // get transaction date
+				Date eDate = (Date) e.getProperty("date"); // get transaction date
 				String tUserId = (String) e.getProperty("buyer"); // get userId
 				String tHourString = (String) e.getProperty("time"); // get transaction hour
+
 				int tHour = Integer.parseInt(tHourString);
-				
+
 				Calendar tDate = Calendar.getInstance();
-				tDate.setTime(sdf.parse(tDateString)); // parse the date
+				tDate.setTime(eDate);
+
+				//Calendar tDate = Calendar.getInstance();
+				//tDate.setTime(sdf.parse(tDateString)); // parse the date
 			
 				// check if execution date is today
 				if (currentDate == tDate.get(Calendar.DAY_OF_YEAR) &&
@@ -70,8 +77,9 @@ public class LaunchServlet extends HttpServlet {
 					// Check if hour is the same hour or previous hour in case we missed smth
 					
 					// TODO: Use Calendar.add(Calendar.HOUR, -1) instead of currentHour-1
-					if (tHour == currentHour || tHour == currentHour-1 ) {
+					if (tHour == currentHour || tHour == currentHour-1  || true) {
 	
+						
 						// Get input stream for credentials file
 						Entity userProfile = 
 							GenericToolkit.getInstance().getUserProfileForUser(tUserId);
@@ -129,7 +137,7 @@ public class LaunchServlet extends HttpServlet {
 				}
 			}
 		} catch (Exception e) {
-			log.severe(e.getMessage());
+			//log.info(e.getMessage());
 		}
 		}
 	}

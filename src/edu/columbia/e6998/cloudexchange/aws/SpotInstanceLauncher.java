@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CancelSpotInstanceRequestsRequest;
+import com.amazonaws.services.ec2.model.CreateKeyPairRequest;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsRequest;
 import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsResult;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
@@ -41,7 +43,7 @@ import java.util.logging.Logger;
 public class SpotInstanceLauncher extends HttpServlet {
 	
 	private static final Logger log = Logger.getLogger(SpotInstanceLauncher.class.getName());
-	
+
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 	throws IOException {
 		
@@ -109,10 +111,28 @@ public class SpotInstanceLauncher extends HttpServlet {
     	launchSpecification.setPlacement(placement);
     	launchSpecification.setKeyName(config.keyPair);
     	launchSpecification.setInstanceType(config.instanceType);
+    	
+    	if(config.keyPair.isEmpty()) {
+    		try {
+    			Calendar now = Calendar.getInstance();
+				CreateKeyPairRequest kpr = new CreateKeyPairRequest(String.valueOf(now.getTime()));
+				ec2.createKeyPair(kpr);
+				launchSpecification.setKeyName(String.valueOf(now.getTime()));
+    		}
+    		catch (Exception e) {}
+    	}
+    	
+    	if(config.ami.isEmpty())
+    		config.ami = "ami-8c1fece5";
+    	
     	launchSpecification.setImageId(config.ami);
+
     	
     	// Add the security group to the request.
     	ArrayList<String> securityGroups = new ArrayList<String>();
+    	if (config.securityGroup.isEmpty())
+        	config.securityGroup = "default";
+    	
     	securityGroups.add(config.securityGroup);
     	launchSpecification.setSecurityGroups(securityGroups); 
 
