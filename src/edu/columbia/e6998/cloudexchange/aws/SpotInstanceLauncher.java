@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.repackaged.com.google.common.util.Base64;
 import com.google.appengine.repackaged.com.google.common.util.Base64DecoderException;
 
+import edu.columbia.e6998.cloudexchange.client.UserProfile;
 import edu.columbia.e6998.cloudexchange.mailer.MailManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
@@ -182,11 +183,13 @@ public class SpotInstanceLauncher extends HttpServlet {
 	            		instanceIds.add(describeResponse.getInstanceId());
 	            		
 	            		//TODO: email buyer & seller
-	            		String[] mails = GenericToolkit.getInstance().getBuyerSellerMailForTransaction(key);
+	            		// profiles[0] - buyer
+	            		// profiles[1] - seller
+	            		UserProfile[] profiles = GenericToolkit.getInstance().getBuyerSellerProfileForTransaction(key);
 	            		
 	            		// TODO: create generic email for TheCloudExchange
 	            		MailManager mm = new MailManager("fedotoveugene@gmail.com", "TheCloudExchange",
-	            				mails[0], "Customer", "Spot instance delivered");
+	            				profiles[0].email, "Customer", "Spot instance delivered");
 	            		String message = "Dear TheCloudExchange Customer,\n\nYour spot instance has been created:\n" +
 	            				"Instance ID = " + instanceIds + "\nPrice Executed = " + currentSpotPrice.toString() +"\n\n" +
 	            						"Yours truly,\nTheCloudExchange";
@@ -194,13 +197,16 @@ public class SpotInstanceLauncher extends HttpServlet {
 	            		mm.Send();
 	            		
 	            		mm = new MailManager("fedotoveugene@gmail.com", "TheCloudExchange",
-	            				mails[1], "Customer", "Spot instance delivered");
+	            				profiles[1].email, "Customer", "Spot instance delivered");
 	            		message = "Dear TheCloudExchange Customer,\n\nA spot instance for your short contract has been delivered:\n" +
 	            				"\nPrice Executed = " + currentSpotPrice.toString() +"\n\n" +
 	            						"Yours truly,\nTheCloudExchange";
 	            		mm.setMsgBody(message);
 	            		mm.Send();
 	            		
+	            		// Charge the seller
+	            		GenericToolkit.getInstance().createCharge(key, 
+	            				describeResponse.getInstanceId(), profiles[1].id, currentSpotPrice.toString(), "delivery");
 	            }
 	    	} catch (AmazonServiceException e) {
 	            // If we have an exception, ensure we don't break out of the loop.

@@ -5,6 +5,8 @@
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreService"%>
 <%@ page import="java.util.*"%>
 <%@ page import="edu.columbia.e6998.cloudexchange.client.PositionEntry"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
 
 <%
 	BlobstoreService blobstoreService = BlobstoreServiceFactory
@@ -29,6 +31,8 @@
 		<tr>
 			<td id="mainTableCell">
 				<div id="left">
+				<table id="settingsTable">
+					<tr><td>
 					<b>My Amazon Credentials</b>
 					<br><br>
 					<a>Current File:&nbsp ${fileName}</a>
@@ -40,6 +44,42 @@
      					<br>
      					<input type="submit" value="Submit">
      				</form>
+     				<br><br>
+     				</td></tr>
+     				<form action="/account" method="post">
+     				<tr><td>
+     					<b>Default AMI</b> 
+     					<br>
+     					<select id="instancetype" name="defaultAmi">
+							<c:forEach var="i" items="${amis}">
+								<c:choose>
+									<c:when test="${i == defaultAmi}">
+										<option selected value="${i}" class="instances">${i}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${i}" class="instances">${i}</option>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+     				</td></tr>
+     				<tr><td>
+     					<b>Default Key Pair</b>
+     					<br>
+     					<input type="text" name="keyPair" value="${keyPair}">
+     					<br>
+     				</td></tr>
+     				<tr><td>
+     					<b>Default Security Group</b>
+     					<br>
+     					<input type="text" name="securityGroup" value="${securityGroup}">
+     					<br>
+     				</td></tr>
+     				<tr><td>
+     					<input type="submit" value="Save">
+     				</td></tr>
+     				</form>
+     			</table>	
 				</div>
 			</td>
 			
@@ -104,6 +144,7 @@
 				<div class="right">
 					<b>My Accounting</b>
 					<br><br>
+					<a>Total Charges: ${totalCharge}</a>
 				</div>
 			</td>
 		</tr>
