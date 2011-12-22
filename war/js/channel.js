@@ -80,7 +80,7 @@ $('.bid, .ask').click(function() {
 			$('#dialog_price').val(0.001);
 		}
 		else {
-			$('#dialog_price').val((parseFloat($(this).text()) - .001).toFixed(3));
+			$('#dialog_price').val(Math.max(0, (parseFloat($(this).text()) - .001)).toFixed(3));
 		}
 	}
 	
