@@ -23,7 +23,22 @@ import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 @SuppressWarnings("serial")
 public class AccountServlet extends HttpServlet {
 
-	final String destination = "/views/account.jsp";
+	private final String destination = "/views/account.jsp";
+	private final String[] amiList = {"ami-8c1fece5",
+			"ami-31814f58",
+			"ami-1b814f72",
+			"ami-3ddb1954",
+			"ami-31d41658",
+			"ami-3d599754",
+			"ami-ab844dc2", 
+			"ami-fbf93092",
+			"ami-fdf93094",
+			"ami-13f9307a",
+			"ami-17f9307e",
+			"ami-e4a7558d",
+			"ami-0da96764",
+			"ami-c7d81aae",
+			"ami-33a96b5a"};
 
 	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -31,24 +46,102 @@ public class AccountServlet extends HttpServlet {
 		
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 		
-		// 1. Getting name of the file uploaded
+		 /**
+		  * 1. Get name of the file uploaded
+		  * 2. Get the default ami
+		  * 3. Get the default key pair
+		  * 4. Get the default security group
+		  * */
+		
 		String fileName = null;
+		String defaultAmi = null;
+		String keyPair = null;
+		String securityGroup = null;
 		
 		Entity userProfile = GenericToolkit.getInstance().getUserProfileForUser(userId);
 
 		// if userProfile does not exist, create entry in the database
 		if (userProfile == null) {
 			fileName = "No AWS credentials file uploaded";
+			defaultAmi = amiList[0];
+			keyPair = "N/A";
+			securityGroup = "N/A";
 		} else {
 			String blobKeyString = (String) userProfile.getProperty("CredentialsBlobKey");
+			defaultAmi = (String) userProfile.getProperty("defaultAmi");
+			keyPair = (String) userProfile.getProperty("keyPair");
+			securityGroup = (String) userProfile.getProperty("securityGroup");
+			
 			BlobKey blobKey = new BlobKey(blobKeyString);
 			BlobInfoFactory bFactory = new BlobInfoFactory();
 			BlobInfo bInfo = bFactory.loadBlobInfo(blobKey);
 			fileName = bInfo.getFilename() + " uploaded at "+ bInfo.getCreation().toString();
 		}
-		req.setAttribute("fileName", fileName);
 		
-		// 2. Get the list of open positions 
+		/**
+		 * 5. Get the list of open positions 
+		 */
+		List<PositionEntry> positions = getPositionsList(userId);
+		
+		/**
+		 * 6. Get list of charges
+		 */
+	
+		List<String> chargeList = getChargesList(userId);
+		Double totalCharge = 0.0;
+		
+		req.setAttribute("fileName", fileName);
+		req.setAttribute("positions", positions);
+		req.setAttribute("amis", amiList);
+		req.setAttribute("defaultAmi", defaultAmi);
+		req.setAttribute("keyPair", keyPair);
+		req.setAttribute("securityGroup", securityGroup);
+		req.setAttribute("totalCharge", totalCharge);
+		req.setAttribute("charges", chargeList);
+		
+		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
+		
+		try {
+			rd.forward(req, resp);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+		throws ServletException, IOException {
+		
+		String defaultAmi = (String) req.getParameter("defaultAmi");
+		String keyPair = (String) req.getParameter("keyPair");
+		String securityGroup = (String) req.getParameter("securityGroup");
+		
+		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+		if (defaultAmi != null)
+			GenericToolkit.getInstance().updateUserProfile(userId, "defaultAmi", defaultAmi.trim());
+		if (keyPair != null) 
+			GenericToolkit.getInstance().updateUserProfile(userId, "keyPair", keyPair.trim());
+		if (securityGroup != null) 
+			GenericToolkit.getInstance().updateUserProfile(userId, "securityGroup", securityGroup.trim());
+		doGet(req, resp);
+	}
+	
+	public List<String> getChargesList(String userId) {
+		ArrayList<String> chargeList = new ArrayList<String>();
+		List<Entity> charges = GenericToolkit.getInstance().getChargesForUser(userId);
+		
+		for (Entity charge : charges) {
+			String chargeString = "";
+			String type = (String) charge.getProperty("type");
+			if (type.equals("delivery")) {
+				chargeString += "Delivered instance:";
+			}
+			String amount = (String) charge.getProperty("amount");
+			chargeString += " -$" + amount;
+		}
+		return chargeList;
+	}
+	
+	public List<PositionEntry> getPositionsList(String userId) {
 		ArrayList<PositionEntry> positions = new ArrayList<PositionEntry>();
 		List<Entity> transactions = GenericToolkit.getInstance().getOpenTransactions();
 		for (Entity transaction : transactions) {
@@ -60,8 +153,7 @@ public class AccountServlet extends HttpServlet {
 					entry.buyOrSell = "Buy";
 				else 
 					entry.buyOrSell = "Sell";
-				
-				
+
 				entry.zone = (String) transaction.getProperty("zone");
 				entry.region = (String) transaction.getProperty("region");
 				entry.ami = (String) transaction.getProperty("ami");
@@ -88,20 +180,7 @@ public class AccountServlet extends HttpServlet {
 				positions.add(entry);
 			}
 		}
-		
-		req.setAttribute("positions", positions);
-		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
-		
-		try {
-			rd.forward(req, resp);
-		} catch (ServletException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
-		doGet(req, resp);
+		return positions;
 	}
 }
 

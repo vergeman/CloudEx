@@ -102,7 +102,7 @@ body
 
 #left {
 	width: 300px; 
-	padding-left: 60px; 
+	padding-left: 40px; 
 	margin-left: 10px;
 	margin-top: 0px; 
 	padding-top: 6px;
@@ -117,6 +117,19 @@ body
 
 #right {
 	width: 300px;
+}
+
+#settingsTable {
+    border-color: #D6D7D6;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#settingsTable td {
+	border-color: #D6D7D6;
+    border-style: solid;
+    padding-left: 5px;
+    padding-top: 5px;
 }
 
 #mainTableCell {

@@ -84,10 +84,11 @@ public class LaunchServlet extends HttpServlet {
 						InstanceConfiguration config = new InstanceConfiguration();
 						config.region  = (String) e.getProperty("region");
 						config.zone = (String) e.getProperty("zone");
-						config.ami = (String) e.getProperty("ami");
 						config.instanceType = (String) e.getProperty("instanceType");
-						config.securityGroup = (String) e.getProperty("securityGroup");
-						config.keyPair = (String) e.getProperty("keyPair");
+						
+						config.ami = (String) userProfile.getProperty("defaultAmi");
+						config.securityGroup = (String) userProfile.getProperty("securityGroup");
+						config.keyPair = (String) userProfile.getProperty("keyPair");
 						
 						// Get profile
 						String profile = (String) e.getProperty("profile");

@@ -174,7 +174,29 @@ public class MessageHandlerServlet extends HttpServlet {
 				
 		case	LAUNCH: 
 				break;
-		
+				
+		case	CONFIRM:
+				switch(msg.msg_action){
+					case BUY:
+						msg = gt.createTransaction(msg.key.substring(0, 16),
+								arrayIndex,
+								userId,
+								"ami",
+								"SG",
+								"KP");
+						break;
+					case SELL:
+						msg = gt.createTransaction(msg.key.substring(0, 16),
+								arrayIndex,
+								userId,
+								"ami",
+								"SG",
+								"KP");
+						break;
+					default:
+						break;
+				}
+				break;
 		default :
 			break;
 		}
