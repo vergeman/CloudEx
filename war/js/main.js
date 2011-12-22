@@ -2,6 +2,7 @@
 
 var contract_data
 var dates_data;
+var spotprice_data;
 
 $(document).ready(function() {
 
@@ -275,6 +276,7 @@ function render(oldKeys, newKeys) {
 		
 		$('.' + newKeys[i] +':even').addClass("odd")
 
+
 	});
 
 }
@@ -303,9 +305,11 @@ function refresh_data() {
 
 	        	contract_data = obj["contract_data"];
 	        	dates_data = obj["dates_data"];
+	        	spotprice_data = obj["spotprice_data"];
 	        },
 	        complete:function(data, textStatus){
 	        	var newk = Keys();
+	        	$('.spot_price').text(spotprice_data[0]);
 	        	render(oldk, newk);
 	        	$('body').css('cursor', 'auto');
 	        }

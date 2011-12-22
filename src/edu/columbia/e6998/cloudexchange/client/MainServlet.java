@@ -19,6 +19,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 import edu.columbia.e6998.cloudexchange.aws.AWSCodes;
+import edu.columbia.e6998.cloudexchange.aws.CredentialsManager;
+import edu.columbia.e6998.cloudexchange.aws.spotprices.SpotPriceManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 import com.google.appengine.repackaged.org.json.JSONArray;
@@ -59,12 +61,13 @@ public class MainServlet extends HttpServlet {
 			
 			ArrayList<String> key_list = new ArrayList<String>(NUM_DAYS);
 			ArrayList<String> dates_list = new ArrayList<String>(NUM_DAYS);
+			ArrayList<String> spotprice_list = new ArrayList<String>(NUM_DAYS);
 			ArrayList<String[][]> contracts_list = new ArrayList<String[][]>(NUM_DAYS);
 			
 			JSONArray contracts_jsondata = new JSONArray();
 			
 			Populate_Contract_Data(defaults, key_list, dates_list, 
-									contracts_list, contracts_jsondata);
+									contracts_list, spotprice_list, contracts_jsondata);
 			
 			
 			/* pass vars to jsp (see destination address) */
@@ -73,6 +76,7 @@ public class MainServlet extends HttpServlet {
 			req.setAttribute("keys", key_list);
 			req.setAttribute("dates", dates_list);
 			req.setAttribute("contracts", contracts_list);
+			req.setAttribute("spotprices", spotprice_list);
 			
 			req.setAttribute("contracts_json", contracts_jsondata);
 			req.setAttribute("dates_json", new JSONArray(dates_list));
@@ -124,18 +128,20 @@ public class MainServlet extends HttpServlet {
 			
 			ArrayList<String> key_list = new ArrayList<String>(NUM_DAYS);
 			ArrayList<String> dates_list = new ArrayList<String>(NUM_DAYS);
+			ArrayList<String> spotprice_list = new ArrayList<String>(NUM_DAYS);
 			ArrayList<String[][]> contracts_list = new ArrayList<String[][]>(NUM_DAYS);
 
 			JSONArray contracts_jsondata = new JSONArray();
 
-			Populate_Contract_Data(request, key_list, dates_list, 
-						contracts_list, contracts_jsondata);
+			Populate_Contract_Data(request, key_list, dates_list,
+						contracts_list, spotprice_list, contracts_jsondata);
 
 		
 			try {
 				JSONObject out = new JSONObject();
 				out.put("contract_data", contracts_jsondata);
 				out.put("dates_data", dates_list);
+				out.put("spotprice_data", spotprice_list);
 				
 				resp.setContentType("application/json");
 
@@ -160,13 +166,29 @@ public class MainServlet extends HttpServlet {
 										ArrayList<String> key_list,
 										ArrayList<String> dates_list,
 										ArrayList<String[][]> contracts_list,
+										ArrayList<String> spotprice_list,
 										JSONArray contracts_jsondata) {
 		
 		Calendar day = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd");
 
 		GenericToolkit gt = GenericToolkit.getInstance();
-
+		
+		CredentialsManager creds;
+		SpotPriceManager spm = null;
+		String spotprice = null;
+		try {
+			creds = new CredentialsManager();
+			spm = new SpotPriceManager(creds);
+			String key = gt.generateProfileKey(defaults[0], defaults[1],
+					defaults[2], defaults[3], day.getTime());
+			
+			spotprice = spm.getSpotprice(key.substring(0, 16)).substring(0,5);
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		
 		for (int d = 0; d < NUM_DAYS; d++) {
 			
@@ -188,7 +210,8 @@ public class MainServlet extends HttpServlet {
 			
 			dates_list.add(formatted_date);
 			contracts_list.add(results);
-
+			spotprice_list.add(spotprice);
+		
 			/*json populate*/
 			try {
 				JSONObject contract_hours = new JSONObject();

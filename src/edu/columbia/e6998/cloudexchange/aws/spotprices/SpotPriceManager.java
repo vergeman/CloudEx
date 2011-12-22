@@ -52,8 +52,8 @@ public class SpotPriceManager {
 		SpotPriceRequest spr = new SpotPriceRequest(profile);
 		SpotPrice sp = new SpotPrice();
 		
-		Calendar now = Calendar.getInstance();
-		now.add(Calendar.MINUTE, -5);
+		Calendar time = Calendar.getInstance();
+		time.add(Calendar.MINUTE, -5);
 		
 		/* check datastore or d/l to get latest price in 5 min span
 		 * for given profile (may be inefficient isn't clear how prices update)
@@ -61,8 +61,8 @@ public class SpotPriceManager {
 		
 		sp = queryDataStore(spr);
 		
-		if (sp.getSpotPrice() == null || sp.getTimestamp().before(now.getTime())) 	
-			sp = downloadSP(spr);
+		if (sp.getSpotPrice() == null || sp.getTimestamp().before(time.getTime())) 	
+			sp = downloadSP(spr, time);
 
 		
 		/*get last price and use the task queue
@@ -70,22 +70,31 @@ public class SpotPriceManager {
 		 * set the taskname to hack a "singleton" queue type
 		 */
 
-		// Eugene: commented for now as it was causing some weird unstoppable calls to /marketprice
-		/**
+		/*task queue isn't the best way to do this..
 		try {
 			Queue queue = QueueFactory.getDefaultQueue();
 			queue.add(withUrl("/marketprice").taskName(profile).param("profile", profile).countdownMillis(DEFER_TIME));
 		}
 		catch(TaskAlreadyExistsException e) {}
-		
-	    System.out.println("now " + now.getTime().toString());
+		*/
+	    System.out.println("request time: " + time.getTime().toString());
 	    System.out.println(sp.getTimestamp().toString());
 	    System.out.println(sp.toString());
-	    */
+	    
 		return sp.getSpotPrice();
 	}
+
 	
-	
+	public String getSpotpriceSince(String profile, Calendar time) {
+
+		SpotPriceRequest spr = new SpotPriceRequest(profile);
+		SpotPrice sp = new SpotPrice();
+		
+		sp = downloadSP(spr, time);
+
+		return sp.getSpotPrice();
+	}
+
 	private SpotPrice queryDataStore(SpotPriceRequest spr) {
 
 		SpotPrice sp = new SpotPrice();
@@ -121,9 +130,9 @@ public class SpotPriceManager {
 	
 	//TODO: get max time once instead of constant overwriting
 	
-	private SpotPrice downloadSP(SpotPriceRequest spr) {
+	private SpotPrice downloadSP(SpotPriceRequest spr, Calendar since) {
 		SpotPrice latest_sp = null;
-		
+		List<SpotPrice> prices = null;
 		try {
 			/* to batch our writes */
 			List<Entity> entities = new ArrayList<Entity>();
@@ -131,16 +140,28 @@ public class SpotPriceManager {
 			/* restrict our request to valid region */
 			ec2.setEndpoint(spr.getEndPoint());
 
+			Calendar time = since;
 			/*make request w/ filters*/
 			DescribeSpotPriceHistoryRequest req = new DescribeSpotPriceHistoryRequest();
+			
+			req.setStartTime(time.getTime());
+			req.setInstanceTypes(Arrays.asList(spr.getInstanceType()));
 			req.setAvailabilityZone(spr.getZone());
 			req.setProductDescriptions(Arrays.asList(spr.getDescription()));
-			
-			List<SpotPrice> prices = ec2.describeSpotPriceHistory(req).getSpotPriceHistory();
+
+			try {
+				prices = ec2.describeSpotPriceHistory(req).getSpotPriceHistory();
+
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			for (SpotPrice sp : prices) {
 
-				String key = buildKey(sp);
+				String key = buildKey(spr, sp);
 
 				Entity spotprice = new Entity("SpotPrice", key);
 
@@ -182,16 +203,11 @@ public class SpotPriceManager {
 	}
 	
 	
-	private String buildKey(SpotPrice sp) {
+	private String buildKey(SpotPriceRequest spr, SpotPrice sp) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(sp.getTimestamp().toString());
+		sb.append(sp.getTimestamp().getTime());
 		sb.append("_");
-		sb.append(sp.getAvailabilityZone());
-		sb.append("_");
-		sb.append(sp.getProductDescription());
-		sb.append("_");
-		sb.append(sp.getInstanceType());
-		
+		sb.append(spr.getProfile());
 		return sb.toString();
 	}
 	

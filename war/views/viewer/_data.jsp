@@ -37,7 +37,7 @@
 		<td></td>
 		<td></td>
 		<td></td>
-		<td></td>
+		<td class="spot_price">${spotprices[i]}</td>
 		<td></td>
 		<td></td>
 		<td></td>		
