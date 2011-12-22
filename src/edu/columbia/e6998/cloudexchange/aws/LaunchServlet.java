@@ -77,7 +77,7 @@ public class LaunchServlet extends HttpServlet {
 					// Check if hour is the same hour or previous hour in case we missed smth
 					
 					// TODO: Use Calendar.add(Calendar.HOUR, -1) instead of currentHour-1
-					if (tHour == currentHour || tHour == currentHour-1  || true) {
+					if (tHour == currentHour || tHour == currentHour-1) {
 	
 						
 						// Get input stream for credentials file
@@ -137,6 +137,7 @@ public class LaunchServlet extends HttpServlet {
 				}
 			}
 		} catch (Exception e) {
+			//alan: i get wierd log errors
 			//log.info(e.getMessage());
 		}
 		}
