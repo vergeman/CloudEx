@@ -30,7 +30,16 @@
     <servlet-name>ToolkitServlet</servlet-name>
     <url-pattern>/data</url-pattern>
   </servlet-mapping>
+ 
+ <servlet>
+    <servlet-name>MyOrdersServlet</servlet-name>
+    <servlet-class>edu.columbia.e6998.cloudexchange.toolkit.MyOrdersServlet</servlet-class>
+  </servlet>
   
+  <servlet-mapping>
+    <servlet-name>MyOrdersServlet</servlet-name>
+    <url-pattern>/orders</url-pattern>
+  </servlet-mapping>
 
 	<!-- blob upload/serve servlets for message passing and connection status/update -->
 	<servlet>

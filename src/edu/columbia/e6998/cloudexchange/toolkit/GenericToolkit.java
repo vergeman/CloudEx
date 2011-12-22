@@ -573,6 +573,14 @@ public class GenericToolkit {
 		}
 		return s;
 	}
+
+	public List<Entity> getMyOrders(String user) {
+		Query qOrder = new Query("Contract");
+		qOrder.addFilter("active", Query.FilterOperator.EQUAL, true);
+		qOrder.addFilter("user", FilterOperator.EQUAL, user);
+		List<Entity> orders = datastore.prepare(qOrder).asList(FetchOptions.Builder.withDefaults());
+		return orders;
+	}
 	
 //	public void createData(String profile){
 //		Random r = new Random();
