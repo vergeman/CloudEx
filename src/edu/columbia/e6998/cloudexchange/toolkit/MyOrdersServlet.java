@@ -13,14 +13,18 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.repackaged.org.json.JSONArray;
+import com.google.appengine.repackaged.org.json.JSONException;
+import com.google.appengine.repackaged.org.json.JSONObject;
 
 
 @SuppressWarnings("serial")
 public class MyOrdersServlet extends HttpServlet {
 	GenericToolkit gt = GenericToolkit.getInstance();
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp)
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+
 		String rs = "";
 		List<Entity> myorders = null;
 		ArrayList<Entity> bids = new ArrayList<Entity>();
@@ -35,16 +39,54 @@ public class MyOrdersServlet extends HttpServlet {
 			//System.out.println("\nUser:"  + user);
 			myorders = gt.getMyOrders(user);
 		}
-		for(Entity e: myorders){
-			//System.out.println(e.toString());
-			if((Boolean) e.getProperty("seller")){
+
+		for (Entity e : myorders) {
+			 //System.out.println(e.toString());
+			if ((Boolean) e.getProperty("seller")) {
 				offers.add(e);
-			}else
+			} else
 				bids.add(e);
 		}
 
 		//System.out.println("\nProcessing Bid\\Offers.");
+		JSONArray current_offers = new JSONArray();
+		JSONArray current_bids = new JSONArray();
+		JSONObject out = new JSONObject();
 		
+		try {
+			for (Entity e : offers) {
+				JSONObject obj = new JSONObject();
+				obj.put("key", e.getKey().toString());
+				obj.put("profile", profileToDetail((String) e.getProperty("profile")));
+				obj.put("date", profileToDate((String) e.getProperty("profile")));
+				obj.put("price", e.getProperty("price"));
+				obj.put("hour", e.getProperty("hour"));
+				
+				current_offers.put(obj);
+			} 
+			
+			
+			for (Entity e : bids) {
+				JSONObject obj = new JSONObject();
+				obj.put("key", e.getKey().toString());
+				obj.put("profile", profileToDetail((String) e.getProperty("profile")));
+				obj.put("date", profileToDate((String) e.getProperty("profile")));
+				obj.put("price", e.getProperty("price"));
+				obj.put("hour", e.getProperty("hour"));
+				
+				current_bids.put(obj);
+			}
+
+			out.put("current_bids", current_bids);
+			out.put("current_offers", current_offers);
+			
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		
+		resp.setContentType("application/json");
+		resp.getWriter().println(out.toString());
+		/*
 		if(offers.isEmpty()){
 			rs = "You do not have any active offers.";
 		}else{
@@ -54,7 +96,8 @@ public class MyOrdersServlet extends HttpServlet {
 						"\tprice:" + String.valueOf((Double) e.getProperty("price"));
 			}
 		}
-		
+		*/
+		/*
 		if(bids.isEmpty()){
 			rs += "\nYou do not have any active bids.";
 		}else{
@@ -66,22 +109,27 @@ public class MyOrdersServlet extends HttpServlet {
 						"\n";
 			}
 		}
+		*/
 		
-	resp.getWriter().write(rs);
+	//resp.getWriter().write(rs);
 	}
 	
 	public String profileToDetail(String profile){
 		String detail = "";
-		SimpleDateFormat dateMMddYYYY= new SimpleDateFormat("MM/dd/yyyy");
 		String[] lookup = gt.reverseLookUpProfile(profile);
-		StringBuilder sDate = new StringBuilder(dateMMddYYYY.format(gt.dateConvert(lookup[gt.DATE])));
 		
-		detail = sDate + "::" + 
+		detail = 
 				"[" + lookup[gt.REGION] + " " + "]" + 
 				"[" + lookup[gt.OS] + " " + "]" +
 				"[" + lookup[gt.INSTANCE_TYPE] + "]";
+		
 		return detail;
 	}
 
-	
+	public String profileToDate(String profile){
+		SimpleDateFormat dateMMddYYYY= new SimpleDateFormat("MM/dd/yyyy");
+		String[] lookup = gt.reverseLookUpProfile(profile);
+		StringBuilder sDate = new StringBuilder(dateMMddYYYY.format(gt.dateConvert(lookup[gt.DATE])));
+		return sDate.toString();
+	}
 }

@@ -6,6 +6,17 @@ var spotprice_data;
 
 $(document).ready(function() {
 
+	//hook in save on accounts page to populate with some preference 
+	//(prevent null crazy loop)
+	$('#upload_submit').click(function() {
+		e.preventDefault();
+		$('#upload_submit').submit();
+		$('#save_submit').submit();
+	});
+	
+	//load current markets
+	update_current();
+	
 	$('.arrow').click(function() {
 		var id = $(this).parent().attr('id');
 		

@@ -6,7 +6,14 @@
 </div>
 <div id="orderbook">
 	<br>
-	Tell me how to get orders
+
+	<div id="orderbook_bids">
+		
+	</div>
 	
+	<div id="orderbook_offers">
+		
+	
+	</div>	
 
 </div>

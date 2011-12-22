@@ -19,11 +19,8 @@
 <jsp:include page="/views/_header.jsp" />
   </head>
   <body>
-<div id="auth">
-<jsp:include page="/views/_auth.jsp" />
-</div>
 <div id="header">
-     <h1>My CloudEx Account</h1>
+		<jsp:include page="/views/_topbar.jsp" />
 </div>
 
 <div id="main">
@@ -38,14 +35,17 @@
 					<a>Current File:&nbsp ${fileName}</a>
 					<br>
 					<br>
+					
 					<form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
      					<input type="file" name="myFile">
      					<br>
      					<br>
-     					<input type="submit" value="Submit">
+     					<input id="upload_submit" type="submit" value="Submit">
      				</form>
+     				
      				<br><br>
      				</td></tr>
+     				
      				<form action="/account" method="post">
      				<tr><td>
      					<b>Default AMI</b> 
@@ -76,7 +76,7 @@
      					<br>
      				</td></tr>
      				<tr><td>
-     					<input type="submit" value="Save">
+     					<input id="save_submit" type="submit" value="Save">
      				</td></tr>
      				</form>
      			</table>	

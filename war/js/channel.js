@@ -20,11 +20,15 @@ socket.onmessage = function(message) {
 			
 			$('#' + key).html(price);
 		}
+
+		
+
 	}
 	catch(err) {
 		console.log("channel data rcv err");
 	}
 
+	update_current();
 };
 
 
@@ -39,7 +43,50 @@ socket.onerror = function() {
 
 
 
+function update_current() {
+	var response;
+	//update current bid /offers
+	$.ajax({
+        url: '/orders',
+        type: 'POST',
+        data:{
+            msg:""
+        },
+        success: function(data){
+        	console.log(data);
+        	
+        	var current_bids = data['current_bids'];
+        	var current_offers = data['current_offers'];
+        	$('#orderbook_bids').html("");
+        	$('#orderbook_offers').html("");
+        	
+        	$.each(current_bids, function(i, v) {
+        		
+        		var datehour = "<div class='orderbook_date'>" + v['date'] + "  " + v['hour'] + ":00</div>";
+        		var profile = "<div class='orderbook_profile'>" + v['profile'] + "</div>";
+        		var price = "<div class='orderbook_price'> Your Offer: " + v['price'] + "</div>";
+        		var key = v['key'];
+        		
+        		$('#orderbook_bids').append('<div class="order ' + key + '">'
+        				+ datehour + profile + price + '</div>');  		
+        	});
+        	$.each(current_offers, function(i, v) {
+        		var datehour = "<div class='orderbook_date'>" + v['date'] + "  " + v['hour'] + ":00</div>";
+        		var profile = "<div class='orderbook_profile'>" + v['profile'] + "</div>";
+        		var price = "<div class='orderbook_price'> Your Bid: " + v['price'] + "</div>";
+        		var key = v['key'];
+        		
+        		$('#orderbook_offers').append('<div class="order ' + key + '">'
+        				+ datehour + profile + price + '</div>');  		
 
+        	});
+        	
+        	
+        },
+        complete:function(){}
+    }, 2000);
+	
+}
 
 
 
