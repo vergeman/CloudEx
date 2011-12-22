@@ -44,12 +44,19 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- order book -->
+		<div id="orderbook_container">
+			<jsp:include page="/views/viewer/_orderbook.jsp" />
+		</div>
 	</div>
 
 	<!--  this is our trade submission modal dialog box -->
 	<div id="dialog" title="Trade Execution">
 		<jsp:include page="/views/viewer/_submit.jsp" />
 	</div>
+	
+
 	
 	
 	<div id="footer">

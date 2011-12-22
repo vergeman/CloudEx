@@ -209,6 +209,21 @@ $(document).ready(function() {
 		}
 	});
 	
+	
+	
+	$('#orderbook_tag').click(function() {
+		var height = $('#orderbook_container').css('height');
+		if (height == "10px") {
+			$('#orderbook_container').animate( { height: '600px'});
+		}
+		else {
+			$('#orderbook_container').animate( { height: '10px'});
+		}
+		
+		
+	}); 
+	
+	
 });
 
 
