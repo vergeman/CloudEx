@@ -558,7 +558,7 @@ public class GenericToolkit {
 			//
 			if(!syncCache.contains(profile)){
 				return sendChannelMessage("REFRESH", 
-						"refresh", 
+						"REFRESH", 
 						"0", 
 						"1", 
 						profile,

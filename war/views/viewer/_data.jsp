@@ -11,10 +11,10 @@
 		<th>Date</th>
 		<th>Hour</th>
 		<th>Sell</th><!-- action status -->
-		<th>Qty</th>
+		<th class="bid_qty">Qty</th>
 		<th>Bid</th>
 		<th>Ask</th>
-		<th>Qty</th>
+		<th class="ask_qty">Qty</th>
 		<th>Buy</th><!-- action status -->
 		<th>Last</th>
 	</tr>
@@ -31,10 +31,10 @@
 		
 		<td></td>
 		<td></td>
-		<td></td>
+		<td class="bid_qty"></td>
 		<td></td>
 		<td class="spot_price">${spotprices[i]}</td>
-		<td></td>
+		<td class="ask_qty"></td>
 		<td></td>
 		<td></td>		
 		</tr>
