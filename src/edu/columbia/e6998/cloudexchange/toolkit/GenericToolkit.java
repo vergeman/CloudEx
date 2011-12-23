@@ -297,7 +297,7 @@ public class GenericToolkit {
 		return updateMemcache((Boolean) offer.getProperty("seller"), profile, arrayIndex, mem, null);
 	}
 	
-	public String createTestTransaction(String date, String time) {
+	public String createTestTransaction(Date date, String time) {
 		
 		Entity transaction = new Entity("Transaction");
 		transaction.setProperty("profile", "0000000020110101");
