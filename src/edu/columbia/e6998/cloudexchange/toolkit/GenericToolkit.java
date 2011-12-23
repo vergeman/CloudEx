@@ -557,9 +557,12 @@ public class GenericToolkit {
 			queryDataStore(profile, "");
 			//
 			if(!syncCache.contains(profile)){
-				System.out.println("Something is not right!!!!!!");
-				//TODO return something very ugly to teach them a lesson
-				return null;
+				return sendChannelMessage("REFRESH", 
+						"refresh", 
+						"0", 
+						"1", 
+						profile,
+						"0");
 			}else{
 				//assume memcache now has the next best bid
 				m = ((Entity[]) syncCache.get(profile))[index];
@@ -691,16 +694,5 @@ public class GenericToolkit {
 		
 		return "";
 	}
-	
-//	public void createData(String profile){
-//		Random r = new Random();
-//		r.setSeed(7/9);
-//		String[] user = {"batman", "robin", "joker", "lisa"};
-//		String[] hours = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-//				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20,",
-//				"21", "22", "23"};
-//		if(syncCache.get(profile) == null)
-//			createBidOffer(profile, r.nextDouble() + 0.001, user[r.nextInt(4)], hours[r.nextInt(24)]);
-//	}
-	
+		
 }
