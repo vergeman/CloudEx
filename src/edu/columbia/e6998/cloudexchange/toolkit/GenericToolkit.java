@@ -17,6 +17,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Transaction;
@@ -439,6 +440,37 @@ public class GenericToolkit {
 		return charges;
 	}
 	
+	public Msg cancelBidOffer(String key){
+		Msg msg = null;
+		//, String profile, String arrayIndex)
+		Key myKey = KeyFactory.stringToKey(key);
+		Transaction txn = datastore.beginTransaction();
+		Entity e = null;
+		try {
+			e = datastore.get(myKey);
+		} catch (EntityNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		datastore.delete(myKey);
+		txn.commit();
+		
+		//Check if the key matches what is displayed
+		String profile = (String) e.getProperty("profile");
+		int arrayIndex = hourToIndex((String) e.getProperty("hour"), (Boolean) e.getProperty("seller"));
+		int index = Integer.valueOf(arrayIndex);
+		Entity m = ((Entity[]) syncCache.get(profile))[index];
+		
+		if(m.getKey().equals(e.getKey())){
+			Entity[] mem = queryDataStore(profile, myKey.toString());
+			return updateMemcache((Boolean) e.getProperty("seller"), profile, String.format("%02d", arrayIndex), mem, null);
+		}
+		
+		return msg;
+	}
+ 
+	
 	private Entity[] deleteBidOffer(String profile, String arrayIndex) {
 		int index = Integer.valueOf(arrayIndex);
 		Entity e;
@@ -469,7 +501,7 @@ public class GenericToolkit {
 		//Msg msg =  new Msg(type, action, value, qty, profile);
 		int i = Integer.valueOf(arrayIndex);
 		
-		Msg msg = new Msg(type, action, value, "1", profile + String.format("%d", i));
+		Msg msg = new Msg(type, action, value, "1", profile + String.format("%d", i), "");
 		return msg;
 	}
 	

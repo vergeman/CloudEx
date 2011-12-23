@@ -12,6 +12,7 @@ public class Msg {
 	String price = null;
 	String qty = null;
 	String key = null;
+	String eKey = null;
 
 	MsgType msg_type = null;
 	MsgAction msg_action = null;
@@ -55,19 +56,20 @@ public class Msg {
 		
 	}
 	
-	public Msg(String type, String action, String price, String qty, String key) {
+	public Msg(String type, String action, String price, String qty, String key, String eKey) {
 		this.type = type;
 		this.action = action;
 		this.price = price;
 		this.qty = qty;
 		this.key = key;
+		this.eKey = eKey;
 		
 		this.msg_type = MsgType.valueOf(type);
 		this.msg_action = MsgAction.valueOf(action);
 	}
 	
 	public String toString() {
-		return type + " " + action + " " + price + " " + qty + " " + key;
+		return type + " " + action + " " + price + " " + qty + " " + key + " " + eKey;
 	}
 
 	public void printString() {
