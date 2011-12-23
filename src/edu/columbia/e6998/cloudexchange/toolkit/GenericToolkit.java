@@ -322,7 +322,7 @@ public class GenericToolkit {
 		transaction.setProperty("price", 			offer.getProperty("price"));
 		transaction.setProperty("date", 			offer.getProperty("date"));
 		transaction.setProperty("time", 			indexToHour(arrayIndex));	//calendar always 1 hour after this
-	//	transaction.setProperty("ami", 				ami);			//variable - user provided
+		transaction.setProperty("ami", 				ami);			//variable - user provided
 		transaction.setProperty("instanceType", 	lookup[INSTANCE_TYPE]);	//micro, large
 		transaction.setProperty("region", 			lookup[REGION]);//usa, jp etc
 		transaction.setProperty("zone", 			lookup[ZONE]);	//variable
@@ -351,7 +351,7 @@ public class GenericToolkit {
 		transaction.setProperty("price",  0.05);
 		transaction.setProperty("date",  date); // date in MMM-dd format
 		transaction.setProperty("time",  time); // time in 24-hour format (16 = 4pm)
-		//transaction.setProperty("ami", 	"ami-8c1fece5"); //variable - user provided
+		transaction.setProperty("ami", 	"ami-8c1fece5"); //variable - user provided
 		transaction.setProperty("instanceType", "t1.micro");	//micro, large
 		transaction.setProperty("region", "US East");//usa, jp etc
 		transaction.setProperty("zone", "us-east-1a");	//variable

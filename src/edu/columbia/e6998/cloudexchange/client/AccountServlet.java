@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,13 +20,16 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.aws.LaunchServlet;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 @SuppressWarnings("serial")
 public class AccountServlet extends HttpServlet {
 	
+	private static final Logger log = Logger.getLogger(AccountServlet.class.getName());
 	private Double totalCharge = 0.0;
 
 	private final String destination = "/views/account.jsp";
@@ -110,21 +116,34 @@ public class AccountServlet extends HttpServlet {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 		
-		String defaultAmi = (String) req.getParameter("defaultAmi");
 		String keyPair = (String) req.getParameter("keyPair");
 		String securityGroup = (String) req.getParameter("securityGroup");
+		Enumeration<String> attributes = req.getParameterNames();
+		String transactionKey = null;
+		while (attributes.hasMoreElements()) {
+			String attribute = attributes.nextElement();
+			log.info("attribute");
+			if (attribute.contains("save")) {
+				transactionKey = attribute.substring(5);
+				break;
+			}
+		}
 		
-		System.out.println("[AccountServlet doPost]");
-		System.out.println(defaultAmi);
-		System.out.println(keyPair);
-		System.out.println(securityGroup);
+		String ami = (String) req.getParameter("ami" + transactionKey);
+		
+		log.info("[AccountServlet doPost]");
+		log.info(ami);
+		log.info(keyPair);
+		log.info(securityGroup);
 		
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-		if (defaultAmi != null)
-			GenericToolkit.getInstance().updateUserProfile(userId, "defaultAmi", defaultAmi.trim());
+		if (ami != null)
+			GenericToolkit.getInstance().updateTransaction(KeyFactory.stringToKey(transactionKey), 
+					"ami", ami);
 		if (keyPair != null) 
 			GenericToolkit.getInstance().updateUserProfile(userId, "keyPair", keyPair.trim());
 		if (securityGroup != null) 
@@ -167,6 +186,7 @@ public class AccountServlet extends HttpServlet {
 				else 
 					entry.buyOrSell = "Sell";
 
+				entry.transactionKey = (String) transaction.getKey().getName();
 				entry.zone = (String) transaction.getProperty("zone");
 				entry.region = (String) transaction.getProperty("region");
 				entry.ami = (String) transaction.getProperty("ami");

@@ -48,22 +48,6 @@
      				
      				<form action="/account" method="post">
      				<tr><td>
-     					<b>Default AMI</b> 
-     					<br>
-     					<select id="instancetype" name="defaultAmi">
-							<c:forEach var="i" items="${amis}">
-								<c:choose>
-									<c:when test="${i == defaultAmi}">
-										<option selected value="${i}" class="instances">${i}</option>
-									</c:when>
-									<c:otherwise>
-										<option value="${i}" class="instances">${i}</option>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</select>
-     				</td></tr>
-     				<tr><td>
      					<b>Default Key Pair</b>
      					<br>
      					<input type="text" name="keyPair" value="${keyPair}">
@@ -105,6 +89,7 @@
 						<td align=center><b>Contract price</b></td>
 						<td align=center><b>Spot price</b></td>
 					</tr>
+					<form action="/account" name="ami"></form>
 					<c:set var="j" value="1"/>
 					<c:forEach var="i" items="${positions}">
 					<tr>
@@ -114,9 +99,21 @@
 						<td>${i.region}</td>
 						<td>${i.zone}</td>
 						<td>${i.instance}</td>
-						<td>${i.ami}</td>
+						<td><select id="instancetype" name="ami${i.transactionKey}">
+							<c:forEach var="k" items="${amis}">
+								<c:choose>
+									<c:when test="${k == i.ami}">
+										<option selected value="${k}" class="instances">${k}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${k}" class="instances">${k}</option>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select></td>
 						<td>${i.contractPrice}</td>
 						<td>${i.spotPrice}</td>
+						<td><input id="save${i.transactionKey}" type="submit" value="Save"></td>
 					</tr>
 					<c:set var="j" value="${j+1}"/>
 					</c:forEach>
