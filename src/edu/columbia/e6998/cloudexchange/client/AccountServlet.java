@@ -3,6 +3,7 @@ package edu.columbia.e6998.cloudexchange.client;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Date;
 
@@ -22,6 +23,8 @@ import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 @SuppressWarnings("serial")
 public class AccountServlet extends HttpServlet {
+	
+	private Double totalCharge = 0.0;
 
 	private final String destination = "/views/account.jsp";
 	private final String[] amiList = {"ami-8c1fece5",
@@ -88,7 +91,6 @@ public class AccountServlet extends HttpServlet {
 		 */
 	
 		List<String> chargeList = getChargesList(userId);
-		Double totalCharge = 0.0;
 		
 		req.setAttribute("fileName", fileName);
 		req.setAttribute("positions", positions);
@@ -131,17 +133,23 @@ public class AccountServlet extends HttpServlet {
 	}
 	
 	public List<String> getChargesList(String userId) {
+		totalCharge = 0.0;
 		ArrayList<String> chargeList = new ArrayList<String>();
 		List<Entity> charges = GenericToolkit.getInstance().getChargesForUser(userId);
-		
-		for (Entity charge : charges) {
-			String chargeString = "";
-			String type = (String) charge.getProperty("type");
-			if (type.equals("delivery")) {
-				chargeString += "Delivered instance:";
+		try {
+			for (Entity charge : charges) {
+				String chargeString = "";
+				String type = (String) charge.getProperty("type");
+				if (type.equals("delivery")) {
+					chargeString += "Delivered instance:";
+				}
+				String amount = (String) charge.getProperty("amount");
+				chargeString += " -$" + amount;
+				chargeList.add(chargeString);
+				totalCharge += Double.parseDouble(amount);
 			}
-			String amount = (String) charge.getProperty("amount");
-			chargeString += " -$" + amount;
+		} catch (Exception e) {
+			
 		}
 		return chargeList;
 	}
@@ -169,21 +177,18 @@ public class AccountServlet extends HttpServlet {
 				//alan: seems we're using dates now
 				/**
 				String dateString = (String) transaction.getProperty("date");
-				
-				String timeString = (String) transaction.getProperty("time");
-				String dateTime = dateString + " " + timeString;
-				SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH");
-				Date date = null;
-				try {
-					//date = sdf.parse(dateTime);
-				} catch (Exception e) {
-				
-				}
 				*/
-				entry.date = date;
-				
-				// TODO: get current price
-				entry.bidAskPrice = null;
+				try {
+					Calendar dateCalendar = Calendar.getInstance();
+					dateCalendar.setTime(date);
+					String timeString = (String) transaction.getProperty("time");
+					dateCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeString));
+					date = dateCalendar.getTime();
+				} catch (NumberFormatException e) {
+				  
+				}
+				SimpleDateFormat sfd = new SimpleDateFormat("MM/dd/yyyy hh a");
+				entry.date = sfd.format(date);
 				// TODO: get current spot price
 				entry.spotPrice = null;
 				

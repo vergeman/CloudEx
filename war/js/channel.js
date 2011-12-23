@@ -83,8 +83,33 @@ function update_current() {
         	
         	
         },
-        complete:function(){}
+        complete:function(){
+        	
+        	$(".orderbook_date, .orderbook_profile, .orderbook_price").click(function() {
+        		var ekey = $(this).parent().attr('class').split(' ')[1];
+        		alert(ekey);
+        		$.ajax({
+    		        url: '/message/',
+    		        type: 'POST',
+    		        data:{
+    		            msg:"UPDATE",
+    		            key:"000000000000000000",
+    		            eKey:ekey,
+    		            qty:0,
+    		            price:0,
+    		            action:"CANCEL",
+    		            channelkey:token
+    		        },
+    		        success: function(){},
+    		        complete:function(){}
+    		    });
+        	
+        	});
+
+        	
+        }
     }, 2000);
+	
 	
 }
 
