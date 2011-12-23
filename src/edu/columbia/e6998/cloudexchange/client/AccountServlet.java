@@ -36,8 +36,6 @@ public class AccountServlet extends HttpServlet {
 	private final String[] amiList = {"ami-8c1fece5",
 			"ami-31814f58",
 			"ami-1b814f72",
-			"ami-3ddb1954",
-			"ami-31d41658",
 			"ami-3d599754",
 			"ami-ab844dc2", 
 			"ami-fbf93092",
