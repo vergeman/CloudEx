@@ -28,10 +28,6 @@
 				<span class="arrow ui-icon ${i ==0 ? 'ui-icon-circle-triangle-s' : 'ui-icon-circle-triangle-e'}" style="float:left;"></span>
 				${dates[i]}
 			</td>
-
-			
-			
-			
 		
 		<td></td>
 		<td></td>

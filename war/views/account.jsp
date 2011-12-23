@@ -87,21 +87,12 @@
 				<div id="center">
 					<b>My Portfolio</b>
 					<br><br>
-					
-<%
- 	ArrayList<PositionEntry> entries = null;
- 	try {
- 		entries = (ArrayList<PositionEntry>) request.getAttribute("positions");
- 	} catch (Exception e) {
- 		// oops
- 	}
- 	if (entries == null) {
- 		out.println("<a> You have no positions in your portfolio </a>");
- 	} else if (entries.size() == 0) {
- 		out.println("<a> You have no positions in your portfolio </a>");
- 	} else {
- 		
- %>
+		
+				<!-- 
+				<c:if test="${empty positions}">
+    				You have no positions in your portfolio
+				</c:if>
+				 -->
 				<table class="positionTable">
 					<tr>
 						<td align=center><b>#</b></td>
@@ -112,39 +103,39 @@
 						<td align=center><b>Instance Type</b></td>
 						<td align=center><b>Ami</b></td>
 						<td align=center><b>Contract price</b></td>
-						<td align=center><b>Bid/Ask price</b></td>
 						<td align=center><b>Spot price</b></td>
 					</tr>
-		<%
-		int i = 1;
-		SimpleDateFormat sfd = new SimpleDateFormat("MM/dd/yyyy hh a");
-		for (PositionEntry e : entries) {
-			out.println("<tr>");
-			out.println("<td>" + i + "</td>");
-			out.println("<td>" + e.buyOrSell + "</td>");
-			out.println("<td>" + sfd.format(e.date) + "</td>");
-			out.println("<td>" + e.region + "</td>");
-			out.println("<td>" + e.zone + "</td>");
-			out.println("<td>" + e.instance + "</td>");
-			out.println("<td>" + e.ami + "</td>");
-			out.println("<td>" + e.contractPrice + "</td>");
-			out.println("<td>" + e.bidAskPrice + "</td>");
-			out.println("<td>" + e.spotPrice + "</td>");
-			out.println("</tr>");
-		}
-		%>
+					<c:set var="j" value="1"/>
+					<c:forEach var="i" items="${positions}">
+					<tr>
+						<td>${j}</td>
+						<td>${i.buyOrSell}</td>
+						<td>${i.date}</td>
+						<td>${i.region}</td>
+						<td>${i.zone}</td>
+						<td>${i.instance}</td>
+						<td>${i.ami}</td>
+						<td>${i.contractPrice}</td>
+						<td>${i.spotPrice}</td>
+					</tr>
+					<c:set var="j" value="${j+1}"/>
+					</c:forEach>
 					</table>
 				</div>
-<%
-	// end of big else
- 	}
-%>
 			</td>
 			<td>
 				<div class="right">
 					<b>My Accounting</b>
 					<br><br>
 					<a>Total Charges: ${totalCharge}</a>
+					<br><br>
+					<ul id="os">
+						<c:forEach var="i" items="${charges}">
+						<li class="os">
+							${i}
+						</li>
+						</c:forEach>
+				</ul>
 				</div>
 			</td>
 		</tr>
