@@ -179,8 +179,8 @@ public class GenericToolkit {
 		Entity[] tmpList = new Entity[48];
 		String memKey = "";
 		int index = 0;
-		ArrayList<String> deletes = new ArrayList<String>();
-		deletes = getDeletes();
+//		ArrayList<String> deletes = new ArrayList<String>();
+//		deletes = getDeletes();
 //		if (deletes==null)
 //			deletes = 
 //		deletes.add(forcedDelete);
@@ -202,7 +202,8 @@ public class GenericToolkit {
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			if (e!=null)
 				//System.out.println("index:" + index + e.toString());			
-			if (tmpList != null  && !deletes.contains(e.getKey().toString())){
+//			if (tmpList != null  && !deletes.contains(e.getKey().toString())){
+			if (tmpList != null){
 				tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];
@@ -227,7 +228,8 @@ public class GenericToolkit {
 			index = hourToIndex(((String) e.getProperty("hour")), ((Boolean) e.getProperty("seller")));
 			if (e!=null)
 				//System.out.println("index:" + index + e.toString());
-			if (tmpList != null && !deletes.contains(e.getKey().toString())){
+//			if (tmpList != null && !deletes.contains(e.getKey().toString())){
+			if (tmpList != null){
 					tmpList[index] = e;
 			}else{
 				tmpList = new Entity[48];

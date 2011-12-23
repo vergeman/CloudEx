@@ -62,7 +62,7 @@ public class Msg {
 		this.price = price;
 		this.qty = qty;
 		this.key = key;
-		this.eKey = eKey;
+		this.eKey = "";
 		
 		this.msg_type = MsgType.valueOf(type);
 		this.msg_action = MsgAction.valueOf(action);

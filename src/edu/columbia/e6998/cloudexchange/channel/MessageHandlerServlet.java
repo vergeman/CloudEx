@@ -110,7 +110,7 @@ public class MessageHandlerServlet extends HttpServlet {
 				  req.getParameter("price").trim(),
 				  req.getParameter("qty").trim(),
 				  req.getParameter("key").trim(),
-				  req.getParameter("eKey").trim()); 
+				  "");
 
 		
 		System.out.println("msg recv: ");
@@ -154,7 +154,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						break;
 						
 					case CANCEL:
-						msg = gt.cancelBidOffer(msg.eKey);
+						msg = gt.cancelBidOffer(req.getParameter("eKey").trim());
 						break;
 						
 					default:
