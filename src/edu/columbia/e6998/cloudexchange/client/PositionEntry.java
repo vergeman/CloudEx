@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class PositionEntry {
 
+	public String transactionKey;
 	public String buyOrSell;
 	public String date;
 	public String ami;
@@ -15,6 +16,10 @@ public class PositionEntry {
 	
 	public PositionEntry () {
 		
+	}
+	
+	public String getTransactionKey() {
+		return this.transactionKey;
 	}
 	
 	public String getBuyOrSell() {
