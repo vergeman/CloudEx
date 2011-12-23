@@ -186,7 +186,7 @@ public class AccountServlet extends HttpServlet {
 				else 
 					entry.buyOrSell = "Sell";
 
-				entry.transactionKey = (String) transaction.getKey().getName();
+				entry.transactionKey = (String) transaction.getKey().toString();
 				entry.zone = (String) transaction.getProperty("zone");
 				entry.region = (String) transaction.getProperty("region");
 				entry.ami = (String) transaction.getProperty("ami");

@@ -89,7 +89,7 @@
 						<td align=center><b>Contract price</b></td>
 						<td align=center><b>Spot price</b></td>
 					</tr>
-					<form action="/account" name="ami"></form>
+					<form action="/account" name="ami">
 					<c:set var="j" value="1"/>
 					<c:forEach var="i" items="${positions}">
 					<tr>
@@ -117,6 +117,7 @@
 					</tr>
 					<c:set var="j" value="${j+1}"/>
 					</c:forEach>
+					</form>
 					</table>
 				</div>
 			</td>
