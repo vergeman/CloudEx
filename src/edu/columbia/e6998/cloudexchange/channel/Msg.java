@@ -42,6 +42,7 @@ public class Msg {
 		CANCEL	("cancel"),
 		EMAIL	("email"),
 		CONFIRM ("confirm"),
+		REFRESH ("refresh"),
 		bidOffer ("bidOffer");	//i don't understand this datastore shouldn't be sending message types
 		
 		private final String action;
