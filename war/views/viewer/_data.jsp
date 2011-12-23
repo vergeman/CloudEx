@@ -16,7 +16,7 @@
 		<th>Ask</th>
 		<th class="ask_qty">Qty</th>
 		<th>Buy</th><!-- action status -->
-		<th>Last</th>
+		<th><!-- Last --></th>
 	</tr>
 	</thead>
 
