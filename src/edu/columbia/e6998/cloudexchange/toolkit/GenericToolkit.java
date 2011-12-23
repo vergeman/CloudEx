@@ -284,7 +284,7 @@ public class GenericToolkit {
 
 		datastore.put(contract);
 		txn.commit();
-		return updateMemcache((Boolean) contract.getProperty("seller"), profile, arrayIndex, (Entity[]) syncCache.get(profile), contract);
+		return updateMemcache((Boolean) contract.getProperty("seller"), profile, arrayIndex, contract);
 	}
 	
 	public Boolean autoTransaction(Boolean seller, double price, String profile, String arrayIndex){
@@ -337,13 +337,14 @@ public class GenericToolkit {
 		transaction.setProperty("priceExecuted", 	"N/A");
 		
 		datastore.put(transaction);
-		Entity[] mem = deleteBidOffer(profile, arrayIndex);
+		//Entity[] mem = deleteBidOffer(profile, arrayIndex);
+		deleteBidOffer(profile, arrayIndex);
 //		for(Entity e: mem){
 //			if(e!=null)
 //				System.out.println(e.toString());
 //		}
 //		System.out.println("delete done");
-		return updateMemcache((Boolean) offer.getProperty("seller"), profile, arrayIndex, mem, null);
+		return updateMemcache((Boolean) offer.getProperty("seller"), profile, arrayIndex, null);
 	}
 	
 	public String createTestTransaction(Date date, String time) {
@@ -468,15 +469,21 @@ public class GenericToolkit {
 		Entity m = ((Entity[]) syncCache.get(profile))[index];
 		
 		if(m.getKey().equals(c.getKey())){
-			Entity[] mem = queryDataStore(profile, c.getKey().toString());
-			return updateMemcache((Boolean) c.getProperty("seller"), profile, String.format("%02d", arrayIndex), mem, null);
+			//Entity[] mem = queryDataStore(profile, c.getKey().toString());
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return updateMemcache((Boolean) c.getProperty("seller"), profile, String.format("%02d", arrayIndex), null);
 		}
 		
 		return msg;
 	}
  
 	
-	private Entity[] deleteBidOffer(String profile, String arrayIndex) {
+	private void deleteBidOffer(String profile, String arrayIndex) {
 		int index = Integer.valueOf(arrayIndex);
 		Entity e;
 		Transaction txn = datastore.beginTransaction();
@@ -490,12 +497,13 @@ public class GenericToolkit {
 		
 		addDelete(e.getKey().toString());
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return queryDataStore(profile, e.getKey().toString()); 
+		//return null;
+		//return queryDataStore(profile, e.getKey().toString()); 
 	}
 
 	public String profileToKey(String profile, String arrayIndex){
@@ -526,30 +534,33 @@ public class GenericToolkit {
 			return (h*2);
 	}
 	
-	private Msg updateMemcache(Boolean flag, String profile, String arrayIndex, Entity[] cache, Entity e){
+	private Msg updateMemcache(Boolean flag, String profile, String arrayIndex, Entity e){
 		Entity[] tmpList = null;
 		Entity m = null;
 		int index = Integer.valueOf(arrayIndex);
-
+	
 		if(!syncCache.contains(profile)){
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 				queryDataStore(profile, "");
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
-		
-		
+
 		System.out.println("updateMemCache::1");
-		//check if this is post create transaction
+		//check if this is post record deletion
 		if(e==null){
+			//update memcache for that profile
+			queryDataStore(profile, "");
+			//
 			if(!syncCache.contains(profile)){
 				System.out.println("Something is not right!!!!!!");
 				//TODO return something very ugly to teach them a lesson
 				return null;
-			}else
+			}else{
+				//assume memcache now has the next best bid
 				m = ((Entity[]) syncCache.get(profile))[index];
 				if(m!= null)
 					return sendChannelMessage("UPDATE", 
@@ -567,13 +578,15 @@ public class GenericToolkit {
 							profile,
 							String.valueOf(index));
 				}
+			}
 		}
 		
-		
+		//assume memcache is updated by now
 		if(syncCache.contains(profile))
 			tmpList = (Entity[]) syncCache.get(profile);
 		else
 			tmpList = new Entity[48];
+		
 		m = tmpList[index];
 		
 		if(m==null){
@@ -593,11 +606,11 @@ public class GenericToolkit {
 		if((Boolean) m.getProperty("seller")){
 			//compare
 			System.out.println("updateMemCache::5");
-			if((Double) m.getProperty("price") <= (Double) e.getProperty("price"))
+			if((Double) m.getProperty("price") <= (Double) e.getProperty("price") && !m.equals(e))
 				return null;
 		}else{
 			System.out.println("updateMemCache::6");
-			if((Double) m.getProperty("price") >= (Double) e.getProperty("price"))
+			if((Double) m.getProperty("price") >= (Double) e.getProperty("price") && !m.equals(e))
 				return null;
 		}
 		
@@ -670,6 +683,12 @@ public class GenericToolkit {
 		qOrder.addFilter("user", FilterOperator.EQUAL, user);
 		List<Entity> orders = datastore.prepare(qOrder).asList(FetchOptions.Builder.withDefaults());
 		return orders;
+	}
+	
+	public String resolveDefaultAMI(String profile){
+		String[] lookup = reverseLookUpProfile(profile);
+		
+		return "";
 	}
 	
 //	public void createData(String profile){
