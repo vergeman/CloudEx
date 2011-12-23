@@ -1,7 +1,7 @@
 
 <div id="header_container">
 	<div id="title">
-		<h1>CloudEx</h1>
+		<h1><a href="/main" style="text-decoration: none;">CloudEx</a></h1>
 	</div>
 
 	<div id="auth">

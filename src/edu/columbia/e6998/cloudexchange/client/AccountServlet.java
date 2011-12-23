@@ -134,10 +134,12 @@ public class AccountServlet extends HttpServlet {
 		String ami = (String) req.getParameter("ami" + transactionKey);
 		
 		log.info("[AccountServlet doPost]");
-		log.info(ami);
-		log.info(keyPair);
-		log.info(securityGroup);
-		
+		try {
+			log.info(ami);
+			log.info(keyPair);
+			log.info(securityGroup);
+		} catch (Exception e) {}
+
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 		if (ami != null)
 			GenericToolkit.getInstance().updateTransaction(KeyFactory.stringToKey(transactionKey), 
@@ -161,7 +163,7 @@ public class AccountServlet extends HttpServlet {
 					chargeString += "Delivered instance:";
 				}
 				String amount = (String) charge.getProperty("amount");
-				chargeString += " -$" + amount;
+				chargeString += " <span style='float:right;'> -$" + amount + "</span>";
 				chargeList.add(chargeString);
 				totalCharge += Double.parseDouble(amount);
 			}
