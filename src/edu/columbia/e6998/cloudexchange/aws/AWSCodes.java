@@ -1,5 +1,7 @@
 package edu.columbia.e6998.cloudexchange.aws;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -118,4 +120,47 @@ public class AWSCodes {
 		
 	}
 	
+	public static String getDefaultAMI(String profile) {
+		ArrayList<String> result= new ArrayList<String>();
+		int instance = Integer.valueOf(profile.substring(6, 8)).intValue();
+		int os = Integer.valueOf(profile.substring(4, 6)).intValue();
+		int region =  Integer.valueOf(profile.substring(0, 2)).intValue();
+		//CLUSTERS
+		if (instance >= 9 ) {
+			switch(os) {
+				case 1:
+					return "ami-0da96764";
+
+				case 2:
+					return "ami-e4a7558d";
+				case 3:
+					return "ami-c7d81aae";
+			}
+		}
+		//WINDOWS 
+		if (os == 2) {
+			if (instance < 2 || instance == 5)
+				return "ami-fbf93092"; 
+
+			return "ami-fdf93094";
+		}//LINUX CASES
+		else {
+
+			// micro, small, medium instance -> 32 bit
+			if ((instance < 1 || instance == 4)) {
+				if (os == 0)
+					return "ami-31814f58";
+				
+				// suse
+				return "ami-3d599754";
+			}
+			// anyone else must be 64bit linux
+			if (os == 0)
+				return "ami-1b814f72";
+
+			return "ami-ab844dc2";
+		}
+		
+		
+	}
 }

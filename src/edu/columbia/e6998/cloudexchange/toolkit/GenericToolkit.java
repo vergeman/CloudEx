@@ -246,6 +246,7 @@ public class GenericToolkit {
 	}
 
 	public Msg createBidOffer(String profile, double price, String user, String arrayIndex){
+		String ami = AWSCodes.getDefaultAMI(profile);
 		
 		//Check if autotransact applies
 		if(autoTransaction(Integer.valueOf(arrayIndex)%2 != 0, price, profile, arrayIndex)){
@@ -258,10 +259,10 @@ public class GenericToolkit {
 			}
 			if (Integer.valueOf(arrayIndex)%2 != 0){
 				//hits
-				return createTransaction(profile, String.format("%02d", index - 1), user, "ami", "SG", "KP");
+				return createTransaction(profile, String.format("%02d", index - 1), user, ami, "SG", "KP");
 			}else{
 				//lifts
-				return createTransaction(profile, String.format("%02d", index + 1), user, "ami", "SG", "KP");
+				return createTransaction(profile, String.format("%02d", index + 1), user, ami, "SG", "KP");
 			}
 		}
 		

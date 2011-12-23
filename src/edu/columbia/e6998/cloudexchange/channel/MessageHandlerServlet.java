@@ -15,6 +15,7 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.aws.AWSCodes;
 import edu.columbia.e6998.cloudexchange.channel.Msg.*;
 import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
@@ -175,7 +176,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						msg = gt.createTransaction(msg.key.substring(0, 16),
 								arrayIndex,
 								userId,
-								"ami",
+								AWSCodes.getDefaultAMI(msg.key),
 								"SG",
 								"KP");
 						break;
@@ -183,7 +184,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						msg = gt.createTransaction(msg.key.substring(0, 16),
 								arrayIndex,
 								userId,
-								"ami",
+								AWSCodes.getDefaultAMI(msg.key),
 								"SG",
 								"KP");
 						break;
