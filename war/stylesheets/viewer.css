@@ -73,6 +73,9 @@ td, th {
 .bid, .ask {
 	cursor:pointer;
 }
+.bid:hover, .ask:hover {
+	background: grey;
+}
 .bid_qty, .ask_qty {
 	display:none;
 }
