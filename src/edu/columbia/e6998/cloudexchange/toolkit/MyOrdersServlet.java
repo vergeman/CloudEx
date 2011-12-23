@@ -61,6 +61,7 @@ public class MyOrdersServlet extends HttpServlet {
 				obj.put("date", profileToDate((String) e.getProperty("profile")));
 				obj.put("price", e.getProperty("price"));
 				obj.put("hour", e.getProperty("hour"));
+				obj.put("profile_key", e.getProperty("profile"));
 				
 				current_offers.put(obj);
 			} 
@@ -73,6 +74,7 @@ public class MyOrdersServlet extends HttpServlet {
 				obj.put("date", profileToDate((String) e.getProperty("profile")));
 				obj.put("price", e.getProperty("price"));
 				obj.put("hour", e.getProperty("hour"));
+				obj.put("profile_key", e.getProperty("profile"));
 				
 				current_bids.put(obj);
 			}

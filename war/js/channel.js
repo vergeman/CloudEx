@@ -17,18 +17,20 @@ socket.onmessage = function(message) {
 		var qty = data['qty'][0];
 	
 		if ( $('#'+key).length > 0) {
-			
-			$('#' + key).html(price);
-		}
 
-		
+			$('#' + key).html(price);
+			
+		}
 
 	}
 	catch(err) {
 		console.log("channel data rcv err");
 	}
-
+	
+	//refreshes
+	refresh_data();
 	update_current();
+
 };
 
 
@@ -53,7 +55,6 @@ function update_current() {
             msg:""
         },
         success: function(data){
-        	console.log(data);
         	
         	var current_bids = data['current_bids'];
         	var current_offers = data['current_offers'];
@@ -66,6 +67,7 @@ function update_current() {
         		var profile = "<div class='orderbook_profile'>" + v['profile'] + "</div>";
         		var price = "<div class='orderbook_price'> Your Offer: " + v['price'] + "</div>";
         		var key = v['key'];
+        		var profile_key = v['profile_key'] +  v['hour'];
         		
         		$('#orderbook_bids').append('<div class="order ' + key + '">'
         				+ datehour + profile + price + '</div>');  		
@@ -75,8 +77,10 @@ function update_current() {
         		var profile = "<div class='orderbook_profile'>" + v['profile'] + "</div>";
         		var price = "<div class='orderbook_price'> Your Bid: " + v['price'] + "</div>";
         		var key = v['key'];
+        		var profile_key = v['profile_key'] +  v['hour'];
+            	
         		
-        		$('#orderbook_offers').append('<div class="order ' + key + '">'
+        		$('#orderbook_offers').append('<div class="order ' + key + ' ' + profile_key + '">'
         				+ datehour + profile + price + '</div>');  		
 
         	});
@@ -87,7 +91,7 @@ function update_current() {
         	
         	$(".orderbook_date, .orderbook_profile, .orderbook_price").click(function() {
         		var ekey = $(this).parent().attr('class').split(' ')[1];
-        		alert(ekey);
+
         		$.ajax({
     		        url: '/message/',
     		        type: 'POST',

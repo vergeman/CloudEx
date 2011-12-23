@@ -4,6 +4,11 @@ h1 {
 	font-family: 'Electrolize', arial, helvetica, sans-serif;
 	font-size: 2.2em;
 }
+h2
+{
+	font-family: 'Electrolize', arial, helvetica, sans-serif;
+	font-size: 1.4em;
+}
 
 body
 {	font:13px/1.231 arial,helvetica,clean,sans-serif;
@@ -14,6 +19,9 @@ body
 	overflow-y: scroll;
 }
 
+a:visited {
+	text-decoration:none;
+}
 
 /*layout*/
 #header {
@@ -52,6 +60,38 @@ body
 	margin: 0px auto;
 }
 
+#welcome {
+	text-align: center;
+	font-size: 1.6em;
+	margin-top: 26px;
+	color: orange;
+}
+#about {
+	margin-top: 20px;
+	font-size: 1.6em;
+	line-height: 1.6;
+}
+#summaries {
+		margin-top: 30px;
+}
+#a, #b, #c {
+	font-size: .78em;
+	display:table-cell;
+	width: 400px;
+	padding: 20px;
+	margin: 20px;
+}
+#a p, #b p, #c p {
+	padding: 20px;
+	min-height: 160px;
+	background: white;
+	color: black;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	box-shadow: 0px 0px 1px 1px orange;
+	-moz-box-shadow: 0px 0px 1px 1px orange;
+	-webkit-box-shadow: 0px 0px 1px 1px;
+}
 .footerBorder
 {
 	background-color:black;
@@ -100,30 +140,50 @@ body
     line-height: 1.5em;
     padding: 0 0 0.5em;
 }
+#user_setup {
+	float:left;
+	width: 310px;
+}
 
-#left {
+/*accounts*/
+#creds_container {
+	float:left;
 	width: 300px; 
-	padding-left: 40px; 
-	margin-left: 10px;
-	margin-top: 0px; 
-	padding-top: 6px;
+	padding:12px;
+	background-color:white;
+	color:black;
 }
 
-#center {
-	width: 650px; 
-	margin-top: 0px; 
-	padding-top: 5px;
-	padding-left: 20px
+#creds_container fieldset, #accounting_container fieldset { 
+	 border: solid 1px #CCCCCC; 
+	 padding: 12px;
 }
 
-#right {
+
+#accounting_container {
 	width: 300px;
+	padding:12px;
+	background-color:white;
+	color:black;
+	min-height: 412px;
+	box-shadow: 0px 0px 2px 2px #b4aaa0;
+	-moz-box-shadow: 0px 0px 2px 2px #b4aaa0;
+	-webkit-box-shadow: 0px 0px 2px 2px #b
 }
 
-#settingsTable {
-    border-color: #D6D7D6;
-    border-style: solid;
-    border-width: 1px;
+#portfolio_container {
+	float:left;
+	width: 614px; 
+	margin-left: 30px;
+	padding: 12px;
+	min-height: 412px;
+	background-color:white;
+	color:black;
+
+	box-shadow: 0px 0px 2px 2px #b4aaa0;
+	-moz-box-shadow: 0px 0px 2px 2px #b4aaa0;
+	-webkit-box-shadow: 0px 0px 2px 2px #b
+
 }
 
 #settingsTable td {
@@ -139,7 +199,7 @@ body
 
 table.positionTable
 {
-	width: 80%;
+
 	border-width: 0 0 1px 1px;
     border-spacing: 0;
     border-collapse: collapse;
@@ -147,13 +207,21 @@ table.positionTable
     border-style: solid;
 }
 
+table.positionTable th {
+	text-align:center;
+	border: 1px solid #CCCCCC;
+	font-weight: 700;
+	font-size: .86em;
+	padding: 2px 2px 3px 3px;
+}
 table.positionTable td
 {
 	border-color: #CCCCCC;
     border-style: solid;
     margin: 0;
-    padding: 4px;
-    border-width: 1px 1px 0 0;
+    padding: 3px 6px 3px 6px;
+    border-width: 1px;
+    font-size: .9em;
 }
 
 /*data stuff*/

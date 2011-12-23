@@ -50,7 +50,7 @@ public class LaunchServlet extends HttpServlet {
 		
 		//log.info("Current time:" + currentHour + " hrs " + currentDate + " " + currentYear);
 		
-		log.info("Checking for instances to launch..." + entities.size());
+		log.info("Checking for instances to launch...[" + entities.size() +" open transactions]");
 		if (entities.size() > 0) { 
 			Queue queue = QueueFactory.getDefaultQueue();
 			
@@ -94,7 +94,11 @@ public class LaunchServlet extends HttpServlet {
 						config.zone = (String) e.getProperty("zone");
 						config.instanceType = (String) e.getProperty("instanceType");
 						
-						config.ami = (String) userProfile.getProperty("defaultAmi");
+						String amiString = (String) e.getProperty("ami");
+						if (amiString == null)
+							config.ami = (String) userProfile.getProperty("defaultAmi");
+						else 
+							config.ami = amiString;
 						config.securityGroup = (String) userProfile.getProperty("securityGroup");
 						config.keyPair = (String) userProfile.getProperty("keyPair");
 						

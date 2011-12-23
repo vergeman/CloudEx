@@ -15,6 +15,7 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import edu.columbia.e6998.cloudexchange.aws.AWSCodes;
 import edu.columbia.e6998.cloudexchange.channel.Msg.*;
 import edu.columbia.e6998.cloudexchange.datastore.ConnectedUserManager;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
@@ -109,7 +110,8 @@ public class MessageHandlerServlet extends HttpServlet {
 				  req.getParameter("action").trim(),
 				  req.getParameter("price").trim(),
 				  req.getParameter("qty").trim(),
-				  req.getParameter("key").trim()); 
+				  req.getParameter("key").trim(),
+				  "");
 
 		
 		System.out.println("msg recv: ");
@@ -153,14 +155,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						break;
 						
 					case CANCEL:
-						//what is ami/sg/kp why would these parameters exist?
-						//why would a CANCEL action create a transaction?
-						msg = gt.createTransaction(msg.key.substring(0, 16),
-							arrayIndex,
-							userId,
-							req.getParameter("ami").trim(),
-							req.getParameter("SG").trim(),
-							req.getParameter("KP").trim());
+						msg = gt.cancelBidOffer(req.getParameter("eKey").trim(), userId);
 						break;
 						
 					default:
@@ -181,7 +176,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						msg = gt.createTransaction(msg.key.substring(0, 16),
 								arrayIndex,
 								userId,
-								"ami",
+								AWSCodes.getDefaultAMI(msg.key),
 								"SG",
 								"KP");
 						break;
@@ -189,7 +184,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						msg = gt.createTransaction(msg.key.substring(0, 16),
 								arrayIndex,
 								userId,
-								"ami",
+								AWSCodes.getDefaultAMI(msg.key),
 								"SG",
 								"KP");
 						break;

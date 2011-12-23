@@ -73,7 +73,12 @@ td, th {
 .bid, .ask {
 	cursor:pointer;
 }
-
+.bid:hover, .ask:hover {
+	background: grey;
+}
+.bid_qty, .ask_qty {
+	display:none;
+}
 .lift {
 	background: green;
 }
@@ -85,6 +90,10 @@ td, th {
 	cursor:pointer;
 }
 
+.spot_price {
+	font-size: 1.2em;
+	font-weight: 700;
+}
 /*#order book*/
 #orderbook_container {
 	position: fixed;
@@ -177,7 +186,7 @@ td, th {
 }
 #dialog_price_container {
 	float:left;
-	margin-left: 30px;
+	/*margin-left: 30px;*/
 }
 #dialog_price {
 	width: 80px;

@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -23,7 +22,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import edu.columbia.e6998.cloudexchange.aws.LaunchServlet;
 import edu.columbia.e6998.cloudexchange.toolkit.GenericToolkit;
 
 @SuppressWarnings("serial")
@@ -36,8 +34,6 @@ public class AccountServlet extends HttpServlet {
 	private final String[] amiList = {"ami-8c1fece5",
 			"ami-31814f58",
 			"ami-1b814f72",
-			"ami-3ddb1954",
-			"ami-31d41658",
 			"ami-3d599754",
 			"ami-ab844dc2", 
 			"ami-fbf93092",
@@ -101,7 +97,6 @@ public class AccountServlet extends HttpServlet {
 		req.setAttribute("fileName", fileName);
 		req.setAttribute("positions", positions);
 		req.setAttribute("amis", amiList);
-		req.setAttribute("defaultAmi", defaultAmi);
 		req.setAttribute("keyPair", keyPair);
 		req.setAttribute("securityGroup", securityGroup);
 		req.setAttribute("totalCharge", totalCharge);
@@ -120,26 +115,32 @@ public class AccountServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 		
+		log.info("[AccountServlet doPost]");
+		
 		String keyPair = (String) req.getParameter("keyPair");
 		String securityGroup = (String) req.getParameter("securityGroup");
-		Enumeration<String> attributes = req.getParameterNames();
+		Enumeration<String> parameters = req.getParameterNames();
 		String transactionKey = null;
-		while (attributes.hasMoreElements()) {
-			String attribute = attributes.nextElement();
-			log.info("attribute");
-			if (attribute.contains("save")) {
-				transactionKey = attribute.substring(5);
+		while (parameters.hasMoreElements()) {
+			String param = parameters.nextElement();
+			log.info(param);
+			if (param.contains("save")) {
+				transactionKey = param.substring(4);
 				break;
 			}
 		}
 		
 		String ami = (String) req.getParameter("ami" + transactionKey);
-		
-		log.info("[AccountServlet doPost]");
-		log.info(ami);
-		log.info(keyPair);
-		log.info(securityGroup);
-		
+	
+		try {
+			log.info(ami);
+			log.info(keyPair);
+			log.info(securityGroup);
+			
+		} catch (Exception e) {
+			log.severe(e.getMessage());
+		}
+
 		String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 		if (ami != null)
 			GenericToolkit.getInstance().updateTransaction(KeyFactory.stringToKey(transactionKey), 
@@ -163,7 +164,7 @@ public class AccountServlet extends HttpServlet {
 					chargeString += "Delivered instance:";
 				}
 				String amount = (String) charge.getProperty("amount");
-				chargeString += " -$" + amount;
+				chargeString += " <span style='float:right;'> -$" + amount + "</span>";
 				chargeList.add(chargeString);
 				totalCharge += Double.parseDouble(amount);
 			}
@@ -186,10 +187,15 @@ public class AccountServlet extends HttpServlet {
 				else 
 					entry.buyOrSell = "Sell";
 
-				entry.transactionKey = (String) transaction.getKey().toString();
+				entry.transactionKey = (String) KeyFactory.keyToString(transaction.getKey());
 				entry.zone = (String) transaction.getProperty("zone");
 				entry.region = (String) transaction.getProperty("region");
-				entry.ami = (String) transaction.getProperty("ami");
+				String amiString = (String) transaction.getProperty("ami");
+				if (amiString == null) {
+					entry.ami = amiList[0];
+				} else {
+					entry.ami = amiString;
+				}
 				entry.instance = (String) transaction.getProperty("instanceType");
 				entry.contractPrice = (Double) transaction.getProperty("price");
 				
