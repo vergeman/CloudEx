@@ -154,7 +154,7 @@ public class MessageHandlerServlet extends HttpServlet {
 						break;
 						
 					case CANCEL:
-						msg = gt.cancelBidOffer(req.getParameter("eKey").trim());
+						msg = gt.cancelBidOffer(req.getParameter("eKey").trim(), userId);
 						break;
 						
 					default:

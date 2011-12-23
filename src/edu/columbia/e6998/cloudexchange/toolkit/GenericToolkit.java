@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 public class GenericToolkit {
@@ -30,6 +31,7 @@ public class GenericToolkit {
 	private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	private MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
 	
+		
 	private static GenericToolkit instance = null;
 	
 	private GenericToolkit() {
@@ -152,7 +154,7 @@ public class GenericToolkit {
 		
 		//can't iterate through null list (but can an empty list..)
 		if (!syncCache.contains(profile)){
-			System.out.println("Profile is not in memcache yet!");
+			//System.out.println("Profile is not in memcache yet!");
 			return results;	
 		}
 		for(Entity t : (Entity[]) syncCache.get(profile)){
@@ -442,31 +444,32 @@ public class GenericToolkit {
 		return charges;
 	}
 	
-	public Msg cancelBidOffer(String key){
+	public Msg cancelBidOffer(String key, String userId){
 		Msg msg = null;
-		//, String profile, String arrayIndex)
-		Key myKey = KeyFactory.stringToKey(key);
-		Transaction txn = datastore.beginTransaction();
-		Entity e = null;
-		try {
-			e = datastore.get(myKey);
-		} catch (EntityNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
+		System.out.println("Key is:" + key);
+		//Key myKey = KeyFactory.stringToKey(key.trim());
+		List<Entity> orders = getMyOrders(userId);
+		Entity c = null;
+		for (Entity e : orders) {
+			if(e.getKey().toString().equals(key))
+				c = e;
 		}
-		datastore.delete(myKey);
+
+		Transaction txn = datastore.beginTransaction();
+		//Entity e = null;
+
+		datastore.delete(c.getKey());
 		txn.commit();
 		
 		//Check if the key matches what is displayed
-		String profile = (String) e.getProperty("profile");
-		int arrayIndex = hourToIndex((String) e.getProperty("hour"), (Boolean) e.getProperty("seller"));
+		String profile = (String) c.getProperty("profile");
+		int arrayIndex = hourToIndex((String) c.getProperty("hour"), (Boolean) c.getProperty("seller"));
 		int index = Integer.valueOf(arrayIndex);
 		Entity m = ((Entity[]) syncCache.get(profile))[index];
 		
-		if(m.getKey().equals(e.getKey())){
-			Entity[] mem = queryDataStore(profile, myKey.toString());
-			return updateMemcache((Boolean) e.getProperty("seller"), profile, String.format("%02d", arrayIndex), mem, null);
+		if(m.getKey().equals(c.getKey())){
+			Entity[] mem = queryDataStore(profile, c.getKey().toString());
+			return updateMemcache((Boolean) c.getProperty("seller"), profile, String.format("%02d", arrayIndex), mem, null);
 		}
 		
 		return msg;
