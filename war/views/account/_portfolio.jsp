@@ -18,7 +18,6 @@
 				<th><b>Instance Type</b></th>
 				<th><b>Ami</b></th>
 				<th><b>Contract price</b></th>
-				<th><b>Spot price</b></th>
 				<th></th>
 			</thead>
 
@@ -46,7 +45,6 @@
 								</c:forEach>
 						</select></td>
 						<td>${i.contractPrice}</td>
-						<td>${i.spotPrice}</td>
 						<td><input name="save${i.transactionKey}" type="submit"
 							value="Save"></td>
 					</tr>

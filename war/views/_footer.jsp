@@ -5,7 +5,7 @@
 
 			
 			Suhan Canaran sc3305@columbia.edu
-			Evgeny Gedotov ef2363@columbia.edu
+			Evgeny Fedotov ef2363@columbia.edu
 			Alan Verga akv2001@columbia.edu
 </div>
 
