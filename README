@@ -1,20 +1,46 @@
 The Cloud Exchange
 E6998, Cloud Computing, Prof Sahu.
 
-Eugene
-Suhan
-Alan
+Alan Verga 		akv2001@columbia.edu
+Evgeny Fedotov 	ef2363@columbia.edu
+Suhan Canaran 	sc3055@columbia.edu
 
 
-
-Library used:
-https://github.com/vergeman/aws-sdk-for-java-on-gae
-
-(forked from https://github.com/apcj/aws-sdk-for-java-on-gae)
-the library is somewhat old and doesn't have new updates - especially
-for spot prices; so had to fork and update to reflect some changes 
-from aws.
+Source Code Repostiory:
+	http://github.com/vergeman/CloudEx
+	git clone git@github.com:vergeman/CloudEx.git
 
 
-build to get build/classes/gae-aws-sdk-1.1.7.1.jar and copy to CloudEx
-WEB-INF/lib/gae-aws-sdk-1.1.7.1.jar
+External Libraries:
+	http://github.com/vergeman/aws-sdk-for-java-on-gae
+
+	(forked from http://github.com/apcj/aws-sdk-for-java-on-gae)
+	the library is somewhat old and doesn't have new updates - especially
+	for spot prices; so had to fork and import new AWS functionality to 
+	reflect up to date changes.
+
+	build to get build/classes/gae-aws-sdk-1.1.7.1.jar and copy to CloudEx
+	WEB-INF/lib/gae-aws-sdk-1.1.7.1.jar
+	
+	Additionally, copy the following directories to WEB-INF/lib
+		commons-codec-1.3/
+		commons-logging-1.1.1/
+		jackson-1.4/
+		
+	
+Dependencies
+
+	JDK
+	CloudEx makes use of JSP's and Expression Language.  This requires adding a JDK to 
+	the build path (as opposed to a JRE).
+	
+	gae-aws
+	add the following to the "Bootstrap classpath"
+	For Eclipse users: run-as -> run_configurations -> classpath)
+		commons-codec-1.3.jar
+		commons-logging-1.1.1
+		jackson-1.4
+
+	Amazon Credentials
+		A 'host' credentials file (AwsCredentials.properties) needs to be placed in 
+		the .cloudexchange.aws package. 
