@@ -54,9 +54,9 @@ public class LaunchServlet extends HttpServlet {
 		if (entities.size() > 0) { 
 			Queue queue = QueueFactory.getDefaultQueue();
 			
-		try {
 			for (Entity e : entities) {
 			
+				try {
 				//String tDateString = (String) e.getProperty("date"); // get transaction date
 				Date eDate = (Date) e.getProperty("date"); // get transaction date
 				String tUserId = (String) e.getProperty("buyer"); // get userId
@@ -76,10 +76,13 @@ public class LaunchServlet extends HttpServlet {
 					
 					// Check if hour is the same hour or previous hour in case we missed smth
 					
+					log.info("[Current hour: " + currentHour + " tHour: " + tHour + "]");
+					
 					// TODO: Use Calendar.add(Calendar.HOUR, -1) instead of currentHour-1
 					if (tHour == currentHour || tHour == currentHour-1) {
-	
-						
+					
+						log.info("[Found an instance to launch]");
+						log.info(e.toString());
 						// Get input stream for credentials file
 						Entity userProfile = 
 							GenericToolkit.getInstance().getUserProfileForUser(tUserId);
@@ -99,6 +102,7 @@ public class LaunchServlet extends HttpServlet {
 							config.ami = (String) userProfile.getProperty("defaultAmi");
 						else 
 							config.ami = amiString;
+						
 						config.securityGroup = (String) userProfile.getProperty("securityGroup");
 						config.keyPair = (String) userProfile.getProperty("keyPair");
 						
@@ -137,13 +141,12 @@ public class LaunchServlet extends HttpServlet {
 								param("key", Base64.encode(bosKey.toByteArray())).
 								param("price", price).
 								etaMillis(ETA_TIME));
-					}
+					} 
 				}
+			}catch (Exception ex) {
+				log.severe(ex.getMessage());
 			}
-		} catch (Exception e) {
-			//alan: i get wierd log errors
-			//log.info(e.getMessage());
-		}
+			}
 		}
 	}
 }
